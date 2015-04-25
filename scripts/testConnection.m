@@ -9,10 +9,12 @@ function testConnection
     data2 = rand(200,100,1);
     save(localFileName2, 'data2');
     
+    theServerName = 'crimson.stanford.edu';
+    theUserName = input(sprintf('Enter username for ''%s'': ', theServerName), 's');
     % Instantiate a RemotDataHandler object
     validationRemoteDataHandler = RemoteDataHandler(...
-        'serverName', 'crimson.stanford.edu',...
-        'userName','nicolas');
+        'serverName', theServerName,...
+        'userName',theUserName);
             
     % Start an SFTP session to transmit the files
     validationRemoteDataHandler.startSFTPsession();
