@@ -1,5 +1,13 @@
-function testConnection
-    
+function varargout = v_SFTPConnectoin(varargin)
+%
+% Test SFTP connection from Matlab 
+%
+
+varargout = UnitTest.runValidationRun(@ValidationFunction, nargout, varargin);
+end
+
+function ValidationFunction(runTimeParams)
+
     % Create a couple of matfiles with dummy data to test transmission
     localFileName1 = 'file1.mat';
     data1 = rand(50,100,1);
