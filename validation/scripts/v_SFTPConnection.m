@@ -1,4 +1,4 @@
-function varargout = v_SFTPConnectoin(varargin)
+function varargout = v_SFTPConnection(varargin)
 %
 % Test SFTP connection from Matlab 
 %
@@ -19,6 +19,7 @@ function ValidationFunction(runTimeParams)
     
     theServerName = 'crimson.stanford.edu';
     theUserName = input(sprintf('Enter username for ''%s'': ', theServerName), 's');
+    
     % Instantiate a RemotDataHandler object
     validationRemoteDataHandler = RemoteDataHandler(...
         'serverName', theServerName,...
@@ -38,6 +39,9 @@ function ValidationFunction(runTimeParams)
     % 
     validationRemoteDataHandler.terminateSFTPsession();
     validationRemoteDataHandler.shutdown;
+    
+    UnitTest.validationRecord('SIMPLE_MESSAGE', sprintf('sFTP connection to %s was successful.', theServerName));
+    
 end
 
 
