@@ -29,11 +29,11 @@ function ValidationFunction(runTimeParams)
     validationRemoteDataHandler.startSFTPsession();
     
     % send file1
-    destinationOnServer = 'validation/SCIEN/ISETBIO/fullvalidation/testDirectory3';
+    destinationOnServer = 'validation/SCIEN/ISETBIO/fullvalidation/testDirectory1A';
     validationRemoteDataHandler.sendFile(localFileName1, destinationOnServer);
 
     % send file2
-    destinationOnServer = 'validation/SCIEN/ISETBIO/fullvalidation/testDirectory4';
+    destinationOnServer = 'validation/SCIEN/ISETBIO/fullvalidation/testDirectory1B';
     validationRemoteDataHandler.sendFile(localFileName2, destinationOnServer);
     
     % 
@@ -42,6 +42,10 @@ function ValidationFunction(runTimeParams)
     
     UnitTest.validationRecord('SIMPLE_MESSAGE', sprintf('sFTP connection to %s was successful.', theServerName));
     
+    % clean up
+    system(sprintf('rm %s',localFileName1));
+    system(sprintf('rm %s',localFileName2));
+
 end
 
 
