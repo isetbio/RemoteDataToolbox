@@ -3,17 +3,35 @@ classdef rdata < handle
 %
 %   rd = rdata(varargin);
 %
+% The rdata object is created to help find and download data from a remote
+% data site that contains useful test and validation data.
 %
-% Examples:
+% The rdata object serves as a little database for helping to read the
+% files on the remote data site. It has various functions to help find the
+% files, open the web-site, and search for files.
+%
+% For this object to work, the remote data site must have an up-to-date
+% Table of Contents stored in the base directory.  That file is read and
+% stored.  The rdata object helps with searching through that site and
+% getting files stored at the site.
+%
+% Examples (creating the rdata object and loading the TOC):
 %  Default with ISETBIO case
 %    rd = rdata;
-%    rd.webSite;
 %    rd.set('name','new name'); rd
 %
 %   Same
 %    rd = rdata('base','http://scarlet.stanford.edu/validation/SCIEN/ISETBIO');
 %    rd
 %
+%   Open one of the MRI data sites
+%    rd = rdata('base','http://scarlet.stanford.edu/validation/MRI/VISTADATA');
+%    rd
+%
+%   Show the web-site view of the remote data
+%    rd.webSite;
+%
+%    allURLs = rd.get('file url');
 %   
 % BW ISETBIO Team, Copyright 2015
 
@@ -34,13 +52,13 @@ methods (Access = public)
             rdata('name','remotedata','base','http://scarlet.stanford.edu/validation/ISETBIO');
         end
         
-        % Read the TOC from the base directory
-        obj.loadTOC;
-        
-        % Parameter/value pairs
+        % Parameter/value pairs.  
         for ii=1:2:length(varargin)
             obj.set(varargin{ii},varargin{ii+1});
         end
+        
+        % Read the Table of Contents from the base directory
+        obj.loadTOC;
         
     end
     
@@ -65,17 +83,28 @@ methods (Access = public)
                 val = 0;
                 nDirs = obj.get('ndirs');
                 for ii=1:nDirs
-                    nFiles = nFiles + numel(obj.files{ii});
+                    val = val + numel(obj.files{ii});
                 end
             case 'fileurl'
-                % Full url to all of the files
-                nDir =obj.get('n dirs');
+                % Full url to every one of the remote files
+                nDir   = obj.get('n dirs');
                 nFiles = obj.get('n files');
                 val = cell(nFiles,1);
                 cnt = 1;
                 for ii=1:nDir
                     for jj=1:numel(obj.files{ii})
-                        val{cnt} = fullfile(obj.base,obj.directories{ii},obj.files{ii});
+                        % Build the URL from the parts
+                        % First, there is an overlap with the directory and
+                        % the base URL.  We can't have it in there twice,
+                        % so we remove the part of the directory that
+                        % overlaps with the URL.  Maybe this should be done
+                        % when we create the TOC.
+                        [~,n]=fileparts(obj.base);
+                        start = strfind(obj.directories{ii},n);
+                        
+                        % For this directory (ii), and then the jj files in
+                        % this directory, obj.file{ii}(jj) ...
+                        val{cnt} = fullfile(obj.base,obj.directories{ii}((start+length(n)):end),obj.files{ii}(jj));
                         cnt = cnt+1;
                     end
                 end                   
@@ -107,24 +136,29 @@ methods (Access = public)
     end
     
     function url = tocURL(obj)
+        % Make the url to the table of contents on the remote site
         url = fullfile(obj.base,'TOC.mat');
     end
     
     function webSite(obj)
         % Open the base address in the system web browser
         web(obj.base,'-browser');
-        
     end
     
     function loadTOC(obj)
         % Write the TOC file into the isetbioRoot/local directory
         
+        % First check that the directory exists, and if not make it
         localDir = fullfile(isetbioRootPath,'local');
         if ~exist(localDir,'dir'),  mkdir(localDir); end
         
+        % Download the file, and check status
         tocFile = fullfile(localDir,'TOC.mat');
         url = obj.tocURL;
-        urlwrite(url,tocFile);
+        [~,status] = urlwrite(url,tocFile);
+        if ~status, error('TOC file not downloaded.'); end
+        
+        % Load the TOC and put it in the rdata object
         load(tocFile,'TOC');
         obj.directories = TOC.d;
         obj.files = TOC.f;

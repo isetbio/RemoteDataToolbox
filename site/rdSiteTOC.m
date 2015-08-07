@@ -40,6 +40,10 @@ function TOC = rdSiteTOC(baseDir)
 %  TOC = rdSiteTOC(baseDir);
 %  chdir(baseDir); save('TOC','TOC');
 %
+%  baseDir = '/wandellfs/data/validation/MRI/VISTADATA';
+%  TOC = rdSiteTOC(baseDir);
+%  chdir(baseDir); save('TOC','TOC');
+%
 % BW ISETBIO Team, Copyright 2015
 
 %% Consider whether we want to keep the rd object in prefs ...
@@ -70,17 +74,24 @@ for ii=1:nDirs
     
     fNames = [];
 
-    % fprintf('Checking directory %s\n',pNames{ii});
+    fprintf('Checking directory %s\n',pNames{ii});
     
-    % Find the mat-files
-    fNames = rdNewFiles(pNames{ii}, fNames, 'mat');
-
-    % Find the jpg-files
-    fNames = rdNewFiles(pNames{ii}, fNames,'jpg');
-
-    % Find the jpg-files
-    fNames = rdNewFiles(pNames{ii},fNames, 'png');
+    % For SCIEN/ISETBIO
+    if strfind(baseDir,'ISET')
+        fNames = rdNewFiles(pNames{ii}, fNames, 'mat');
+        fNames = rdNewFiles(pNames{ii}, fNames,'jpg');
+        fNames = rdNewFiles(pNames{ii},fNames, 'png');
+    end
     
+    % For VISTADATA
+    if strfind(baseDir,'VISTA')
+        fNames = rdNewFiles(pNames{ii},fNames, 'gz');
+        fNames = rdNewFiles(pNames{ii},fNames, 'tgz');
+        fNames = rdNewFiles(pNames{ii},fNames, 'bvals');
+        fNames = rdNewFiles(pNames{ii},fNames, 'bvecs');
+    end
+    
+    % Create a summary
     if ~isempty(fNames)
         TOC.d{cnt} = pNames{ii};
         TOC.f{cnt} = fNames;
@@ -112,7 +123,9 @@ if ~isempty(newFiles)
     end
     
     if isempty(fNames), fNames = newNames;
-    else fNames = cat(newNames,fNames);
+    else
+        % The names are kept in the rows, so the cell array is N x 1
+        fNames = vertcat(newNames,fNames);
     end
 
 end
