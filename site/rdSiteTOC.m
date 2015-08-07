@@ -1,4 +1,4 @@
-function dirList = rdSiteTOC(baseDir) 
+function TOC = rdSiteTOC(baseDir) 
 % Make MATLAB struct and JSON file describing remote files
 %
 % This script is intended to be run at a data site.  Its purpose is to
@@ -13,13 +13,13 @@ function dirList = rdSiteTOC(baseDir)
 %
 % Inputs
 %  baseDir:  This is the root directory.  Files below this list will be
-%  catalogued.  At present, we are limiting the file types (e.g., excluding
-%  files with a .txt extension or a .php extensions).  Not sure how to
-%  handle this in the future.
+%    catalogued.  At present, we are limiting the file types (e.g.,
+%    excluding files with a .txt extension or a .php extensions).  Not sure
+%    how to handle this in the future.
 %
 % Returns
-%  fileSummary - A structure containing the files and directories in
-%  various forms that can be searched conveniently by the rdata object.
+%  TOC - A structure containing the files and directories in
+%        various forms that can be searched conveniently by the rdata object.
 %
 % Uses the tools in RemoteDataToolbox to 
 %
@@ -28,20 +28,22 @@ function dirList = rdSiteTOC(baseDir)
 %   (c) Make a struct containing the directories with files with these
 %   extensions
 %   
-% We can download the struct using urlread and when you try to find a file
-% with some name find its location from the struct.
+% We use the remote data object (rdata) to download the struct. There is a
+% function (rd.loadTOC) that uses urlread and to locate the TOC and put it
+% in the rdata object.
 %
-% We save the directory information in a JSON file, also, so that the list
-% of files can be viewed with a browser.
+% We are considering saving the directory information in a JSON file,
+% rather than a mat-file, so that the TOC can be viewed with a browser.
 %
 % Example
 %  baseDir = '/wandellfs/data/validation/SCIEN/ISETBIO';
-%  files = rdSiteTOC(baseDir);
+%  TOC = rdSiteTOC(baseDir);
+%  chdir(baseDir); save('TOC','TOC');
 %
 % BW ISETBIO Team, Copyright 2015
 
-%%
-
+%% Consider whether we want to keep the rd object in prefs ...
+%
 % if ispref('ISETBIO','remote')
 %     remote = getpref('ISETBIO','remote');
 % else
@@ -62,7 +64,7 @@ pNames = dirwalk(baseDir);
 
 nDirs = length(pNames);
 nFiles = 0;
-dirList = [];
+TOC = [];
 cnt = 1;
 for ii=1:nDirs
     
@@ -80,22 +82,22 @@ for ii=1:nDirs
     fNames = rdNewFiles(pNames{ii},fNames, 'png');
     
     if ~isempty(fNames)
-        dirList.d{cnt} = pNames{ii};
-        dirList.f{cnt} = fNames;
+        TOC.d{cnt} = pNames{ii};
+        TOC.f{cnt} = fNames;
         cnt = cnt + 1;
         nFiles = nFiles + length(fNames);
     end
     
 end
 
-fprintf('Found %d files in %d directories\n',nFiles,length(dirList.d));
+fprintf('Found %d files in %d directories\n',nFiles,length(TOC.d));
 
 
 end
 
 
 function fNames = rdNewFiles(updateDir,fNames, ext)
-% Add files in UpdateDir with ext to the fNames list
+% Add files from updateDir with ext to fNames
 %
 
 newFiles = dir(fullfile(updateDir,['*.',ext]));

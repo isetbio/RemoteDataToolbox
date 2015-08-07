@@ -5,13 +5,21 @@ classdef rdata < handle
 %
 %
 % Examples:
+%  Default with ISETBIO case
+%    rd = rdata;
+%    rd.webSite;
+%    rd.set('name','new name'); rd
 %
+%   Same
+%    rd = rdata('base','http://scarlet.stanford.edu/validation/SCIEN/ISETBIO');
+%    rd
 %
+%   
 % BW ISETBIO Team, Copyright 2015
 
 properties
     name = 'remotedata'
-    base = 'http://scarlet.stanford.edu/validation/ISETBIO';
+    base = 'http://scarlet.stanford.edu/validation/SCIEN/ISETBIO';
     directories = {};   % List of the directory names, 1:D
     files = {};         % List of files in each directory
 end
@@ -27,7 +35,7 @@ methods (Access = public)
         end
         
         % Read the TOC from the base directory
-        urlread(fullfile(obj.base,'TOC.mat');
+        obj.loadTOC;
         
         % Parameter/value pairs
         for ii=1:2:length(varargin)
@@ -98,90 +106,32 @@ methods (Access = public)
         end
     end
     
-    function display(obj,varargin)
-        fprintf('\nRemote data object\n');
-        fprintf('\tname: %s\n',obj.name);
-        fprintf('\tbase: %s\n',obj.base);
-        fprintf('\t%d directories\n',numel(obj.directories));
-        fprintf('\t%d files\n',obj.get('nfiles'));
+    function url = tocURL(obj)
+        url = fullfile(obj.base,'TOC.mat');
     end
     
-end
-
-end
-
+    function webSite(obj)
+        % Open the base address in the system web browser
+        web(obj.base,'-browser');
+        
+    end
     
-% switch f
-%     
-%     case 'ls'
-%         % dirList = rdata('ls',remote, extension);
-%         if ~isempty(varargin), pattern = varargin{1};
-%         else pattern = '.mat';
-%         end
-%         
-%         % Read and parse html string
-%         % Some day we might pass this as an argument
-%         p    = '<a[^>]*href="(?<link>[^"]*)">(?<name>[^<]*)</a>';
-%         
-%         % str  = webread(webdir);
-%         str  = urlread(webdir);
-%         name = regexp(str, p, 'names');
-% 
-%         %% Filter by user input pattern
-%         if ~isempty(pattern)
-%             indx = arrayfun(@(x) ~isempty(strfind(x.name, pattern)), name);
-%             nfiles = sum(indx);
-%             if nfiles == 0, warning('No files match pattern: %s',pattern);
-%             else
-%                 % Copy the matching patterns
-%                 names = cell(nfiles,1);
-%                 cnt = 1;
-%                 for ii=find(indx)
-%                     names{cnt} = name(ii).name;
-%                     cnt = cnt+1;
-%                 end
-%             end
-%         end
-%         val = names;
-%         
-%     case 'cd'
-%         % rdata('cd',remote)
-%         setpref('ISET','remote',remote);
-%         val = remote;
-%         
-%     case 'get'
-%         % outName = rdata('get',remote,fname);
-%         rname = fullfile(webdir,varargin{1});
-%         oname = tempname;
-%         [val,status] = urlwrite(rname,oname);
-%         if ~status,  error('File get error.\n'); end
-%         
-%     case 'put'
-%         % NYI
-%         error('Put not yet implemented');
-%         
-%     case 'readimage'
-%         % rdata('read image', remote, fname);
-%         if isempty(varargin), error('remote file name required'); end
-%         
-%         rname = fullfile(webdir,varargin{1});
-%         val = imread(rname);
-%         
-%     case 'loaddata'
-%         % rdata('load data',remote,fname,variable)
-%         if isempty(varargin), error('remote data file name required'); end
-%         
-%         rname = fullfile(webdir,varargin{1});
-%         oname = tempname; oname = [oname,'.mat'];
-%         [oname, status] = urlwrite(rname,oname);
-%         if ~status,  error('Load data error.\n'); end
-%         
-%         val = load(oname);
-%         if length(varargin) == 2
-%             eval(['val = val.',varargin{2},';']);
-%         end
-% 
-%     otherwise
-%         error('Unknown function %s\n',func);
-% end
+    function loadTOC(obj)
+        % Write the TOC file into the isetbioRoot/local directory
+        
+        localDir = fullfile(isetbioRootPath,'local');
+        if ~exist(localDir,'dir'),  mkdir(localDir); end
+        
+        tocFile = fullfile(localDir,'TOC.mat');
+        url = obj.tocURL;
+        urlwrite(url,tocFile);
+        load(tocFile,'TOC');
+        obj.directories = TOC.d;
+        obj.files = TOC.f;
+    end
+    
+        
+end
+
+end
 
