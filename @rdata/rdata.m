@@ -14,11 +14,17 @@ classdef rdata < handle
 % of Contents stored in the base directory.  That TOC is read and stored
 % with the rdata object is created. 
 %
+% The default remote data site is
+%
+%   'http://scarlet.stanford.edu/validation/SCIEN/ISETBIO'
+%
 % Key Methods:
 %   .urlfile - rd.urlfile(str) retrieves urls containing the string
 %   .webSite - Open the remote web-site in the system browser
 %   .set     - 
 %   .get     - 
+%   .tocURL
+%   
 %
 % Examples (creating the rdata object and loading the TOC):
 %    rd = rdata('base','http://scarlet.stanford.edu/validation/SCIEN/ISETBIO')
@@ -44,8 +50,8 @@ classdef rdata < handle
 % BW ISETBIO Team, Copyright 2015
 
 properties
-    name = 'remotedata'
-    base = 'http://scarlet.stanford.edu/validation/SCIEN/ISETBIO';
+    name = 'remotedata' % Name of this object
+    base = '';          % URL of base directory with TOC
     directories = {};   % List of the directory names, 1:D
     files = {};         % List of files in each directory
     url = {};           % List of URLs to every file
@@ -58,7 +64,7 @@ methods (Access = public)
     function obj = rdata(varargin)
         
         if isempty(varargin)
-            rdata('name','remotedata','base','http://scarlet.stanford.edu/validation/ISETBIO');
+            rdata('name','remotedata','base','http://scarlet.stanford.edu/validation/SCIEN/ISETBIO');
         end
         
         % Parameter/value pairs.  
@@ -138,8 +144,6 @@ methods (Access = public)
         web(obj.base,'-browser');
     end
     
-    
-        
 end
 
 end

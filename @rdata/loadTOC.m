@@ -1,8 +1,10 @@
-function loadTOC(obj)
-% Write the TOC file into the isetbioRoot/local directory
+function loadTOC(obj,localDir)
+% Write the TOC file into a temporary directory
 
 % First check that the directory exists, and if not make it
-localDir = fullfile(isetbioRootPath,'local');
+if notDefined('localDir')
+    localDir = fullfile(tempdir,'rdata');
+end
 if ~exist(localDir,'dir'),  mkdir(localDir); end
 
 % Download the file, and check status

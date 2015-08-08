@@ -20,8 +20,9 @@ for ii=1:nDir
         [~,n] = fileparts(obj.base);
         start = strfind(obj.directories{ii},n);
         
-        % For this directory (ii)
-        % and the files in this directory, obj.file{ii}(jj)
+        % Make the URLs for
+        %  this directory (ii)
+        %  and the files in this directory, obj.file{ii}(jj)
         val{cnt} = char(fullfile(obj.base,obj.directories{ii}((start+length(n)):end),obj.files{ii}(jj)));
         cnt = cnt+1;
     end
