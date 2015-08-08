@@ -4,35 +4,43 @@ classdef rdata < handle
 %   rd = rdata(varargin);
 %
 % The rdata object is created to help find and download data from a remote
-% data site that contains useful test and validation data.
+% site that contains useful test and validation data.
 %
-% The rdata object serves as a little database for helping to read the
-% files on the remote data site. It has various functions to help find the
-% files, open the web-site, and search for files.
+% The rdata object serves as a database for helping to read the files on
+% the remote data site. It has various methods to help find the files,
+% open the web-site, and search for the file urls for downloading.
 %
-% For this object to work, the remote data site must have an up-to-date
-% Table of Contents stored in the base directory.  That file is read and
-% stored.  The rdata object helps with searching through that site and
-% getting files stored at the site.
+% This object requires that the remote data site have an up-to-date Table
+% of Contents stored in the base directory.  That TOC is read and stored
+% with the rdata object is created. 
+%
+% Key Methods:
+%   .urlfile - rd.urlfile(str) retrieves urls containing the string
+%   .webSite - Open the remote web-site in the system browser
+%   .set     - 
+%   .get     - 
 %
 % Examples (creating the rdata object and loading the TOC):
-%  Default with ISETBIO case
-%    rd = rdata;
-%    rd.set('name','new name'); rd
-%
-%   Same
-%    rd = rdata('base','http://scarlet.stanford.edu/validation/SCIEN/ISETBIO');
-%    rd
+%    rd = rdata('base','http://scarlet.stanford.edu/validation/SCIEN/ISETBIO')
 %
 %   Open one of the MRI data sites
-%    rd = rdata('base','http://scarlet.stanford.edu/validation/MRI/VISTADATA');
-%    rd
+%    rd = rdata('base','http://scarlet.stanford.edu/validation/MRI/VISTADATA')
 %
 %   Show the web-site view of the remote data
 %    rd.webSite;
 %
-%    allURLs = rd.get('file url');
-%   
+%   The urls to all the files in the TOC
+%    allURLs = rd.urlfile;
+%
+%   To all the files with the string 'bvecs'
+%    url = rd.urlfile('bvecs');
+%
+%   Use with urlwrite to get a remote file and store it in a local
+%   directory
+%    url = rd.urlfile('dwi.bvecs')
+%    fname = fullfile(rootPath,'local','dwi.bvecs');
+%    urlwrite(url,fname);
+%
 % BW ISETBIO Team, Copyright 2015
 
 properties
@@ -40,6 +48,7 @@ properties
     base = 'http://scarlet.stanford.edu/validation/SCIEN/ISETBIO';
     directories = {};   % List of the directory names, 1:D
     files = {};         % List of files in each directory
+    url = {};           % List of URLs to every file
 end
 
 methods (Access = public)
@@ -60,6 +69,9 @@ methods (Access = public)
         % Read the Table of Contents from the base directory
         obj.loadTOC;
         
+        % Create the URLs to each individual file
+        obj.urlCreate;
+        
     end
     
     function val = get(obj,param,varargin)
@@ -70,44 +82,25 @@ methods (Access = public)
         % Get the requested parameter
         switch(param)
             case 'name'
+                % Name of this object
                 val = obj.name;
             case 'base'
+                % URL to the base directory of the data
                 val = obj.base;
             case 'directories'
+                % Cell array of directories
                 val = obj.directories;
             case 'files'
+                % Cell array of the files in each directory
                 val = obj.files;
             case 'ndirs'
                 val = numel(obj.directories);
             case 'nfiles'
-                val = 0;
-                nDirs = obj.get('ndirs');
-                for ii=1:nDirs
-                    val = val + numel(obj.files{ii});
-                end
-            case 'fileurl'
-                % Full url to every one of the remote files
-                nDir   = obj.get('n dirs');
-                nFiles = obj.get('n files');
-                val = cell(nFiles,1);
-                cnt = 1;
-                for ii=1:nDir
-                    for jj=1:numel(obj.files{ii})
-                        % Build the URL from the parts
-                        % First, there is an overlap with the directory and
-                        % the base URL.  We can't have it in there twice,
-                        % so we remove the part of the directory that
-                        % overlaps with the URL.  Maybe this should be done
-                        % when we create the TOC.
-                        [~,n]=fileparts(obj.base);
-                        start = strfind(obj.directories{ii},n);
-                        
-                        % For this directory (ii), and then the jj files in
-                        % this directory, obj.file{ii}(jj) ...
-                        val{cnt} = fullfile(obj.base,obj.directories{ii}((start+length(n)):end),obj.files{ii}(jj));
-                        cnt = cnt+1;
-                    end
-                end                   
+                % Number of files in all the directories
+                val = numel(obj.url);
+            case 'url'
+                % The URLs to every file in the TOC
+                val = obj.url;                
             otherwise
                 error('Unknown parameter %s\n',param);
         end
@@ -145,24 +138,6 @@ methods (Access = public)
         web(obj.base,'-browser');
     end
     
-    function loadTOC(obj)
-        % Write the TOC file into the isetbioRoot/local directory
-        
-        % First check that the directory exists, and if not make it
-        localDir = fullfile(isetbioRootPath,'local');
-        if ~exist(localDir,'dir'),  mkdir(localDir); end
-        
-        % Download the file, and check status
-        tocFile = fullfile(localDir,'TOC.mat');
-        url = obj.tocURL;
-        [~,status] = urlwrite(url,tocFile);
-        if ~status, error('TOC file not downloaded.'); end
-        
-        % Load the TOC and put it in the rdata object
-        load(tocFile,'TOC');
-        obj.directories = TOC.d;
-        obj.files = TOC.f;
-    end
     
         
 end
