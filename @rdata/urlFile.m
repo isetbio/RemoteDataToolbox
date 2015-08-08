@@ -1,7 +1,7 @@
-function val = urlfile(obj,str)
+function val = urlFile(obj,str)
 % Returns a cell array of urls that contain the string
 %
-%  urlList = obj.urlfile(str)
+%  urlList = obj.urlFile(str)
 %
 % (BW) Copyright ISETBIO Team, 2015
 
