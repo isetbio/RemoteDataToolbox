@@ -11,7 +11,7 @@ if ~exist(localDir,'dir'),  mkdir(localDir); end
 tocFile = fullfile(localDir,'TOC.mat');
 url = obj.tocURL;
 [~,status] = urlwrite(url,tocFile);
-if ~status, error('TOC file not downloaded.'); end
+if ~status, error('TOC not downloaded at \n%s\n',url); end
 
 % Load the TOC and put it in the rdata object
 load(tocFile,'TOC');

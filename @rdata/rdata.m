@@ -64,7 +64,8 @@ methods (Access = public)
     function obj = rdata(varargin)
         
         if isempty(varargin)
-            rdata('name','remotedata','base','http://scarlet.stanford.edu/validation/SCIEN/ISETBIO');
+            obj = rdata('base','http://scarlet.stanford.edu/validation/SCIEN/ISETBIO');
+            return;
         end
         
         % Parameter/value pairs.  
