@@ -1,7 +1,14 @@
 function [dest,url] = fileGet(obj,str,dest)
-% Retrieve a single file and place it at destination
-% If destination is empty, place it in a temp file
-% rd.fileGet('sphere.nii.gz');
+% Retrieve a single file and place it at dest
+%
+%    [dest,url] = rd.fileGet(str,dest)
+%
+% If destination is empty, place it in a temp directory, such as
+% /tmp/rdata/<filename>
+%
+% Example:
+%  rd = rdata;  % Default is SCIEN/ISETBIO
+%  [dest,url] = rd.fileGet('EurasianFemale_Office.mat')
 %
 % BW Copyright ISETBIO Team, 2015
 
