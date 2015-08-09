@@ -17,6 +17,8 @@ url = obj.urlFile(str);
 
 if numel(url) > 1
     error('Multiple files match the string %s\n.  No transfer.',str);
+elseif isempty(url)
+    error('No files match the string %s\nNo transfer', str);
 else
     % We have a single match to the string.
     if ~exist('dest','var') || isempty(dest)
