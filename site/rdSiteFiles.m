@@ -1,4 +1,6 @@
 function TOC = rdSiteFiles(baseDir, saveFlag) 
+% Deprecated - use rdSiteTOC
+%
 % Create mat-file and JSON file summarizing contents of a remote directory
 %
 % The struct and file sit in the base directory.  These files can be
