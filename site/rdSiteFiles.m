@@ -1,5 +1,5 @@
-function dirList = rdSiteFiles(baseDir) 
-% Make MATLAB struct and JSON file describing remote files
+function TOC = rdSiteFiles(baseDir, saveFlag) 
+% Create mat-file and JSON file summarizing contents of a remote directory
 %
 % The struct and file sit in the base directory.  These files can be
 % downloaded to faciliate finding files in other routines.
@@ -19,22 +19,18 @@ function dirList = rdSiteFiles(baseDir)
 %
 % Example
 %  baseDir = '/wandellfs/data/validation/SCIEN/ISETBIO';
-%  files = ibDataFiles(baseDir);
+%  TOC = rdSiteFiles(baseDir);
+%  chdir(baseDir); save('TOC','TOC');
+%
+%  saveFlag = true;
+%  rdSiteFiles(baseDir,saveFlag);
 %
 % BW ISETBIO Team, Copyright 2015
 
-%%
-
-% if ispref('ISETBIO','remote')
-%     remote = getpref('ISETBIO','remote');
-% else
-%     remote.host = 'http://scarlet.stanford.edu';
-%     remote.directory = fullfile('validation','SCIEN','ISETBIO');
-%     remote.base = fullfile(remote.host,remote.directory);
-%     setpref('ISETBIO','remote',remote);
-% end
-
 %% Walk the directory
+if notDefined('saveFlag'), saveFlag = true; end
+
+curDir = pwd;
 
 chdir(baseDir);
 
@@ -45,7 +41,7 @@ pNames = dirwalk(baseDir);
 
 nDirs = length(pNames);
 nFiles = 0;
-dirList = [];
+TOC = [];
 cnt = 1;
 for ii=1:nDirs
     
@@ -63,16 +59,26 @@ for ii=1:nDirs
     fNames = ibNewFiles(pNames{ii},fNames, 'png');
     
     if ~isempty(fNames)
-        dirList.d{cnt} = pNames{ii};
-        dirList.f{cnt} = fNames;
+        TOC.d{cnt} = pNames{ii};
+        TOC.f{cnt} = fNames;
         cnt = cnt + 1;
         nFiles = nFiles + length(fNames);
     end
     
 end
 
-fprintf('Found %d files in %d directories\n',nFiles,length(dirList.d));
+fprintf('Found %d files in %d directories\n',nFiles,length(TOC.d));
 
+if saveFlag
+    save('TOC','TOC');
+    fprintf('Saved new TOC mat-file in %s\n',baseDir)
+    
+    savejson('TOC',TOC,'TOC.jsn');
+    fprintf('Saved new TOC json-file in %s\n',baseDir)
+
+end
+
+chdir(curDir);
 
 end
 
