@@ -1,4 +1,4 @@
-function TOC = rdSiteTOC(baseDir) 
+function TOC = rdSiteTOC(baseDir,saveFlag) 
 % Make MATLAB struct and JSON file describing remote files
 %
 % This script is intended to be run at a data site.  Its purpose is to
@@ -58,8 +58,10 @@ function TOC = rdSiteTOC(baseDir)
 % end
 
 %% Walk the directory
-
+curDir = pwd;
 chdir(baseDir);
+
+if notDefined('saveFlag'), saveFlag = true; end
 
 % Directory Path names (pNames)
 % Directories within each path (dNames)
@@ -76,19 +78,16 @@ for ii=1:nDirs
 
     fprintf('Checking directory %s\n',pNames{ii});
     
-    % For SCIEN/ISETBIO
-    if strfind(baseDir,'ISET')
-        fNames = rdNewFiles(pNames{ii}, fNames, 'mat');
-        fNames = rdNewFiles(pNames{ii}, fNames,'jpg');
-        fNames = rdNewFiles(pNames{ii},fNames, 'png');
-    end
-    
     % For VISTADATA
-    if strfind(baseDir,'VISTA')
+    if strfind(baseDir,'MRI')
         fNames = rdNewFiles(pNames{ii},fNames, 'gz');
         fNames = rdNewFiles(pNames{ii},fNames, 'tgz');
         fNames = rdNewFiles(pNames{ii},fNames, 'bvals');
         fNames = rdNewFiles(pNames{ii},fNames, 'bvecs');
+    elseif strfind(baseDir,'SCIEN')
+        fNames = rdNewFiles(pNames{ii}, fNames, 'mat');
+        fNames = rdNewFiles(pNames{ii}, fNames,'jpg');
+        fNames = rdNewFiles(pNames{ii},fNames, 'png');
     end
     
     % Create a summary
@@ -102,7 +101,12 @@ for ii=1:nDirs
 end
 
 fprintf('Found %d files in %d directories\n',nFiles,length(TOC.d));
-
+if saveFlag
+    fprintf('\n**Saving Matlab file TOC.mat and json file TOC.jsn\n');
+    save('TOC','TOC');
+    savejson('TOC',TOC,'TOC.jsn');
+end
+chdir(curDir);
 
 end
 
