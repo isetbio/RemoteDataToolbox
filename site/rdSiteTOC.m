@@ -1,4 +1,4 @@
-function TOC = rdSiteTOC(baseDir) 
+function TOC = rdSiteTOC(baseDir,saveFlag) 
 % Make MATLAB struct and JSON file describing remote files
 %
 % This script is intended to be run at a data site.  Its purpose is to
@@ -58,8 +58,10 @@ function TOC = rdSiteTOC(baseDir)
 % end
 
 %% Walk the directory
-
+curDir = pwd;
 chdir(baseDir);
+
+if notDefined('saveFlag'), saveFlag = true; end
 
 % Directory Path names (pNames)
 % Directories within each path (dNames)
@@ -99,7 +101,12 @@ for ii=1:nDirs
 end
 
 fprintf('Found %d files in %d directories\n',nFiles,length(TOC.d));
-
+if saveFlag
+    fprintf('\n**Saving Matlab file TOC.mat and json file TOC.jsn\n');
+    save('TOC','TOC');
+    savejson('TOC',TOC,'TOC.jsn');
+end
+chdir(curDir);
 
 end
 
