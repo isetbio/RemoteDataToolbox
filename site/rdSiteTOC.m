@@ -76,19 +76,16 @@ for ii=1:nDirs
 
     fprintf('Checking directory %s\n',pNames{ii});
     
-    % For SCIEN/ISETBIO
-    if strfind(baseDir,'ISET')
-        fNames = rdNewFiles(pNames{ii}, fNames, 'mat');
-        fNames = rdNewFiles(pNames{ii}, fNames,'jpg');
-        fNames = rdNewFiles(pNames{ii},fNames, 'png');
-    end
-    
     % For VISTADATA
-    if strfind(baseDir,'VISTA')
+    if strfind(baseDir,'MRI')
         fNames = rdNewFiles(pNames{ii},fNames, 'gz');
         fNames = rdNewFiles(pNames{ii},fNames, 'tgz');
         fNames = rdNewFiles(pNames{ii},fNames, 'bvals');
         fNames = rdNewFiles(pNames{ii},fNames, 'bvecs');
+    elseif strfind(baseDir,'SCIEN')
+        fNames = rdNewFiles(pNames{ii}, fNames, 'mat');
+        fNames = rdNewFiles(pNames{ii}, fNames,'jpg');
+        fNames = rdNewFiles(pNames{ii},fNames, 'png');
     end
     
     % Create a summary
