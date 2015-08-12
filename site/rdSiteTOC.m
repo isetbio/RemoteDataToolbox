@@ -102,8 +102,8 @@ end
 
 fprintf('Found %d files in %d directories\n',nFiles,length(TOC.d));
 if saveFlag
-    fprintf('\n**Saving Matlab file TOC.mat and json file TOC.jsn\n');
-    save('TOC','TOC');
+    fprintf('\n**Saving json file TOC.jsn\n');
+    % save('TOC','TOC');
     savejson('TOC',TOC,'TOC.jsn');
 end
 chdir(curDir);

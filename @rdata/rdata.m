@@ -137,7 +137,7 @@ methods (Access = public)
     
     function url = tocURL(obj)
         % Make the url to the table of contents on the remote site
-        url = fullfile(obj.base,'TOC.mat');
+        url = fullfile(obj.base,'TOC.jsn');
     end
     
     function webSite(obj)
