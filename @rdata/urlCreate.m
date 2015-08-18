@@ -15,7 +15,7 @@ cnt = 1;
 [~,nBasechars] = fileparts(obj.base);
 for ii=1:nDir
     % If there is only one file, then obj.files{ii} is a string, not a cell
-    % array 
+    % array
     if iscell(obj.files{ii})
         for jj=1:numel(obj.files{ii})
             % Build the URL from the parts We remove the part
@@ -27,13 +27,14 @@ for ii=1:nDir
             %  this directory (ii)
             %  and the files in this directory, obj.file{ii}(jj)
             val{cnt} = char(fullfile(obj.base,obj.directories{ii}((start+length(nBasechars)):end),obj.files{ii}(jj)));
+            cnt = cnt+1;
         end
     else
         % Since it is a string, do this
         start = strfind(obj.directories{ii},nBasechars);
         val{cnt} = fullfile(obj.base,obj.directories{ii}((start+length(nBasechars)):end),obj.files{ii});
+        cnt = cnt+1;
     end
-    cnt = cnt+1;
 end
 
 obj.url = val;
