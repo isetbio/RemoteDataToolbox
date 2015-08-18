@@ -1,4 +1,4 @@
-function urlCreate( obj )
+function urlCreate( rd )
 % Create the urls to each file in the Table of Contents (TOC)
 %
 % The url strings are created when the remote data object is created.  The
@@ -7,36 +7,39 @@ function urlCreate( obj )
 % BW, ISETBIO Team, Copyright 2015
 
 % Full url to every one of the remote files
-nDir   = obj.get('n dirs');
-nFiles = obj.get('n files');
+nDir   = rd.get('n dirs');
+nFiles = rd.get('n files');
 val = cell(nFiles,1);
 cnt = 1;
 
-[~,nBasechars] = fileparts(obj.base);
+[~,baseName] = fileparts(rd.base);
+nBaseName = length(baseName);
 for ii=1:nDir
+    % rd.directories{ii}, ii
     % If there is only one file, then obj.files{ii} is a string, not a cell
     % array 
-    if iscell(obj.files{ii})
-        for jj=1:numel(obj.files{ii})
+    if iscell(rd.files{ii})
+        for jj=1:numel(rd.files{ii})
             % Build the URL from the parts We remove the part
             % of the directory that overlap with the URL.
             % Maybe this should be done when we create the TOC.
-            start = strfind(obj.directories{ii},nBasechars);
+            start = strfind(rd.directories{ii},baseName);
             
             % Make the URLs for
             %  this directory (ii)
             %  and the files in this directory, obj.file{ii}(jj)
-            val{cnt} = char(fullfile(obj.base,obj.directories{ii}((start+length(nBasechars)):end),obj.files{ii}(jj)));
+            val{cnt} = char(fullfile(rd.base,rd.directories{ii}((start+length(baseName)):end),rd.files{ii}(jj)));
+            cnt = cnt+1;
         end
     else
-        % Since it is a string, do this
-        start = strfind(obj.directories{ii},nBasechars);
-        val{cnt} = fullfile(obj.base,obj.directories{ii}((start+length(nBasechars)):end),obj.files{ii});
+        % Since it is not a cell, it must be a string, do this
+        start = strfind(rd.directories{ii},baseName);
+        val{cnt} = fullfile(rd.base,rd.directories{ii}((start+nBaseName):end),rd.files{ii});
+        cnt = cnt+1;
     end
-    cnt = cnt+1;
 end
 
-obj.url = val;
+rd.url = val;
 
 end
 
