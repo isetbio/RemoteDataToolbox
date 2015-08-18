@@ -27,7 +27,7 @@ classdef rdata < handle
 %   
 %
 % Examples (creating the rdata object and loading the TOC):
-%    rd = rdata('base','http://scarlet.stanford.edu/validation/SCIEN/ISETBIO')
+%    rd = rdata('base','http://scarlet.stanford.edu/validation/SCIEN')
 %
 %   Open one of the MRI data sites
 %    rd = rdata('base','http://scarlet.stanford.edu/validation/MRI/VISTADATA')
@@ -64,7 +64,7 @@ methods (Access = public)
     function obj = rdata(varargin)
         
         if isempty(varargin)
-            obj = rdata('base','http://scarlet.stanford.edu/validation/SCIEN/ISETBIO');
+            obj = rdata('base','http://scarlet.stanford.edu/validation/SCIEN');
             return;
         end
         

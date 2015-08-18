@@ -1,5 +1,5 @@
 function val = listFiles(rd,dirName)
-% List all the directories at the remote data site
+% List all the directories at the remote data site that match dirName
 %
 %   rd.listFiles(dirName)
 %
