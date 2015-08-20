@@ -74,7 +74,7 @@ methods (Access = public)
         end
         
         % Read the Table of Contents from the base directory
-        obj.loadTOC;
+        obj.tocLoad;
         
         % Create the URLs to each individual file
         obj.urlCreate;
@@ -136,6 +136,7 @@ methods (Access = public)
     end
     
     function url = tocURL(obj)
+        % Should this be renamed to urlTOC?
         % Make the url to the table of contents on the remote site
         url = fullfile(obj.base,'TOC.jsn');
     end

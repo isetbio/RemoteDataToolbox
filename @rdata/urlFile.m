@@ -9,7 +9,7 @@ if notDefined('str'), val = obj.url; return; end
 
 % Find the urls that contain the string
 urlstrings = obj.url;
-s = strfind(obj.url,str);
+s = strfind(urlstrings,str);
 
 % There must be a better way to do this
 lst = [];

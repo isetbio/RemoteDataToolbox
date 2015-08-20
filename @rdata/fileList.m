@@ -1,11 +1,11 @@
-function filesList(obj)
+function fileList(obj)
 % Print a list of all the files in the rd
 %
-%  rd.filesList
+%  rd.fileList
 %
 % Example:
 %  rd = rdata;
-%  rd.filesList
+%  rd.fileList
 %
 % HJ/BW ISETBIO Team, Copyright 2015
 

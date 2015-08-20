@@ -12,18 +12,19 @@ rd = rdata;    % Runs loadTOC and urlCreate
 % Just dump it out to have a look
 rd
 
+rd.webSite;
+
 % Have a look at the files
-rd.listFiles('HDR')
+rd.fileList
 
 %% Try another base directory
 rd = rdata('base','http://scarlet.stanford.edu/validation/SCIEN/RGB');
 
-rd.listFiles('LStryer')
-rd.listFiles('Stryer')
+rd.dirList('LStryer')
 
 % Look at the nice picture
-img = rd.readImage('twoBirds.jpg');
-imshow(img);
+img = rd.imageRead('twoBirds.jpg');
+vcNewGraphWin; imshow(img);
 
 %% Load the MRI directory
 rd = rdata('base','http://scarlet.stanford.edu/validation/MRI/VISTADATA');
@@ -32,6 +33,6 @@ rd = rdata('base','http://scarlet.stanford.edu/validation/MRI/VISTADATA');
 lst  = rd.urlFile('bvecs')
 dest = rd.fileGet(lst{1})
 
-rd.listFiles('T1andMesh')
+rd.dirList('T1andMesh')
 
 %% END

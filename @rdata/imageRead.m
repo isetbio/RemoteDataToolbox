@@ -1,12 +1,12 @@
-function img = readImage(obj,str)
+function img = imageRead(obj,str)
 % Read image data from the remote repository
 %
-%   rd.readImage(fname)
+%   rd.imageRead(fname)
 %
 % Example:
 %  rd = rdata('base','http://scarlet.stanford.edu/validation/SCIEN');
 %  rd.webSite;
-%  img = rd.readImage('rocksWater'); imshow(img)
+%  img = rd.imageRead('rocksWater'); imshow(img)
 %  
 % BW ISETBIO Team, Copyright 2015
 
