@@ -139,6 +139,9 @@ methods (Access = public)
         % Should this be renamed to urlTOC?
         % Make the url to the table of contents on the remote site
         url = fullfile(obj.base,'TOC.jsn');
+        
+        % This line solves the Matlab fullfile bug on windows system
+        if ispc, url = strrep(url, '\', '/'); end
     end
     
     function webSite(obj)

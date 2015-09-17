@@ -35,6 +35,7 @@ else
             % Do nothing
         elseif nFiles ==1
             val{cnt} = char(fullfile(rd.base,rd.directories{ii}((start+nBaseName):end),rd.files{ii}));
+            if ispc, val{cnt} = strrep(val{cnt}, '\', '/'); end
             cnt = cnt+1;
         else
             for kk=1:nFiles
@@ -46,6 +47,7 @@ else
                 %  this directory (ii)
                 %  and the files in this directory, obj.file{ii}(jj)
                 val{cnt} = char(fullfile(rd.base,rd.directories{ii}((start+nBaseName):end),rd.files{ii}(kk)));
+                if ispc, val{cnt} = strrep(val{cnt}, '\', '/'); end
                 cnt = cnt+1;
             end
         end
