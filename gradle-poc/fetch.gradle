@@ -1,0 +1,25 @@
+
+repositories {
+    maven {
+        credentials {
+            username "${System.env.USERNAME}"
+            password "${System.env.PASSWORD}"
+        }
+        url "${System.env.REPOSITORY}"
+    }
+}
+
+configurations {
+  fetch
+}
+
+dependencies {
+  fetch "${System.env.GROUP}:${System.env.ID}:${System.env.VERSION}@${System.env.EXTENSION}"
+}
+
+task fetchIt << {
+  configurations.fetch.resolve().each {
+    file -> println "FETCHED " + file.getPath()
+  }
+}
+
