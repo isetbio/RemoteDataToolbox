@@ -6,6 +6,8 @@
 %   @param id
 %   @param version
 %   @param extension
+%
+%   filePath = FetchArtifact(repository, username, password, group, id, version, extension)
 function filePath = FetchArtifact(repository, username, password, group, id, version, extension)
 
 filePath = '';

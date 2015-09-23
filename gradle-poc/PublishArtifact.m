@@ -6,6 +6,8 @@
 %   @param id
 %   @param version
 %   @param file
+%
+%	filePath = PublishArtifact(repository, username, password, group, id, version, file)
 function filePath = PublishArtifact(repository, username, password, group, id, version, file)
 
 filePath = '';
