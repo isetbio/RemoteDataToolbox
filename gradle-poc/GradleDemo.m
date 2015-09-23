@@ -1,20 +1,24 @@
 %% Proof of concept showing off "gradle wrapper" ease of use (I hope).
 %
 % You should be able to:
-%   - add RemoteDataToolbox to your Matlab path (including this new folder)
-%   - run GradleDemo (this script)
-%   - see that an artifact was fetched from a Maven Repository
-%   - load the artifact (some text) in Matlab and play with it
+%   - Add RemoteDataToolbox to your Matlab path, including this new folder.
+%   - Run GradleDemo (this script).
+%   - See that an artifact was fetched from a Maven Repository.
+%   - Load the artifact (some text) in Matlab and play with it.
 %
 % The file fetched in this example is a Maven "pom" file, which is XML
-% describing an artifact.
+% describing an artifact.  The artifact is on a public server called Maven
+% Central.
 %
-% For fun try changing to "extension = 'jar'" below.  This will fetch the
+% See what we're fetching in your browser:
+%   https://repo1.maven.org/maven2/jython/jython/2.1/
+%
+% For fun, try changing the extension below to 'jar'.  This will fetch the
 % actual Java library, which will display as gibbersih.
 %
 % We will want to fetch Matlab mat files, which we will pass to the load()
-% command.  But we haven't put those in a Maven repository yet, so we can't
-% fetch them with Gradle yet.
+% command.  It would be nice to load() a mat file in this demo, but I don't
+% know of any public Maven repositories with mat files in them (yet...).
 %
 % BSH 23 September 2015
 
