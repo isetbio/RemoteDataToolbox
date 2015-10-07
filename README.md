@@ -10,7 +10,7 @@ Uses [Gradle](http://gradle.org/) as the Maven client.  This takes care of:
 Includes the [Gradle Wrapper](https://docs.gradle.org/current/userguide/gradle_wrapper.html) which means you don't have to install Gradle yourself.  It just happens.
 
 ### Archiva Queries
-Also includes utilities for querying the repository.  These assume that the Maven repository is running [Archiva](https://archiva.apache.org/index.cgi) because they rely on Archiva's RESTful API.  On the client side, these utilities use Matlab's webread().  These take care of:
+Also includes utilities for querying the repository.  These assume that the Maven repository is running [Archiva](https://archiva.apache.org/index.cgi) because they rely on Archiva's RESTful API.  On the client side, these utilities use Matlab's `webread()` function.  These take care of:
  * listing artifacts and groups
  * searching for artifacts by group, id, version, or fuzzy text matching
 
