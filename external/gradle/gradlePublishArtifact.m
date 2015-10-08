@@ -7,8 +7,8 @@
 %   @param version
 %   @param file
 %
-%	filePath = PublishArtifact(repository, username, password, group, id, version, file)
-function filePath = PublishArtifact(repository, username, password, group, id, version, file)
+%	filePath = gradlePublishArtifact(repository, username, password, group, id, version, file)
+function filePath = gradlePublishArtifact(repository, username, password, group, id, version, file)
 
 filePath = '';
 
@@ -59,4 +59,4 @@ setenv('EXTENSION');
 setenv('FILE');
 
 %% Fetch the file and report the path into the local cache.
-filePath = FetchArtifact(repository, username, password, group, id, version, extension);
+filePath = gradleFetchArtifact(repository, username, password, group, id, version, extension);

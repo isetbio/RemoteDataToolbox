@@ -1,0 +1,5 @@
+{
+	"repository": "http://test-server.foo",
+	"username": "test-user",
+	"password": "test-password"
+}
