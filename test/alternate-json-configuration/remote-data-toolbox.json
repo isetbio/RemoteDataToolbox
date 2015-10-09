@@ -1,0 +1,6 @@
+{
+	"serverUrl": "http://alternate-server-url",
+	"username": "guest",
+	"password": "",
+    "repositoryName": "alternate-repository-name"
+}

@@ -1,7 +1,7 @@
 %%% RemoteDataToolbox Copyright (c) 2015 The RemoteDataToolbox Team.
 %
 % Initialize a struct with RemoteDataToolbox configuration
-%   @param varargin a single struct, or multiple name-value pairs
+%   @param varargin a file path, a struct, or multiple name-value pairs
 %
 % @details
 % Initializes a struct containing RemoteDataToolbox configuration.
@@ -9,8 +9,16 @@
 % order of pereference these sources are:
 %   - default values declared in this function
 %   - project-specific values declared in a remote-data-toolbox.json file
-%   located in the current folder or a parent folder
+%   located in the given @a varargin folder (default is pwd()) or a parent
+%   folder
 %   - values declared in the given @a varargin struct or name-value pairs
+%
+% @details
+% @a varargin may have one of three forms:
+%   - a single string file path to search for remote-data-toolbox.json
+%   - a single struct containing multiple field-value pairs of
+%   configuration
+%   - multiple name-value pairs of configuration
 %
 % @details
 % Returns a struct of RemoteDataToolbox configuration.
@@ -22,26 +30,35 @@
 % @ingroup utilities
 function configuration = rdtConfiguration(varargin)
 
+%% What did the user pass in?
+configArgs = struct();
+configFolder = pwd();
+if 1 == nargin
+    argin = varargin{1};
+    if isstruct(argin)
+        configArgs = argin;
+    elseif ischar(argin)
+        configFolder = argin;
+    end
+    
+elseif 1 < nargin && 0 == mod(nargin, 2)
+    % passed in name-value paris
+    configArgs = struct(varargin{:});
+end
+
 %% Start with default configuration.
 configuration = getDefaultConfiguration();
 
-%% Merge with project-specific configuration.
+%% Merge with project-specific configuration from file.
 jsonConfigFile = 'remote-data-toolbox.json';
-jsonConfigPath = rdtSearchParentFolders(jsonConfigFile, pwd());
+jsonConfigPath = rdtSearchParentFolders(jsonConfigFile, configFolder);
 if ~isempty(jsonConfigPath)
     jsonConfiguration = loadjson(jsonConfigPath);
     configuration = mergeStructs(configuration, jsonConfiguration);
 end
 
 %% Merge with configuration passed in as parameters.
-if 1 == nargin
-    % passed in a struct
-    configuration = mergeStructs(configuration, varargin{1});
-    
-elseif 1 < nargin && 0 == mod(nargin, 2)
-    % passed in name-value paris
-    configuration = mergeStructs(configuration, struct(varargin{:}));
-end
+configuration = mergeStructs(configuration, configArgs);
 
 %% Source of truth for required fields and default values.
 function configuration = getDefaultConfiguration()
@@ -56,7 +73,7 @@ configuration = struct( ...
 %% Smash fields of the second struct onto the first struct.
 function target = mergeStructs(target, source)
 
-if ~isstruct(source)
+if ~isstruct(source) || isempty(source)
     return;
 end
 
