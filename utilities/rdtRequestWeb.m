@@ -4,19 +4,18 @@
 %   @param resourcePath request path to append to the server url
 %   @param queryParams struct of query params to add to the request path
 %   @param requestBody string or struct for 'post' request body
-%   @param verb http verb like 'get' or 'post'
 %   @param configuration optional RemoteDataToolbox configuration struct
 %
 % @details
 % Performs an http request to a web server.  If @a configuration is
-% provided, sends the request to the server at @a configuration.repository.
+% provided, sends the request to the server at @a configuration.serverUrl.
 % Otherwise, uses the configuration returned from rdtConfiguration().
 %
 % @details
-% Appends the given @a resourcePath to server URL to form a complete
-% resource URL.  If @a queryParams is provided, it must be a struct with
-% string field values.  Fields and values are appended to the resource URL
-% to form a complete query.
+% Appends the given @a resourcePath to @a configuration serverUrl to form a
+% complete resource URL.  If @a queryParams is provided, it must be a
+% struct with string field values.  Fields and values are included in the
+% request as query parameters.
 %
 % @details
 % By default, performs an http GET request.  If @a request body is
@@ -32,10 +31,6 @@
 %   .
 %
 % @details
-% If @a verb is provided, it must be an http request verb 'get' or 'post',
-% used to override the default.
-%
-% @details
 % Returns a string or struct representing the server's response to the http
 % request.  If the request failed, returns ''.  By default returns the
 % response body verbatim as a string.  The value of @a
@@ -47,10 +42,10 @@
 %
 % @details
 % Usage:
-%   response = rdtRequestWeb(resourcePath, queryParams, requestBody, verb, configuration)
+%   response = rdtRequestWeb(resourcePath, queryParams, requestBody, configuration)
 %
 % @ingroup utilities
-function response = rdtRequestWeb(resourcePath, queryParams, requestBody, verb, configuration)
+function response = rdtRequestWeb(resourcePath, queryParams, requestBody, configuration)
 
 response = '';
 
@@ -66,11 +61,7 @@ if nargin < 3 || isempty(requestBody)
     requestBody = '';
 end
 
-if nargin < 4 || isempty(verb)
-    verb = 'auto';
-end
-
-if nargin < 5 || isempty(configuration)
+if nargin < 4 || isempty(configuration)
     configuration = rdtConfiguration();
 else
     configuration = rdtConfiguration(configuration);
@@ -102,8 +93,7 @@ options = weboptions( ...
     'Password', configuration.password, ...
     'ContentType', 'text', ...
     'KeyName', 'Accept', ...
-    'KeyValue', configuration.acceptMediaType, ...
-    'RequestMethod', verb);
+    'KeyValue', configuration.acceptMediaType);
 
 %% Perform GET or POST?
 if isempty(requestBody)

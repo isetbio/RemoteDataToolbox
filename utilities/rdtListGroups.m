@@ -31,7 +31,7 @@ end
 %% Query the Archiva server.
 resourcePath = '/restServices/archivaServices/searchService/getAllGroupIds';
 params.selectedRepos = configuration.repositoryName;
-response = rdtRequestWeb(resourcePath, params, [], '', configuration);
+response = rdtRequestWeb(resourcePath, params, [], configuration);
 if isempty(response) || ~isfield(response, 'groupIds')
     return;
 end

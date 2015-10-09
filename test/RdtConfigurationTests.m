@@ -1,4 +1,4 @@
-classdef RdtConfigurationTest < matlab.unittest.TestCase
+classdef RdtConfigurationTests < matlab.unittest.TestCase
     
     methods (Test)
         

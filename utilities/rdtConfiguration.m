@@ -53,7 +53,7 @@ configuration = getDefaultConfiguration();
 jsonConfigFile = 'remote-data-toolbox.json';
 jsonConfigPath = rdtSearchParentFolders(jsonConfigFile, configFolder);
 if ~isempty(jsonConfigPath)
-    jsonConfiguration = loadjson(jsonConfigPath);
+    jsonConfiguration = rdtFromJson(jsonConfigPath);
     configuration = mergeStructs(configuration, jsonConfiguration);
 end
 
