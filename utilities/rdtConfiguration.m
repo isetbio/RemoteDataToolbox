@@ -54,11 +54,11 @@ jsonConfigFile = 'remote-data-toolbox.json';
 jsonConfigPath = rdtSearchParentFolders(jsonConfigFile, configFolder);
 if ~isempty(jsonConfigPath)
     jsonConfiguration = rdtFromJson(jsonConfigPath);
-    configuration = mergeStructs(configuration, jsonConfiguration);
+    configuration = rdtMergeStructs(configuration, jsonConfiguration);
 end
 
 %% Merge with configuration passed in as parameters.
-configuration = mergeStructs(configuration, configArgs);
+configuration = rdtMergeStructs(configuration, configArgs);
 
 %% Source of truth for required fields and default values.
 function configuration = getDefaultConfiguration()
@@ -69,16 +69,3 @@ configuration = struct( ...
     'password', '', ...
     'requestMediaType', 'application/json', ...
     'acceptMediaType', 'application/json');
-
-%% Smash fields of the second struct onto the first struct.
-function target = mergeStructs(target, source)
-
-if ~isstruct(source) || isempty(source)
-    return;
-end
-
-fields = fieldnames(source);
-for ii = 1:numel(fields)
-    field = fields{ii};
-    target.(field) = source.(field);
-end

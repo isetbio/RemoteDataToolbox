@@ -8,7 +8,7 @@ classdef RdtConfigurationTests < matlab.unittest.TestCase
         
         function testFromConfigFolder(testCase)
             testFolder = fileparts(mfilename('fullpath'));
-            alternateConfigFolder = fullfile(testFolder, 'alternate-json-configuration');
+            alternateConfigFolder = fullfile(testFolder, 'alternateJsonConfiguration');
             configuration = rdtConfiguration(alternateConfigFolder);
             testCase.assertEqual('alternate-repository-name', configuration.repositoryName);
         end
