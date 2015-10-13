@@ -28,7 +28,7 @@ gradlew = fullfile(thisPath, 'gradlew');
 fetchDotGradle = fullfile(thisPath, 'fetch.gradle');
 
 %% Invoke Gradle.
-command = sprintf('%s -b %s fetchIt', gradlew, fetchDotGradle);
+command = sprintf('%s --daemon -b %s fetchIt', gradlew, fetchDotGradle);
 disp(command);
 
 % temporarily clear the library path, which breaks gradlew

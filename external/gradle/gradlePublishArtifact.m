@@ -32,7 +32,7 @@ gradlew = fullfile(thisPath, 'gradlew');
 publishDotGradle = fullfile(thisPath, 'publish.gradle');
 
 %% Invoke Gradle.
-command = sprintf('%s -b %s publish', gradlew, publishDotGradle);
+command = sprintf('%s --daemon -b %s publish', gradlew, publishDotGradle);
 disp(command);
 
 % temporarily clear the library path, which breaks gradlew
