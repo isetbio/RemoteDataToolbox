@@ -29,13 +29,22 @@ password = 'pa55w0rd';
 
 pathHere = fileparts(mfilename('fullpath'));
 
+groupId = 'test-group-1';
 gradlePublishArtifact(repository, username, password, ...
-    'test-group1', 'test-artifact1', '1', fullfile(pathHere, 'test-artifact1.txt'));
+    groupId, 'image-artifact', '1', fullfile(pathHere, 'image-artifact.jpg'));
 gradlePublishArtifact(repository, username, password, ...
-    'test-group1', 'test-artifact2', '2', fullfile(pathHere, 'test-artifact2.mat'));
+    groupId, 'json-artifact', '2', fullfile(pathHere, 'json-artifact.json'));
+gradlePublishArtifact(repository, username, password, ...
+    groupId, 'matlab-artifact', '3', fullfile(pathHere, 'matlab-artifact.mat'));
+gradlePublishArtifact(repository, username, password, ...
+    groupId, 'text-artifact', '4', fullfile(pathHere, 'text-artifact.txt'));
 
+groupId = 'test-group-2';
 gradlePublishArtifact(repository, username, password, ...
-    'test-group2', 'test-artifact1', '1', fullfile(pathHere, 'test-artifact1.txt'));
+    groupId, 'image-artifact', '1', fullfile(pathHere, 'image-artifact.jpg'));
 gradlePublishArtifact(repository, username, password, ...
-    'test-group2', 'test-artifact2', '2', fullfile(pathHere, 'test-artifact2.mat'));
-
+    groupId, 'json-artifact', '2', fullfile(pathHere, 'json-artifact.json'));
+gradlePublishArtifact(repository, username, password, ...
+    groupId, 'matlab-artifact', '3', fullfile(pathHere, 'matlab-artifact.mat'));
+gradlePublishArtifact(repository, username, password, ...
+    groupId, 'text-artifact', '4', fullfile(pathHere, 'text-artifact.txt'));

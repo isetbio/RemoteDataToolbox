@@ -12,10 +12,10 @@ classdef RdtQueryTests < matlab.unittest.TestCase
             'password', 'pa55w0rd', ...
             'requestMediaType', 'application/json', ...
             'acceptMediaType', 'application/json');
-        expectedGroupIds = {'test-group1', 'test-group2'};
-        expectedArtifactIds = {'test-artifact1', 'test-artifact2'};
-        expectedVersions = {'1', '2'};
-        expectedTypes = {'mat', 'txt'};
+        expectedGroupIds = {'test-group-1', 'test-group-2'};
+        expectedArtifactIds = {'image-artifact', 'json-artifact', 'matlab-artifact', 'text-artifact'};
+        expectedVersions = {'1', '2', '3', '4'};
+        expectedTypes = {'jpg', 'json', 'mat', 'txt'};
     end
     
     methods (TestMethodSetup)
@@ -44,11 +44,11 @@ classdef RdtQueryTests < matlab.unittest.TestCase
         end
         
         function testListArtifacts(testCase)
-            artifacts = rdtListArtifacts('test-group1', testCase.testConfig);
-            testCase.checkGroupArtifacts(artifacts, 'test-group1');
+            artifacts = rdtListArtifacts('test-group-1', testCase.testConfig);
+            testCase.checkGroupArtifacts(artifacts, 'test-group-1');
             
-            artifacts = rdtListArtifacts('test-group2', testCase.testConfig);
-            testCase.checkGroupArtifacts(artifacts, 'test-group2');
+            artifacts = rdtListArtifacts('test-group-2', testCase.testConfig);
+            testCase.checkGroupArtifacts(artifacts, 'test-group-2');
         end
         
         function testSearchEmptyTerms(testCase)
@@ -64,21 +64,21 @@ classdef RdtQueryTests < matlab.unittest.TestCase
         function testSearchHitAll(testCase)
             artifacts = rdtSearchArtifacts('test', '', '', '', '', testCase.testConfig);
             testCase.assertInstanceOf(artifacts, 'struct');
-            testCase.assertNumElements(artifacts, 4);
+            testCase.assertNumElements(artifacts, 8);
         end
         
         function testSearchRestrictGroupId(testCase)
-            artifacts = rdtSearchArtifacts('test', 'test-group1', '', '', '', testCase.testConfig);
-            testCase.checkGroupArtifacts(artifacts, 'test-group1');
+            artifacts = rdtSearchArtifacts('test', 'test-group-1', '', '', '', testCase.testConfig);
+            testCase.checkGroupArtifacts(artifacts, 'test-group-1');
         end
         
         function testSearchRestrictArtifactId(testCase)
-            artifacts = rdtSearchArtifacts('test', '', 'test-artifact1', '', '', testCase.testConfig);
+            artifacts = rdtSearchArtifacts('test', '', 'text-artifact', '', '', testCase.testConfig);
             testCase.assertInstanceOf(artifacts, 'struct');
             testCase.assertNumElements(artifacts, 2);
             
             artifactIds = {artifacts.artifactId};
-            testCase.assertEqual(artifactIds, {'test-artifact1', 'test-artifact1'});
+            testCase.assertEqual(artifactIds, {'text-artifact', 'text-artifact'});
         end
         
         function testSearchRestrictVersion(testCase)
@@ -100,18 +100,18 @@ classdef RdtQueryTests < matlab.unittest.TestCase
         end
         
         function testSearchRestrictUniqueArtifact(testCase)
-            artifacts = rdtSearchArtifacts('test', 'test-group1', 'test-artifact1', '1', 'txt', testCase.testConfig);
+            artifacts = rdtSearchArtifacts('test', 'test-group-1', 'image-artifact', '1', 'jpg', testCase.testConfig);
             testCase.assertInstanceOf(artifacts, 'struct');
             testCase.assertNumElements(artifacts, 1);
             
-            testCase.assertEqual(artifacts.groupId, 'test-group1');
-            testCase.assertEqual(artifacts.artifactId, 'test-artifact1');
+            testCase.assertEqual(artifacts.groupId, 'test-group-1');
+            testCase.assertEqual(artifacts.artifactId, 'image-artifact');
             testCase.assertEqual(artifacts.version, '1');
-            testCase.assertEqual(artifacts.type, 'txt');
+            testCase.assertEqual(artifacts.type, 'jpg');
         end
         
         function testSearchRestrictNoArtifact(testCase)
-            artifacts = rdtSearchArtifacts('test', 'test-group1', 'test-artifact1', '2', 'txt', testCase.testConfig);
+            artifacts = rdtSearchArtifacts('test', 'test-group-1', 'image-artifact', '2', 'jpg', testCase.testConfig);
             testCase.assertEmpty(artifacts);
         end
         
@@ -121,10 +121,10 @@ classdef RdtQueryTests < matlab.unittest.TestCase
         function checkGroupArtifacts(testCase, artifacts, groupId)
             testCase.assertNotEmpty(artifacts);
             testCase.assertInstanceOf(artifacts, 'struct');
-            testCase.assertNumElements(artifacts, 2);
+            testCase.assertNumElements(artifacts, 4);
             
             groupIds = sort({artifacts.groupId});
-            testCase.assertEqual(groupIds, {groupId, groupId});
+            testCase.assertEqual(groupIds, {groupId, groupId, groupId, groupId});
             
             artifactIds = sort({artifacts.artifactId});
             testCase.assertEqual(artifactIds, testCase.expectedArtifactIds);

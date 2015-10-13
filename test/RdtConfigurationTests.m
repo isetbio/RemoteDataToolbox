@@ -38,6 +38,7 @@ classdef RdtConfigurationTests < matlab.unittest.TestCase
             testCase.assertNotEmpty(configuration);
             testCase.assertInstanceOf(configuration, 'struct');
             testCase.assertThat(configuration, matlab.unittest.constraints.HasField('serverUrl'));
+            testCase.assertThat(configuration, matlab.unittest.constraints.HasField('repositoryUrl'));
             testCase.assertThat(configuration, matlab.unittest.constraints.HasField('repositoryName'));
         end
     end

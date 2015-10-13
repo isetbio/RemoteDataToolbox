@@ -1,5 +1,6 @@
 {
 	"serverUrl": "http://localhost:8080",
+    "repositoryUrl": "http://localhost:8080/repository/test-repository",
 	"username": "guest",
 	"password": "",
     "repositoryName": "test-repository"
