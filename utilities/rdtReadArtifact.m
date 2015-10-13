@@ -32,7 +32,7 @@
 %
 % @details
 % Usage:
-%   artifacts = rdtListGroups(configuration)
+%   [data, artifact] = rdtReadArtifact(groupId, artifactId, version, type, configuration)
 %
 % @ingroup utilities
 function [data, artifact] = rdtReadArtifact(groupId, artifactId, version, type, configuration)

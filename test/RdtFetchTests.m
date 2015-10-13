@@ -108,5 +108,58 @@ classdef RdtFetchTests < matlab.unittest.TestCase
             testCase.assertNotEmpty(artifact);
             testCase.assertInstanceOf(artifact, 'struct');
         end
+        
+        function testFetchMultiple(testCase)
+            % look for all four test artifacts in one group
+            artifacts(4) = rdtArtifact( ...
+                'groupId', 'test-group-1', ...
+                'artifactId', 'text-artifact', ...
+                'version', '4', ...
+                'type', 'txt');
+            artifacts(3) = rdtArtifact( ...
+                'groupId', 'test-group-1', ...
+                'artifactId', 'matlab-artifact', ...
+                'version', '3', ...
+                'type', 'mat');
+            artifacts(2) = rdtArtifact( ...
+                'groupId', 'test-group-1', ...
+                'artifactId', 'json-artifact', ...
+                'version', '2', ...
+                'type', 'json');
+            artifacts(1) = rdtArtifact( ...
+                'groupId', 'test-group-1', ...
+                'artifactId', 'image-artifact', ...
+                'version', '1', ...
+                'type', 'jpg');
+            
+            % fetch all four
+            [datas, fetchedArtifacts] = rdtReadArtifacts(artifacts, testCase.testConfig);
+            
+            % verify expected data
+            testCase.assertNotEmpty(datas);
+            testCase.assertInstanceOf(datas, 'cell');
+            testCase.assertNumElements(datas, numel(artifacts));
+            
+            testCase.assertEqual(datas{4}, 'This is a test artifact.');
+            testCase.assertEqual(datas{3}.foo, 'bar');
+            testCase.assertEqual(datas{2}.hello, 'world');
+            testCase.assertTrue(isnumeric(datas{1}));
+            testCase.assertSize(datas{1}, [1080 1920 3]);
+            
+            % verify expected metadata
+            testCase.assertNotEmpty(fetchedArtifacts);
+            testCase.assertInstanceOf(fetchedArtifacts, 'struct');
+            testCase.assertNumElements(fetchedArtifacts, numel(artifacts));
+            for ii = 1:numel(artifacts)
+                artifact = artifacts(ii);
+                fetched = fetchedArtifacts(ii);
+                
+                % artifact id should match what was passed in
+                testCase.assertEqual(fetched.artifactId, artifact.artifactId);
+                
+                % localPath should have been filled in
+                testCase.assertEqual(exist(fetched.localPath, 'file'), 2);
+            end
+        end
     end
 end
