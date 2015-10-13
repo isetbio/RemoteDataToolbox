@@ -15,7 +15,7 @@ classdef RdtQueryTests < matlab.unittest.TestCase
         expectedGroupIds = {'test-group1', 'test-group2'};
         expectedArtifactIds = {'test-artifact1', 'test-artifact2'};
         expectedVersions = {'1', '2'};
-        expectedTypes = {'txt', 'mat'};
+        expectedTypes = {'mat', 'txt'};
     end
     
     methods (TestMethodSetup)
@@ -45,23 +45,95 @@ classdef RdtQueryTests < matlab.unittest.TestCase
         
         function testListArtifacts(testCase)
             artifacts = rdtListArtifacts('test-group1', testCase.testConfig);
-            testCase.checkExpectedArtifacts(artifacts);
+            testCase.checkGroupArtifacts(artifacts, 'test-group1');
             
             artifacts = rdtListArtifacts('test-group2', testCase.testConfig);
-            testCase.checkExpectedArtifacts(artifacts);
+            testCase.checkGroupArtifacts(artifacts, 'test-group2');
+        end
+        
+        function testSearchEmptyTerms(testCase)
+            artifacts = rdtSearchArtifacts('', '', '', '', '', testCase.testConfig);
+            testCase.assertEmpty(artifacts);
+        end
+        
+        function testSearchHitNone(testCase)
+            artifacts = rdtSearchArtifacts('nonononotamatch', '', '', '', '', testCase.testConfig);
+            testCase.assertEmpty(artifacts);
+        end
+        
+        function testSearchHitAll(testCase)
+            artifacts = rdtSearchArtifacts('test', '', '', '', '', testCase.testConfig);
+            testCase.assertInstanceOf(artifacts, 'struct');
+            testCase.assertNumElements(artifacts, 4);
+        end
+        
+        function testSearchRestrictGroupId(testCase)
+            artifacts = rdtSearchArtifacts('test', 'test-group1', '', '', '', testCase.testConfig);
+            testCase.checkGroupArtifacts(artifacts, 'test-group1');
+        end
+        
+        function testSearchRestrictArtifactId(testCase)
+            artifacts = rdtSearchArtifacts('test', '', 'test-artifact1', '', '', testCase.testConfig);
+            testCase.assertInstanceOf(artifacts, 'struct');
+            testCase.assertNumElements(artifacts, 2);
+            
+            artifactIds = {artifacts.artifactId};
+            testCase.assertEqual(artifactIds, {'test-artifact1', 'test-artifact1'});
+        end
+        
+        function testSearchRestrictVersion(testCase)
+            artifacts = rdtSearchArtifacts('test', '', '', '1', '', testCase.testConfig);
+            testCase.assertInstanceOf(artifacts, 'struct');
+            testCase.assertNumElements(artifacts, 2);
+            
+            versions = {artifacts.version};
+            testCase.assertEqual(versions, {'1', '1'});
+        end
+        
+        function testSearchRestrictType(testCase)
+            artifacts = rdtSearchArtifacts('test', '', '', '', 'mat', testCase.testConfig);
+            testCase.assertInstanceOf(artifacts, 'struct');
+            testCase.assertNumElements(artifacts, 2);
+            
+            types = {artifacts.type};
+            testCase.assertEqual(types, {'mat', 'mat'});
+        end
+        
+        function testSearchRestrictUniqueArtifact(testCase)
+            artifacts = rdtSearchArtifacts('test', 'test-group1', 'test-artifact1', '1', 'txt', testCase.testConfig);
+            testCase.assertInstanceOf(artifacts, 'struct');
+            testCase.assertNumElements(artifacts, 1);
+            
+            testCase.assertEqual(artifacts.groupId, 'test-group1');
+            testCase.assertEqual(artifacts.artifactId, 'test-artifact1');
+            testCase.assertEqual(artifacts.version, '1');
+            testCase.assertEqual(artifacts.type, 'txt');
+        end
+        
+        function testSearchRestrictNoArtifact(testCase)
+            artifacts = rdtSearchArtifacts('test', 'test-group1', 'test-artifact1', '2', 'txt', testCase.testConfig);
+            testCase.assertEmpty(artifacts);
         end
         
     end
     
     methods (Access=private)
-        function checkExpectedArtifacts(testCase, artifacts)
+        function checkGroupArtifacts(testCase, artifacts, groupId)
             testCase.assertNotEmpty(artifacts);
             testCase.assertInstanceOf(artifacts, 'struct');
-            testCase.assertSize(artifacts, [1,2]);
-            testCase.assertThat(artifacts, matlab.unittest.constraints.HasField('artifactId'));
+            testCase.assertNumElements(artifacts, 2);
+            
+            groupIds = sort({artifacts.groupId});
+            testCase.assertEqual(groupIds, {groupId, groupId});
             
             artifactIds = sort({artifacts.artifactId});
             testCase.assertEqual(artifactIds, testCase.expectedArtifactIds);
+            
+            versions = sort({artifacts.version});
+            testCase.assertEqual(versions, testCase.expectedVersions);
+            
+            types = sort({artifacts.type});
+            testCase.assertEqual(types, testCase.expectedTypes);
         end
     end
 end
