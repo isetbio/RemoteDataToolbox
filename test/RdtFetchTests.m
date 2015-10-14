@@ -161,5 +161,24 @@ classdef RdtFetchTests < matlab.unittest.TestCase
                 testCase.assertEqual(exist(fetched.localPath, 'file'), 2);
             end
         end
+        
+        function testFetchLatestVersion(testCase)
+            groupId = 'test-group-1';
+            artifactId = 'matlab-artifact';
+            type = 'mat';
+            [data, artifact] = rdtReadArtifact(groupId, ...
+                artifactId, ...
+                '', ...
+                type, ...
+                testCase.testConfig);
+            
+            testCase.assertNotEmpty(data);
+            testCase.assertInstanceOf(data, 'struct');
+            testCase.assertEqual(data.foo, 'bar');
+            
+            testCase.assertNotEmpty(artifact);
+            testCase.assertInstanceOf(artifact, 'struct');
+            testCase.assertEqual(artifact.artifactId, 'matlab-artifact');
+        end
     end
 end
