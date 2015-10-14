@@ -67,5 +67,44 @@ classdef RdtPublishTests < matlab.unittest.TestCase
             testCase.assertTrue(isnumeric(data.testArtifactData));
             testCase.assertEqual(data.testArtifactData, testArtifactData);
         end
+        
+        function testPublishMultiple(testCase)
+            % choose the testArtifacts from this folder
+            thisFolder = fileparts(mfilename('fullpath'));
+            artifactFolder = fullfile(thisFolder, 'testArtifacts');
+            
+            artifacts = rdtPublishArtifacts(artifactFolder, ...
+                'publish-multiple-group', ...
+                '123', ...
+                '', ...
+                testCase.testConfig);
+            
+            testCase.assertNotEmpty(artifacts);
+            testCase.assertInstanceOf(artifacts, 'struct');
+            
+            for ii = 1:numel(artifacts)
+                originalFile = fullfile(artifactFolder, ...
+                    [artifacts(ii).artifactId '.' artifacts(ii).type]);
+                testCase.assertEqual(exist(originalFile, 'file'), 2);
+            end
+        end
+        
+        function testPublishMultipleByType(testCase)
+            % choose the testArtifacts from this folder
+            thisFolder = fileparts(mfilename('fullpath'));
+            artifactFolder = fullfile(thisFolder, 'testArtifacts');
+            
+            artifacts = rdtPublishArtifacts(artifactFolder, ...
+                'publish-multiple-group', ...
+                '123', ...
+                'txt', ...
+                testCase.testConfig);
+            
+            testCase.assertNotEmpty(artifacts);
+            testCase.assertInstanceOf(artifacts, 'struct');
+            testCase.assertNumElements(artifacts, 1);
+            testCase.assertEqual(artifacts.type, 'txt');
+            testCase.assertEqual(artifacts.artifactId, 'text-artifact');
+        end
     end
 end
