@@ -34,7 +34,7 @@
 % Usage:
 %   [data, artifact] = rdtReadArtifact(groupId, artifactId, version, type, configuration)
 %
-% @ingroup utilities
+% @ingroup artifacts
 function [data, artifact] = rdtReadArtifact(groupId, artifactId, version, type, configuration)
 
 data = [];

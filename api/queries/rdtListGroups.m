@@ -17,7 +17,7 @@
 % Usage:
 %   groupIds = rdtListGroups(configuration)
 %
-% @ingroup utilities
+% @ingroup queries
 function groupIds = rdtListGroups(configuration)
 
 groupIds = {};

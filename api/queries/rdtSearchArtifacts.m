@@ -28,7 +28,7 @@
 % Usage:
 %   artifacts = rdtSearchArtifacts(searchText, groupId, artifactId, version, type, configuration)
 %
-% @ingroup utilities
+% @ingroup queries
 function artifacts = rdtSearchArtifacts(searchText, groupId, artifactId, version, type, configuration)
 
 artifacts = [];

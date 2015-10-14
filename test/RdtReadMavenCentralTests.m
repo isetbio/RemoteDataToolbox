@@ -1,5 +1,5 @@
-classdef RdtFetchMavenCentralTests < matlab.unittest.TestCase
-    % Test that we can fetch artifacts from a general-purpose Maven
+classdef RdtReadMavenCentralTests < matlab.unittest.TestCase
+    % Test that we can read artifacts from a general-purpose Maven
     % repository, regardless of how we configure our own server.  These
     % tests rely on Maven Central, which is a popular, public Maven
     % repository:

@@ -36,7 +36,7 @@
 % Usage:
 %   artifacts = rdtPublishArtifacts(folder, groupId, version, type, configuration)
 %
-% @ingroup utilities
+% @ingroup artifacts
 function artifacts = rdtPublishArtifacts(folder, groupId, version, type, configuration)
 
 artifacts = [];

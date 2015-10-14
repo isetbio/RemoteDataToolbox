@@ -18,7 +18,7 @@
 % Usage:
 %   artifacts = rdtListGroups(configuration)
 %
-% @ingroup utilities
+% @ingroup queries
 function artifacts = rdtListArtifacts(groupId, configuration)
 
 artifacts = [];

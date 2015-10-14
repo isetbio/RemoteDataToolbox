@@ -44,7 +44,7 @@
 % Usage:
 %   response = rdtRequestWeb(resourcePath, queryParams, requestBody, configuration)
 %
-% @ingroup utilities
+% @ingroup queries
 function response = rdtRequestWeb(resourcePath, queryParams, requestBody, configuration)
 
 response = '';

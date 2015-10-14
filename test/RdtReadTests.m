@@ -1,5 +1,5 @@
-classdef RdtFetchTests < matlab.unittest.TestCase
-    % Test that we can fetch artifacts with expected content from our own
+classdef RdtReadTests < matlab.unittest.TestCase
+    % Test that we can read artifacts with expected content from our own
     % Maven server.  These tests assume that we have a Maven server
     % running on localhost with expected user credentials and repository
     % contents. If the expected server can't be found, skips these tests.

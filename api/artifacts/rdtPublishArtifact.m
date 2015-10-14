@@ -25,7 +25,7 @@
 % Usage:
 %   artifact = rdtPublishArtifact(file, groupId, artifactId, version, configuration)
 %
-% @ingroup utilities
+% @ingroup artifacts
 function artifact = rdtPublishArtifact(file, groupId, artifactId, version, configuration)
 
 artifact = [];

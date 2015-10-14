@@ -28,7 +28,7 @@
 % Usage:
 %   artifacts = rdtListGroups(configuration)
 %
-% @ingroup utilities
+% @ingroup artifacts
 function [datas, artifacts] = rdtReadArtifacts(artifacts, configuration)
 
 if nargin < 2 || isempty(configuration)
