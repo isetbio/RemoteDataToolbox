@@ -7,8 +7,8 @@
 %   @param version
 %   @param file
 %
-%	filePath = gradlePublishArtifact(repository, username, password, group, id, version, file)
-function filePath = gradlePublishArtifact(repository, username, password, group, id, version, file)
+%	[filePath, extension] = gradlePublishArtifact(repository, username, password, group, id, version, file)
+function [filePath, extension] = gradlePublishArtifact(repository, username, password, group, id, version, file)
 
 filePath = '';
 
@@ -31,7 +31,7 @@ thisScript = mfilename('fullpath');
 gradlew = fullfile(thisPath, 'gradlew');
 publishDotGradle = fullfile(thisPath, 'publish.gradle');
 
-%% Invoke Gradle.
+%% Invoke Gradle to publish the artifact.
 command = sprintf('%s --daemon -b %s publish', gradlew, publishDotGradle);
 disp(command);
 
@@ -59,4 +59,4 @@ setenv('EXTENSION');
 setenv('FILE');
 
 %% Fetch the file and report the path into the local cache.
-filePath = gradleFetchArtifact(repository, username, password, group, id, version, extension);
+filePath = gradleFetchArtifact(repository, username, password, group, id, version, extension, true);

@@ -1,7 +1,7 @@
 %%% RemoteDataToolbox Copyright (c) 2015 The RemoteDataToolbox Team.
 %
 % Query an Archiva Maven repository to list all artifact in a group.
-%   @parap groupId string id of the group from which to list artifacts
+%   @param groupId string id of the group from which to list artifacts
 %   @param configuration optional RemoteDataToolbox configuration struct
 %
 % @details

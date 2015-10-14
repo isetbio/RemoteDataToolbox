@@ -1,16 +1,16 @@
 %%% RemoteDataToolbox Copyright (c) 2015 The RemoteDataToolbox Team.
 %
 % Fetch an artifact from a Maven repository an read it into Matlab.
-%   @parap groupId string id of the artifact's group (required)
-%   @parap artifactId string id of the artifact itself (required)
-%   @parap version string artifact version (defaults to latest)
-%   @parap type string file type of the artifact (defaults to 'mat')
+%   @param groupId string id of the artifact's group (required)
+%   @param artifactId string id of the artifact itself (required)
+%   @param version string artifact version (defaults to latest)
+%   @param type string file type of the artifact (defaults to 'mat')
 %   @param configuration optional RemoteDataToolbox configuration struct
 %
 % @details
 % Fetches an artifact from a Maven respository, caches it in the local file
 % system, and loads the artifact into a Matlab variable.  If @a
-% configuration is provided, queries the server at @a
+% configuration is provided, fetches from the server at @a
 % configuration.repository.  Otherwise, uses the configuration returned
 % from rdtConfiguration().
 %
@@ -39,6 +39,14 @@ function [data, artifact] = rdtReadArtifact(groupId, artifactId, version, type, 
 
 data = [];
 artifact = [];
+
+if nargin < 1 || isempty(groupId) || ~ischar(groupId)
+    error('rdtReadArtifact:missingGroupId', 'groupId must be a string');
+end
+
+if nargin < 2 || isempty(artifactId) || ~ischar(artifactId)
+    error('rdtReadArtifact:missingArtifactId', 'artifactId must be a string');
+end
 
 if nargin < 3 || isempty(version)
     version = '+';

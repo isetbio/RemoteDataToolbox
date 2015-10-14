@@ -39,8 +39,8 @@ classdef RdtQueryTests < matlab.unittest.TestCase
         
         function testListGroups(testCase)
             groupIds = rdtListGroups(testCase.testConfig);
-            groupIds = sort(groupIds);
-            testCase.assertEqual(groupIds, testCase.expectedGroupIds);
+            testCase.assertTrue(any(strcmp(groupIds, testCase.expectedGroupIds{1})));
+            testCase.assertTrue(any(strcmp(groupIds, testCase.expectedGroupIds{2})));
         end
         
         function testListArtifacts(testCase)

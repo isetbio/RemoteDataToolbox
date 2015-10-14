@@ -1,11 +1,11 @@
 %%% RemoteDataToolbox Copyright (c) 2015 The RemoteDataToolbox Team.
 %
 % Search an Archiva Maven repository with fuzzy matching of free text.
-%   @parap searchText free text of search terms to match
-%   @parap groupId optional groupId to restrict search
-%   @parap artifactId optional artifactId to restrict search
-%   @parap version optional artifact version to restrict search
-%   @parap type optional artifact type to restrict search
+%   @param searchText free text of search terms to match
+%   @param groupId optional groupId to restrict search
+%   @param artifactId optional artifactId to restrict search
+%   @param version optional artifact version to restrict search
+%   @param type optional artifact type to restrict search
 %   @param configuration optional RemoteDataToolbox configuration struct
 %
 % @details

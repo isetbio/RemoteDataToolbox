@@ -6,11 +6,16 @@
 %   @param id
 %   @param version
 %   @param extension
+%   @param refreshCached
 %
-%   filePath = gradleFetchArtifact(repository, username, password, group, id, version, extension)
-function filePath = gradleFetchArtifact(repository, username, password, group, id, version, extension)
+%   filePath = gradleFetchArtifact(repository, username, password, group, id, version, extension, refreshCached)
+function filePath = gradleFetchArtifact(repository, username, password, group, id, version, extension, refreshCached)
 
 filePath = '';
+
+if nargin < 8 || isempty(refreshCached)
+    refreshCached = false;
+end
 
 %% Pass args to Gradle via enviromnent variables.
 setenv('REPOSITORY', repository);
@@ -28,7 +33,13 @@ gradlew = fullfile(thisPath, 'gradlew');
 fetchDotGradle = fullfile(thisPath, 'fetch.gradle');
 
 %% Invoke Gradle.
-command = sprintf('%s --daemon -b %s fetchIt', gradlew, fetchDotGradle);
+if refreshCached
+    refresh = '--refresh-dependencies';
+else
+    refresh = '';
+end
+
+command = sprintf('%s --daemon %s -b %s fetchIt', gradlew, refresh, fetchDotGradle);
 disp(command);
 
 % temporarily clear the library path, which breaks gradlew

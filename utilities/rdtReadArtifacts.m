@@ -1,7 +1,7 @@
 %%% RemoteDataToolbox Copyright (c) 2015 The RemoteDataToolbox Team.
 %
 % Fetch multiple artifacts from a Maven repository an read them into Matlab.
-%   @parap artifacts struct array of artifact metadata
+%   @param artifacts struct array of artifact metadata
 %   @param configuration optional RemoteDataToolbox configuration struct
 %
 % @details
