@@ -30,8 +30,10 @@ row = 1 + floor((0:499) / 50);
 indexes = repmat(row, 500, 1);
 colors = jet(10);
 colors = colors(randperm(10), :);
+imageData = colors(indexes, :);
+imageData = reshape(imageData, 500, 500, 3);
 imageFile = fullfile(tempdir(), 'my-image.png');
-imwrite(indexes, colors, imageFile, 'png');
+imwrite(imageData, imageFile, 'png');
 
 % view the image
 imshow(imageFile)
@@ -68,5 +70,6 @@ disp(artifact)
 
 %% Visit the new artifact on the web!
 
-% you may need to enter your credentials again (demo:pa55w0rd)
+% Frmo the directory listing, click on png file and check that the image in
+% the brwoser matches the image in the Matlab figure.
 web(artifact.url, '-browser')
