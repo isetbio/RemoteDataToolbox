@@ -8,7 +8,7 @@
 % Opens a url in a web browser for viewing.  If @a configOrArtifact is a
 % Remote Data Toolbox artifact struct opens @a configOrArtifact.url.  If @a
 % configOrArtifact is a RemoteDataToolbox configuration struct, opens @a
-% configOrArtifact.serverUrl.
+% configOrArtifact.serverUrl or @a configOrArtifact.repositoryUrl.
 %
 % @details
 % If @a whichUrl is provided, opens @a configOrArtifact.(whichUrl) instead
@@ -19,10 +19,14 @@
 % returned from rdtConfiguration().
 %
 % @details
+% Returns the url that was passed to the web browser for browsing.
+%
+% @details
 % Usage:
+%   url = rdtOpenBrowser(configOrArtifact, whichUrl)
 %
 % @ingroup utilities
-function rdtOpenBrowser(configOrArtifact, whichUrl)
+function url = rdtOpenBrowser(configOrArtifact, whichUrl)
 
 if nargin < 1 || isempty(configOrArtifact)
     configOrArtifact = rdtConfiguration();
@@ -46,6 +50,10 @@ elseif isfield(configOrArtifact, 'url')
 elseif isfield(configOrArtifact, 'serverUrl')
     % looks like a config struct
     url = configOrArtifact.serverUrl;
+    
+elseif isfield(configOrArtifact, 'repositoryUrl')
+    % looks like a config struct
+    url = configOrArtifact.repositoryUrl;
 end
 
 if isempty(url)
