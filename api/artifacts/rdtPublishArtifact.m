@@ -10,7 +10,7 @@
 % @details
 % Publishes the given @a file as artifact to a Maven respository.  If @a
 % configuration is provided, publishes to the server at @a
-% configuration.repository.  Otherwise, uses the configuration returned
+% configuration.repositoryUrl.  Otherwise, uses the configuration returned
 % from rdtConfiguration().
 %
 % @details

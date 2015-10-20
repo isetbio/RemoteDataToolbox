@@ -7,7 +7,7 @@
 % @details
 % Requests a list of all artifacts from the given groupId, from an Archiva
 % Maven repository.  If @a configuration is provided, queries the server at
-% @a configuration.repository.  Otherwise, uses the configuration returned
+% @a configuration.serverUrl.  Otherwise, uses the configuration returned
 % from rdtConfiguration().
 %
 % @details

@@ -8,7 +8,7 @@
 % Fetches multiple artifacts from a Maven respository, caches each in the
 % local file system, and loads each into a Matlab variable.  If @a
 % configuration is provided, queries the server at @a
-% configuration.repository.  Otherwise, uses the configuration returned
+% configuration.repositoryUrl.  Otherwise, uses the configuration returned
 % from rdtConfiguration().
 %
 % @details

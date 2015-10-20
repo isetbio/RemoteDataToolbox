@@ -10,8 +10,8 @@
 % @details
 % Publishes each of the files in the given @a folder as an artifact to a
 % Maven respository.  If @a configuration is provided, publishes to the
-% server at @a configuration.repository.  Otherwise, uses the configuration
-% returned from rdtConfiguration().
+% server at @a configuration.repositoryUrl.  Otherwise, uses the
+% configuration returned from rdtConfiguration().
 %
 % @details
 % Each published artifact will use the same @a groupId and @a version.  The

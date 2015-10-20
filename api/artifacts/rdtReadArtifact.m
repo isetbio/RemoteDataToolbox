@@ -11,7 +11,7 @@
 % Fetches an artifact from a Maven respository, caches it in the local file
 % system, and loads the artifact into a Matlab variable.  If @a
 % configuration is provided, fetches from the server at @a
-% configuration.repository.  Otherwise, uses the configuration returned
+% configuration.repositoryUrl.  Otherwise, uses the configuration returned
 % from rdtConfiguration().
 %
 % @details

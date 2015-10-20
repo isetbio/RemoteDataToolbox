@@ -11,7 +11,7 @@
 % @details
 % Searches an Archiva Maven repository for artifacts matching the search
 % terms in the given @a searchText.  If @a configuration is provided,
-% queries the server at @a configuration.repository.  Otherwise, uses the
+% queries the server at @a configuration.serverUrl.  Otherwise, uses the
 % configuration returned from rdtConfiguration().
 %
 % @details

@@ -6,7 +6,7 @@
 % @details
 % Requests a list of all artifact groups from an Archiva Maven repository.
 % If @a configuration is provided, queries the server at @a
-% configuration.repository.  Otherwise, uses the configuration returned
+% configuration.serverUrl.  Otherwise, uses the configuration returned
 % from rdtConfiguration().
 %
 % @details
