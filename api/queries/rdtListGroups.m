@@ -1,6 +1,6 @@
 %%% RemoteDataToolbox Copyright (c) 2015 The RemoteDataToolbox Team.
 %
-% Query an Archiva Maven repository to list all artifact groups
+% Query an Archiva Maven repository to list all artifact groups.
 %   @param configuration optional RemoteDataToolbox configuration struct
 %
 % @details
@@ -11,14 +11,15 @@
 %
 % @details
 % Returns a cell array string groupIds returned from the Archiva
-% respository, or {} if the query failed.
+% respository, or {} if the query failed.  Also returns the name of the
+% repository whose groups are listed.
 %
 % @details
 % Usage:
-%   groupIds = rdtListGroups(configuration)
+%   [groupIds, repositoryName] = rdtListGroups(configuration)
 %
 % @ingroup queries
-function groupIds = rdtListGroups(configuration)
+function [groupIds, repositoryName] = rdtListGroups(configuration)
 
 groupIds = {};
 
@@ -30,7 +31,8 @@ end
 
 %% Query the Archiva server.
 resourcePath = '/restServices/archivaServices/searchService/getAllGroupIds';
-params.selectedRepos = configuration.repositoryName;
+repositoryName = configuration.repositoryName;
+params.selectedRepos = repositoryName;
 response = rdtRequestWeb(resourcePath, params, [], configuration);
 if isempty(response) || ~isfield(response, 'groupIds')
     return;

@@ -15,7 +15,7 @@
 % this with the default "guest" account.
 %
 % See the rdtExampleProjectPublishData.m to see how to publish data in the
-% first place
+% first place.
 %
 % @ingroup examples
 
