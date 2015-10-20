@@ -70,6 +70,6 @@ disp(artifact)
 
 %% Visit the new artifact on the web!
 
-% Frmo the directory listing, click on png file and check that the image in
+% From the directory listing, click on png file and check that the image in
 % the brwoser matches the image in the Matlab figure.
-web(artifact.url, '-browser')
+rdtOpenBrowser(artifact);
