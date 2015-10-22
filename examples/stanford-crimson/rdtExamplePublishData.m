@@ -41,7 +41,7 @@ imshow(imageFile)
 %% Get repository configuration and credentials.
 
 % cd to "project" folder so RemodeDataToolbox can locate JSON configuration
-thisFolder = fileparts(which('rdtExampleProjectPublishData'));
+thisFolder = fileparts(which('rdtExamplePublishData'));
 cd(thisFolder);
 
 % enter credentials (demo:pa55w0rd) to complete the configuration
