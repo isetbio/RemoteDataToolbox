@@ -6,11 +6,16 @@
 %   @param id
 %   @param version
 %   @param file
+%   @param cacheFolder
 %
-%	[filePath, extension] = gradlePublishArtifact(repository, username, password, group, id, version, file)
-function [filePath, extension] = gradlePublishArtifact(repository, username, password, group, id, version, file)
+%	[filePath, extension] = gradlePublishArtifact(repository, username, password, group, id, version, file, cacheFolder)
+function [filePath, extension] = gradlePublishArtifact(repository, username, password, group, id, version, file, cacheFolder)
 
 filePath = '';
+
+if nargin < 8 || isempty(cacheFolder)
+    cacheFolder = '';
+end
 
 [inputPath, inputBase, inputExtension] = fileparts(file);
 extension = inputExtension(inputExtension ~= '.');
@@ -34,11 +39,20 @@ gradlew = fullfile(thisPath, 'gradlew');
 publishDotGradle = fullfile(thisPath, 'publish.gradle');
 
 %% Invoke Gradle to publish the artifact.
+if ~isempty(cacheFolder)
+    cache = [ ...
+        '--project-cache-dir "' cacheFolder '" ' ...
+        '--gradle-user-home "' cacheFolder '" '];
+else
+    cache = '';
+end
+
 dylibPath = 'DYLD_LIBRARY_PATH=""';
-command = sprintf('%s %s --daemon %s -b %s publish', ...
+command = sprintf('%s %s --daemon %s %s -b %s publish', ...
     dylibPath, ...
     gradlew, ...
     systemProps, ...
+    cache, ...
     publishDotGradle);
 
 disp(command);

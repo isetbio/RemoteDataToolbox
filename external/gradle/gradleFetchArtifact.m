@@ -7,14 +7,19 @@
 %   @param version
 %   @param extension
 %   @param refreshCached
+%   @param cacheFolder
 %
-%   filePath = gradleFetchArtifact(repository, username, password, group, id, version, extension, refreshCached)
-function filePath = gradleFetchArtifact(repository, username, password, group, id, version, extension, refreshCached)
+%   filePath = gradleFetchArtifact(repository, username, password, group, id, version, extension, refreshCached, cacheFolder)
+function filePath = gradleFetchArtifact(repository, username, password, group, id, version, extension, refreshCached, cacheFolder)
 
 filePath = '';
 
 if nargin < 8 || isempty(refreshCached)
     refreshCached = false;
+end
+
+if nargin < 9 || isempty(cacheFolder)
+    cacheFolder = '';
 end
 
 %% -D Define system properties.
@@ -40,12 +45,21 @@ else
     refresh = '';
 end
 
+if ~isempty(cacheFolder)
+    cache = [ ...
+        '--project-cache-dir "' cacheFolder '" ' ...
+        '--gradle-user-home "' cacheFolder '" '];
+else
+    cache = '';
+end
+
 dylibPath = 'DYLD_LIBRARY_PATH=""';
-command = sprintf('%s %s --daemon %s %s -b %s fetchIt', ...
+command = sprintf('%s %s --daemon %s %s %s -b %s fetchIt', ...
     dylibPath, ...
     gradlew, ...
     refresh, ...
     systemProps, ...
+    cache, ...
     fetchDotGradle);
 
 disp(command);
