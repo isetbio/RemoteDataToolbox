@@ -39,17 +39,10 @@ else
     refresh = '';
 end
 
-command = sprintf('%s --daemon %s -b %s fetchIt', gradlew, refresh, fetchDotGradle);
+dylibPath = 'DYLD_LIBRARY_PATH=""';
+command = sprintf('%s %s --daemon %s -b %s fetchIt', dylibPath, gradlew, refresh, fetchDotGradle);
 disp(command);
-
-% temporarily clear the library path, which breaks gradlew
-DYLD_LIBRARY_PATH = getenv('DYLD_LIBRARY_PATH');
-setenv('DYLD_LIBRARY_PATH');
-
 [status, result] = system(command);
-
-% restore the library path that Matlab wants
-setenv('DYLD_LIBRARY_PATH', DYLD_LIBRARY_PATH);
 
 if 0 ~= status
     error('FetchArtifact:BadStatus', 'error status %d (%s)', status, result)

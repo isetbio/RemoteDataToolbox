@@ -32,17 +32,10 @@ gradlew = fullfile(thisPath, 'gradlew');
 publishDotGradle = fullfile(thisPath, 'publish.gradle');
 
 %% Invoke Gradle to publish the artifact.
-command = sprintf('%s --daemon -b %s publish', gradlew, publishDotGradle);
+dylibPath = 'DYLD_LIBRARY_PATH=""';
+command = sprintf('%s %s --daemon -b %s publish', dylibPath, gradlew, publishDotGradle);
 disp(command);
-
-% temporarily clear the library path, which breaks gradlew
-DYLD_LIBRARY_PATH = getenv('DYLD_LIBRARY_PATH');
-setenv('DYLD_LIBRARY_PATH');
-
 [status, result] = system(command);
-
-% restore the library path that Matlab wants
-setenv('DYLD_LIBRARY_PATH', DYLD_LIBRARY_PATH);
 
 if 0 ~= status
     error('PublishArtifact:BadStatus', 'error status %d (%s)', status, result)
