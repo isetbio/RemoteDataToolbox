@@ -1,43 +1,20 @@
 # RemoteDataToolbox
-Matlab utilities for reading and publishing artifacts (aka data files) stored in a Maven repository.
+Matlab utilities for managing reading and writing of data files stored on a remote ftp-site.
 
-### Gradle
-RemoteDataToolbox includes utilities that invoke [Gradle](http://gradle.org/) as the Maven client.  Gradle takes care of:
- * web connections and authentication
- * reading and publishing artifacts with Maven metadata
- * client-side caching of artifacts
+The functionality will be based on the urlwrite() function, 
+which in the most modern releases is superceded by websave.  Perhaps we
+will also use the ftp object for some purposes.  Much to learn about permissions
+writing and so forth from within Matlab.
 
-The RemoteDataToolbox distribution includes the [Gradle Wrapper](https://docs.gradle.org/current/userguide/gradle_wrapper.html) which means you don't have to install Gradle yourself.  It just happens.
+It is possible we should create a remote data object (rdo) and interact
+with that.  Or perhaps we just create a bunch of functions here and
+let each toolbox use these functions in its own way.  For example, ISET
+and ISETBIO could both interact with these functions and create different
+remote data objects.  Same with VISTASOFT.
 
-### Archiva Queries
-Also includes utilities for querying the repository.  These assume that the Maven repository is running [Archiva](https://archiva.apache.org/index.cgi) because they rely on Archiva's RESTful API.  On the client side, these utilities use Matlab's `webread()` function.  These take care of:
- * listing artifacts and groups
- * searching for artifacts by group, id, version, or fuzzy text matching
+The first site we will be interacting with is http://scarlet.stanford.edu/validation
 
-### JSON Project Configuration
-All RemoteDataToolbox functions can be used "as is", by passing in explicit configuration in the form of a struct.  This configuration would incluld things like the url of the Maven repository.
-
-Alternatively, project-specific configuration can be placed in a JSON configuration file.  RemoteDataToolbox functions will search the current folder, its parent folder, and so on, until finding a file named `remote-data-toolbox.json`.  This file must contain configuration, such as the url of the Maven repository.
-
-The RemoteDataToolbox distribution includes [JSONlab](http://www.mathworks.com/matlabcentral/fileexchange/33381-jsonlab--a-toolbox-to-encode-decode-json-files-in-matlab-octave) for converting JSON data to and from Matlab structs.
-
-# Examples
-
-### Read an Artifact
-TODO...
-
-### Publish an Artifact
-TODO...
-
-### Query the Repository
-TODO...
-
-### JSON configuration
-TODO...
-
-# Have Fun!
 Brian
 Michael
 Nicolas
 David
-Ben
