@@ -6,13 +6,22 @@ classdef RdtConfigurationTests < matlab.unittest.TestCase
             testCase.sanityCheckConfiguration(rdtConfiguration());
         end
         
-        function testFromConfigFolder(testCase)
-            testFolder = fileparts(mfilename('fullpath'));
-            alternateConfigFolder = fullfile(testFolder, 'alternateJsonConfiguration');
-            configuration = rdtConfiguration(alternateConfigFolder);
+        function testFromTestProject(testCase)
+            configuration = rdtConfiguration('test');
+            testCase.assertEqual('test-repository', configuration.repositoryName);
+        end
+        
+        function testFromAlternateProject(testCase)
+            configuration = rdtConfiguration('test-alternate');
             testCase.assertEqual('alternate-repository-name', configuration.repositoryName);
         end
         
+        function testFromExplicitFile(testCase)
+            configFile = which('rdt-config-test-alternate.json');
+            configuration = rdtConfiguration(configFile);
+            testCase.assertEqual('alternate-repository-name', configuration.repositoryName);
+        end
+                
         function testFromStructArg(testCase)
             configArgs.repositoryName = 'random-repository-name';
             configuration = rdtConfiguration(configArgs);
