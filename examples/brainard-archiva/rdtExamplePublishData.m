@@ -12,8 +12,8 @@
 % You probably don't want to store your project's repository credentials in
 % a JSON file, because others would be able to read it.  So before
 % publishing data, this script will prompt you to enter a password into a
-% dialog window.  For this demo, use the user name "demo" and password
-% "pa55w0rd".
+% dialog window.  For this demo, use the user name "test" and password
+% "test123".
 %
 % See the rdtExampleProjectReadData.m to see how to read data that's
 % already been published.
@@ -44,8 +44,8 @@ imshow(imageFile)
 thisFolder = fileparts(which('rdtExamplePublishData'));
 cd(thisFolder);
 
-% enter credentials (demo:pa55w0rd) to complete the configuration
-configuration = rdtCredentialsDialog();
+% enter credentials (test:test123) to complete the configuration
+configuration = rdtCredentialsDialog('brainard-archiva');
 
 %% Publish the image as an artifact.
 

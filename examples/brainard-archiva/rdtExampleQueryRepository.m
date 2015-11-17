@@ -25,7 +25,7 @@ clear;
 clc;
 
 %% What groups are available?  These are like repository folders.
-[groupIds, repositoryName] = rdtListGroups();
+[groupIds, repositoryName] = rdtListGroups('brainard-archiva');
 nGroups = numel(groupIds);
 
 fprintf('There are %d groups in the repository "%s":\n', nGroups, repositoryName);
@@ -34,7 +34,7 @@ disp(groupIds)
 %% What artifacts are available in each group?
 for ii = 1:nGroups
     groupId = groupIds{ii};
-    artifacts = rdtListArtifacts(groupId);
+    artifacts = rdtListArtifacts(groupId, 'brainard-archiva');
     nArtifacts = numel(artifacts);
     
     fprintf('Group "%s" contains %d artifacts:\n', groupId, nArtifacts);
@@ -47,7 +47,7 @@ end
 
 % should see the same artifact as in rdtExamplePublishData.m
 
-demoArtifacts = rdtSearchArtifacts('demo');
+demoArtifacts = rdtSearchArtifacts('demo', '', '', '', '', 'brainard-archiva');
 nArtifacts = numel(demoArtifacts);
 fprintf('%d artifacts match the term "demo":\n', nArtifacts);
 for jj = 1:nArtifacts
@@ -55,7 +55,7 @@ for jj = 1:nArtifacts
 end
 
 %% Which artifacts match the term "test"?
-testArtifacts = rdtSearchArtifacts('test');
+testArtifacts = rdtSearchArtifacts('test', '', '', '', '', 'brainard-archiva');
 nArtifacts = numel(testArtifacts);
 fprintf('%d artifacts match the term "test":\n', nArtifacts);
 for jj = 1:nArtifacts
@@ -63,7 +63,7 @@ for jj = 1:nArtifacts
 end
 
 %% Which *text* artifacts match the term "test"?
-testTxtArtifacts = rdtSearchArtifacts('test', '', '', '', 'txt');
+testTxtArtifacts = rdtSearchArtifacts('test', '', '', '', 'txt', 'brainard-archiva');
 nArtifacts = numel(testTxtArtifacts);
 fprintf('%d artifacts of type "txt" match the term "test":\n', nArtifacts);
 for jj = 1:nArtifacts
@@ -71,7 +71,7 @@ for jj = 1:nArtifacts
 end
 
 %% Which *version 2* artifacts match the term "test"?
-testV2Artifacts = rdtSearchArtifacts('test', '', '', '2');
+testV2Artifacts = rdtSearchArtifacts('test', '', '', '2', '', 'brainard-archiva');
 nArtifacts = numel(testV2Artifacts);
 fprintf('%d artifacts at version 2 match the term "test":\n', nArtifacts);
 for jj = 1:nArtifacts

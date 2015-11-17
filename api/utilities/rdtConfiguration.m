@@ -56,7 +56,7 @@ end
 %% Declare expected args and default values.
 parser = inputParser();
 parser.CaseSensitive = true;
-parser.KeepUnmatched = false;
+parser.KeepUnmatched = true;
 parser.PartialMatching = false;
 parser.StructExpand = true;
 
@@ -71,7 +71,7 @@ parser.addParameter('cacheFolder', '');
 
 %% Parse the input through the input scheme.
 parser.parse(configArgs{:});
-configuration = parser.Results;
+configuration = rdtMergeStructs(parser.Results, parser.Unmatched, true);
 
 %% Load config from a JSON file.
 function configArgs = configFromJson(arg)
