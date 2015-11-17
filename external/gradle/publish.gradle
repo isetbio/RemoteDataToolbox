@@ -5,12 +5,12 @@ apply plugin: "maven-publish"
 publishing {
     publications {
         maven(MavenPublication) {
-            groupId "${System.env.GROUP}"
-            artifactId "${System.env.ID}"
-            version "${System.env.VERSION}"
+            groupId System.getProperty("GROUP")
+            artifactId System.getProperty("ID")
+            version System.getProperty("VERSION")
 
-            artifact("${System.env.FILE}") {
-                extension "${System.env.EXTENSION}"
+            artifact(System.getProperty("FILE")) {
+                extension System.getProperty("EXTENSION")
             }
         }
     }
@@ -18,10 +18,10 @@ publishing {
     repositories {
         maven {
             credentials {
-                username "${System.env.USERNAME}"
-                password "${System.env.PASSWORD}"
+                username System.getProperty("USERNAME")
+                password System.getProperty("PASSWORD")
             }
-            url "${System.env.REPOSITORY}"
+            url System.getProperty("REPOSITORY")
         }
     }
 }

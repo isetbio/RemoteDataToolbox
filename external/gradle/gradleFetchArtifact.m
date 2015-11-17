@@ -17,14 +17,15 @@ if nargin < 8 || isempty(refreshCached)
     refreshCached = false;
 end
 
-%% Pass args to Gradle via enviromnent variables.
-setenv('REPOSITORY', repository);
-setenv('USERNAME', username);
-setenv('PASSWORD', password);
-setenv('GROUP', group);
-setenv('ID', id);
-setenv('VERSION', version);
-setenv('EXTENSION', extension);
+%% -D Define system properties.
+systemProps = [ ...
+    '-DREPOSITORY=' repository ' ' ...
+    '-DUSERNAME=' username ' ' ...
+    '-DPASSWORD=' password ' ' ...
+    '-DGROUP=' group ' ' ...
+    '-DID=' id ' ' ...
+    '-DVERSION=' version ' ' ...
+    '-DEXTENSION=' extension ' '];
 
 %% Locate the gradle wrapper.
 thisScript = mfilename('fullpath');
@@ -40,10 +41,15 @@ else
 end
 
 dylibPath = 'DYLD_LIBRARY_PATH=""';
-command = sprintf('%s %s --daemon %s -b %s fetchIt', dylibPath, gradlew, refresh, fetchDotGradle);
+command = sprintf('%s %s --daemon %s %s -b %s fetchIt', ...
+    dylibPath, ...
+    gradlew, ...
+    refresh, ...
+    systemProps, ...
+    fetchDotGradle);
+
 disp(command);
 [status, result] = system(command);
-
 if 0 ~= status
     error('FetchArtifact:BadStatus', 'error status %d (%s)', status, result)
 end
@@ -55,12 +61,3 @@ nextLines = lineEnds(lineEnds > fetched);
 pathStart = fetched + 8;
 pathEnd = nextLines(1);
 filePath = result(pathStart:pathEnd-1);
-
-%% Don't leak enviroment variables (especially PASSWORD!)
-setenv('REPOSITORY');
-setenv('USERNAME');
-setenv('PASSWORD');
-setenv('GROUP');
-setenv('ID');
-setenv('VERSION');
-setenv('EXTENSION');

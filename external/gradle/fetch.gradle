@@ -2,10 +2,10 @@
 repositories {
     maven {
         credentials {
-            username "${System.env.USERNAME}"
-            password "${System.env.PASSWORD}"
+            username System.getProperty("USERNAME")
+            password System.getProperty("PASSWORD")
         }
-        url "${System.env.REPOSITORY}"
+        url System.getProperty("REPOSITORY")
     }
 }
 
@@ -14,7 +14,10 @@ configurations {
 }
 
 dependencies {
-  fetch "${System.env.GROUP}:${System.env.ID}:${System.env.VERSION}@${System.env.EXTENSION}"
+  fetch System.getProperty("GROUP") + 
+    ":" + System.getProperty("ID") + 
+    ":" + System.getProperty("VERSION") + 
+    "@" + System.getProperty("EXTENSION")
 }
 
 task fetchIt << {
