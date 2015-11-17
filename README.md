@@ -7,7 +7,7 @@ RemoteDataToolbox includes utilities that invoke [Gradle](http://gradle.org/) as
  * reading and publishing artifacts with Maven metadata
  * client-side caching of artifacts
 
-The RemoteDataToolbox distribution includes the [Gradle Wrapper](https://docs.gradle.org/current/userguide/gradle_wrapper.html) which means you don't have to install Gradle yourself.  It just happens.
+The RemoteDataToolbox distribution includes the [Gradle Wrapper](https://docs.gradle.org/current/userguide/gradle_wrapper.html) which means you don't have to install Gradle yourself -- it happens automatically.
 
 ### Archiva Queries
 Also includes utilities for querying the repository.  These assume that the Maven repository is running [Archiva](https://archiva.apache.org/index.cgi) because they rely on Archiva's RESTful API.  On the client side, these utilities use Matlab's `webread()` function.  These take care of:
@@ -22,18 +22,7 @@ Alternatively, project-specific configuration can be placed in a JSON configurat
 The RemoteDataToolbox distribution includes [JSONlab](http://www.mathworks.com/matlabcentral/fileexchange/33381-jsonlab--a-toolbox-to-encode-decode-json-files-in-matlab-octave) for converting JSON data to and from Matlab structs.
 
 # Examples
-
-### Read an Artifact
-TODO...
-
-### Publish an Artifact
-TODO...
-
-### Query the Repository
-TODO...
-
-### JSON configuration
-TODO...
+We have several [examples](https://github.com/isetbio/RemoteDataToolbox/tree/bshApi/examples) in the form of Matlab scripts.
 
 # Have Fun!
 Brian
