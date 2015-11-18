@@ -1,6 +1,6 @@
 %%% RemoteDataToolbox Copyright (c) 2015 The RemoteDataToolbox Team.
 %
-% Fetch an artifact from a Maven repository an read it into Matlab.
+% Fetch an artifact from a remote repository an read it into Matlab.
 %   @param groupId string id of the artifact's group (required)
 %   @param artifactId string id of the artifact itself (required)
 %   @param version string artifact version (defaults to latest)
@@ -8,11 +8,9 @@
 %   @param configuration optional RemoteDataToolbox configuration struct
 %
 % @details
-% Fetches an artifact from a Maven respository, caches it in the local file
-% system, and loads the artifact into a Matlab variable.  If @a
-% configuration is provided, fetches from the server at @a
-% configuration.repositoryUrl.  Otherwise, uses the configuration returned
-% from rdtConfiguration().
+% Fetches an artifact from a remote respository, caches it in the local
+% file system, and loads the artifact into a Matlab variable.  @a
+% configuration.repositoryUrl should point at the repository root.
 %
 % @details
 % Returns a Matlab variable containing the artifact data.  The class of the
@@ -25,23 +23,24 @@
 %
 % @details
 % Also returns a struct of metadata about the artifact, including its
-% groupId, artifactId, server url, and local file path.  See rdtArtifact().
+% remotePath, artifactId, server url, and local file path.  See
+% rdtArtifact().
 %
 % @details
 % If the fetch fails or the requested artifact doesn't exist, returns [].
 %
 % @details
 % Usage:
-%   [data, artifact] = rdtReadArtifact(groupId, artifactId, version, type, configuration)
+%   [data, artifact] = rdtReadArtifact(remotePath, artifactId, version, type, configuration)
 %
 % @ingroup artifacts
-function [data, artifact] = rdtReadArtifact(groupId, artifactId, version, type, configuration)
+function [data, artifact] = rdtReadArtifact(remotePath, artifactId, version, type, configuration)
 
 data = [];
 artifact = [];
 
-if nargin < 1 || isempty(groupId) || ~ischar(groupId)
-    error('rdtReadArtifact:missingGroupId', 'groupId must be a string');
+if nargin < 1 || isempty(remotePath) || ~ischar(remotePath)
+    error('rdtReadArtifact:missingRemotePath', 'remotePath must be a string');
 end
 
 if nargin < 2 || isempty(artifactId) || ~ischar(artifactId)
@@ -66,7 +65,7 @@ end
 localPath = gradleFetchArtifact(configuration.repositoryUrl, ...
     configuration.username, ...
     configuration.password, ...
-    groupId, ...
+    remotePath, ...
     artifactId, ...
     version, ...
     type, ...
@@ -77,9 +76,9 @@ if isempty(localPath)
 end
 
 %% Build an artifact struct for the fetched artifact.
-remoteUrl = [configuration.repositoryUrl '/' groupId '/' artifactId '/' version];
+remoteUrl = [configuration.repositoryUrl '/' remotePath '/' artifactId '/' version];
 artifact = rdtArtifact( ...
-    'groupId', groupId, ...
+    'remotePath', remotePath, ...
     'artifactId', artifactId, ...
     'version', version, ...
     'type', type, ...

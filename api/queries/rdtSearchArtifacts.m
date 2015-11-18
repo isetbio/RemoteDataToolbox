@@ -2,7 +2,7 @@
 %
 % Search an Archiva Maven repository with fuzzy matching of free text.
 %   @param searchText free text of search terms to match
-%   @param groupId optional groupId to restrict search
+%   @param remotePath optional remote path to restrict search
 %   @param artifactId optional artifactId to restrict search
 %   @param version optional artifact version to restrict search
 %   @param type optional artifact type to restrict search
@@ -10,13 +10,12 @@
 %
 % @details
 % Searches an Archiva Maven repository for artifacts matching the search
-% terms in the given @a searchText.  If @a configuration is provided,
-% queries the server at @a configuration.serverUrl.  Otherwise, uses the
-% configuration returned from rdtConfiguration().
+% terms in the given @a searchText.  @a configuration.serverUrl should
+% point to the Archiva server root.
 %
 % @details
 % By default, searches for any artifact that matches the given @a
-% searchText.  If @a groupId, @a artifactId, @a version, or @a type is
+% searchText.  If @a remotePath, @a artifactId, @a version, or @a type is
 % provided the search will be restricted to only those artifacts that match
 % the given restriction.
 %
@@ -26,10 +25,10 @@
 %
 % @details
 % Usage:
-%   artifacts = rdtSearchArtifacts(searchText, groupId, artifactId, version, type, configuration)
+%   artifacts = rdtSearchArtifacts(searchText, remotePath, artifactId, version, type, configuration)
 %
 % @ingroup queries
-function artifacts = rdtSearchArtifacts(searchText, groupId, artifactId, version, type, configuration)
+function artifacts = rdtSearchArtifacts(searchText, remotePath, artifactId, version, type, configuration)
 
 artifacts = [];
 
@@ -37,8 +36,8 @@ if nargin < 1 || isempty(searchText)
     searchText = '';
 end
 
-if nargin < 2 || isempty(groupId)
-    groupId = '';
+if nargin < 2 || isempty(remotePath)
+    remotePath = '';
 end
 
 if nargin < 3 || isempty(artifactId)
@@ -70,7 +69,9 @@ end
 nArtifacts = numel(response);
 artifactCell = cell(1, nArtifacts);
 for ii = 1:nArtifacts
-    artifactCell{ii} = rdtArtifact(response{ii});
+    r =response{ii};
+    r.remotePath = r.groupId;
+    artifactCell{ii} = rdtArtifact(r);
 end
 artifacts = [artifactCell{:}];
 
@@ -79,7 +80,7 @@ artifacts = [artifactCell{:}];
 % instead of transferring extra results and doing filtering here on the
 % client side.  But in testing, the Archiva searchArtifacts resource didn't
 % allow this.
-isMatch = isFieldMatch(artifacts, 'groupId', groupId) ...
+isMatch = isFieldMatch(artifacts, 'remotePath', remotePath) ...
     & isFieldMatch(artifacts, 'artifactId', artifactId) ...
     & isFieldMatch(artifacts, 'version', version) ...
     & isFieldMatch(artifacts, 'type', type);

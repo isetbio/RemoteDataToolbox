@@ -1,9 +1,9 @@
 classdef RdtPublishTests < matlab.unittest.TestCase
     % Test that we can publish artifacts with expected content to our
-    % own Maven server.  These tests attempt to connect to a public Archiva
-    % server called brainard-archiva, using expected test credentials and
-    % repository contents. If the expected server can't be found, skips
-    % these tests.
+    % own remote repository.  These tests attempt to connect to a public
+    % Archiva server called brainard-archiva, using expected test
+    % credentials and repository contents. If the expected server can't be
+    % found, skips these tests.
     
     properties (Access = private)
         testConfig = rdtConfiguration( ...

@@ -14,7 +14,7 @@ classdef RdtQueryTests < matlab.unittest.TestCase
             'password', 'test123', ...
             'requestMediaType', 'application/json', ...
             'acceptMediaType', 'application/json');
-        expectedGroupIds = {'test-group-1', 'test-group-2'};
+        expectedRemotePaths = {'test-group-1', 'test-group-2'};
         expectedArtifactIds = {'image-artifact', 'json-artifact', 'matlab-artifact', 'text-artifact'};
         expectedVersions = {'1', '2', '3', '4'};
         expectedTypes = {'jpg', 'json', 'mat', 'txt'};
@@ -39,19 +39,19 @@ classdef RdtQueryTests < matlab.unittest.TestCase
     
     methods (Test)
         
-        function testListGroups(testCase)
-            [groupIds, repositoryName] = rdtListGroups(testCase.testConfig);
-            testCase.assertTrue(any(strcmp(groupIds, testCase.expectedGroupIds{1})));
-            testCase.assertTrue(any(strcmp(groupIds, testCase.expectedGroupIds{2})));
+        function testListRemotePaths(testCase)
+            [remotePaths, repositoryName] = rdtListRemotePaths(testCase.testConfig);
+            testCase.assertTrue(any(strcmp(remotePaths, testCase.expectedRemotePaths{1})));
+            testCase.assertTrue(any(strcmp(remotePaths, testCase.expectedRemotePaths{2})));
             testCase.assertEqual(repositoryName, testCase.testConfig.repositoryName);
         end
         
         function testListArtifacts(testCase)
             artifacts = rdtListArtifacts('test-group-1', testCase.testConfig);
-            testCase.checkGroupArtifacts(artifacts, 'test-group-1');
+            testCase.checkPathArtifacts(artifacts, 'test-group-1');
             
             artifacts = rdtListArtifacts('test-group-2', testCase.testConfig);
-            testCase.checkGroupArtifacts(artifacts, 'test-group-2');
+            testCase.checkPathArtifacts(artifacts, 'test-group-2');
         end
         
         function testSearchEmptyTerms(testCase)
@@ -70,9 +70,9 @@ classdef RdtQueryTests < matlab.unittest.TestCase
             testCase.assertNumElements(artifacts, 8);
         end
         
-        function testSearchRestrictGroupId(testCase)
+        function testSearchRestrictRemotePath(testCase)
             artifacts = rdtSearchArtifacts('test', 'test-group-1', '', '', '', testCase.testConfig);
-            testCase.checkGroupArtifacts(artifacts, 'test-group-1');
+            testCase.checkPathArtifacts(artifacts, 'test-group-1');
         end
         
         function testSearchRestrictArtifactId(testCase)
@@ -107,7 +107,7 @@ classdef RdtQueryTests < matlab.unittest.TestCase
             testCase.assertInstanceOf(artifacts, 'struct');
             testCase.assertNumElements(artifacts, 1);
             
-            testCase.assertEqual(artifacts.groupId, 'test-group-1');
+            testCase.assertEqual(artifacts.remotePath, 'test-group-1');
             testCase.assertEqual(artifacts.artifactId, 'image-artifact');
             testCase.assertEqual(artifacts.version, '1');
             testCase.assertEqual(artifacts.type, 'jpg');
@@ -121,13 +121,13 @@ classdef RdtQueryTests < matlab.unittest.TestCase
     end
     
     methods (Access=private)
-        function checkGroupArtifacts(testCase, artifacts, groupId)
+        function checkPathArtifacts(testCase, artifacts, remotePath)
             testCase.assertNotEmpty(artifacts);
             testCase.assertInstanceOf(artifacts, 'struct');
             testCase.assertNumElements(artifacts, 4);
             
-            groupIds = sort({artifacts.groupId});
-            testCase.assertEqual(groupIds, {groupId, groupId, groupId, groupId});
+            remotePaths = sort({artifacts.remotePath});
+            testCase.assertEqual(remotePaths, {remotePath, remotePath, remotePath, remotePath});
             
             artifactIds = sort({artifacts.artifactId});
             testCase.assertEqual(artifactIds, testCase.expectedArtifactIds);

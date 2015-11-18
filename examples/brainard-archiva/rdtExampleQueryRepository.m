@@ -4,8 +4,8 @@
 %
 % This script shows how you might query a project's Archiva server to find
 % out things like:
-%   - What groups of artifacts are available?
-%   - What artifacts are in each gruop?
+%   - What remote paths to artifacts are available?
+%   - What artifacts are located under each remote path?
 %   - What artifacts match a search term?
 %
 % This script uses a JSON file to configure the Remote Data Toolbox with
@@ -24,20 +24,20 @@
 clear;
 clc;
 
-%% What groups are available?  These are like repository folders.
-[groupIds, repositoryName] = rdtListGroups('brainard-archiva');
-nGroups = numel(groupIds);
+%% What remote paths are available?
+[remotePaths, repositoryName] = rdtListRemotePaths('brainard-archiva');
+nPaths = numel(remotePaths);
 
-fprintf('There are %d groups in the repository "%s":\n', nGroups, repositoryName);
-disp(groupIds)
+fprintf('There are %d remote paths in the repository "%s":\n', nPaths, repositoryName);
+disp(remotePaths)
 
-%% What artifacts are available in each group?
-for ii = 1:nGroups
-    groupId = groupIds{ii};
-    artifacts = rdtListArtifacts(groupId, 'brainard-archiva');
+%% What artifacts are available under each remote path?
+for ii = 1:nPaths
+    remotePath = remotePaths{ii};
+    artifacts = rdtListArtifacts(remotePath, 'brainard-archiva');
     nArtifacts = numel(artifacts);
     
-    fprintf('Group "%s" contains %d artifacts:\n', groupId, nArtifacts);
+    fprintf('Remote path "%s" contains %d artifacts:\n', remotePath, nArtifacts);
     for jj = 1:nArtifacts
         disp(artifacts(jj));
     end

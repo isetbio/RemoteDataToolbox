@@ -34,22 +34,22 @@ password = 'test123';
 
 pathHere = fileparts(mfilename('fullpath'));
 
-groupId = 'test-group-1';
+remotePath = 'test-group-1';
 gradlePublishArtifact(repository, username, password, ...
-    groupId, 'image-artifact', '1', fullfile(pathHere, 'image-artifact.jpg'));
+    remotePath, 'image-artifact', '1', fullfile(pathHere, 'image-artifact.jpg'));
 gradlePublishArtifact(repository, username, password, ...
-    groupId, 'json-artifact', '2', fullfile(pathHere, 'json-artifact.json'));
+    remotePath, 'json-artifact', '2', fullfile(pathHere, 'json-artifact.json'));
 gradlePublishArtifact(repository, username, password, ...
-    groupId, 'matlab-artifact', '3', fullfile(pathHere, 'matlab-artifact.mat'));
+    remotePath, 'matlab-artifact', '3', fullfile(pathHere, 'matlab-artifact.mat'));
 gradlePublishArtifact(repository, username, password, ...
-    groupId, 'text-artifact', '4', fullfile(pathHere, 'text-artifact.txt'));
+    remotePath, 'text-artifact', '4', fullfile(pathHere, 'text-artifact.txt'));
 
-groupId = 'test-group-2';
+remotePath = 'test-group-2';
 gradlePublishArtifact(repository, username, password, ...
-    groupId, 'image-artifact', '1', fullfile(pathHere, 'image-artifact.jpg'));
+    remotePath, 'image-artifact', '1', fullfile(pathHere, 'image-artifact.jpg'));
 gradlePublishArtifact(repository, username, password, ...
-    groupId, 'json-artifact', '2', fullfile(pathHere, 'json-artifact.json'));
+    remotePath, 'json-artifact', '2', fullfile(pathHere, 'json-artifact.json'));
 gradlePublishArtifact(repository, username, password, ...
-    groupId, 'matlab-artifact', '3', fullfile(pathHere, 'matlab-artifact.mat'));
+    remotePath, 'matlab-artifact', '3', fullfile(pathHere, 'matlab-artifact.mat'));
 gradlePublishArtifact(repository, username, password, ...
-    groupId, 'text-artifact', '4', fullfile(pathHere, 'text-artifact.txt'));
+    remotePath, 'text-artifact', '4', fullfile(pathHere, 'text-artifact.txt'));

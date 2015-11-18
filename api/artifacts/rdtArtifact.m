@@ -1,13 +1,13 @@
 %%% RemoteDataToolbox Copyright (c) 2015 The RemoteDataToolbox Team.
 %
-% Initialize a struct representation of a Maven artifact.
-%   @param varargin struct or name-value pairs of maven Artifact metadata
+% Initialize a struct representation of a remote artifact.
+%   @param varargin struct or name-value pairs of artifact metadata
 %
 % @details
-% Returns a struct of metadata about a Maven artifact, with required fields
-% defined, such as @b groupId, @b artifactId, and @b version.  The given
-% @a varargin may be a struct or a list of name-value pairs to replace
-% fill in the required fields.
+% Returns a struct of metadata about a remote artifact, with required
+% fields defined, such as @b remotePath, @b artifactId, and @b version.
+% The given @a varargin may be a struct or a list of name-value pairs to
+% replace fill in the required fields.
 %
 % @details
 % Usage:
@@ -34,7 +34,7 @@ artifact = struct( ...
     'url', '', ...
     'localPath', '', ...
     'repositoryId', '', ...
-    'groupId', '', ...
+    'remotePath', '', ...
     'artifactId', '', ...
     'version', '', ...
     'type', '');

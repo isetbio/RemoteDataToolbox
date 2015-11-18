@@ -3,10 +3,11 @@
 % This is a tutorial for working with the Remote Data Toolbox.
 %
 % This script shows how you might generate some data as part of a project
-% and publish that data as an artifact to the project's Maven repository.
+% and publish that data as an artifact to the project's remote data
+% repository.
 %
 % This script uses a JSON file to configure the Remote Data Toolbox with
-% things like the Url of the project's Maven repository.  This simplifies
+% things like the Url of the project's remote repository.  This simplifies
 % various calls to the Remote Data Toolbox functions.
 %
 % You probably don't want to store your project's repository credentials in
@@ -49,8 +50,8 @@ configuration = rdtCredentialsDialog('brainard-archiva');
 
 %% Publish the image as an artifact.
 
-% each artifact must belong to a group, which is like a folder
-groupId = 'project-demo';
+% each artifact is located at a remote path
+remotePath = 'project-demo';
 
 % each artifact must have an artifactId, which is like a file name
 artifactId = 'demo-image';
@@ -60,7 +61,7 @@ version = '42';
 
 % supply the configuration, which now contains publishing credentials
 artifact = rdtPublishArtifact(imageFile, ...
-    groupId, ...
+    remotePath, ...
     artifactId, ...
     version, ...
     configuration);

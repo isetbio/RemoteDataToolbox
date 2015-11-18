@@ -4,10 +4,10 @@
 %
 % This script shows how you might access some shared data which is part of
 % a project.  The shared data would have been published already to the
-% project's Maven repository.
+% project's remote repository.
 %
 % This script uses a JSON file to configure the Remote Data Toolbox with
-% things like the Url of the project's Maven repository.  This simplifies
+% things like the Url of the project's remote repository.  This simplifies
 % various calls to the Remote Data Toolbox functions.
 %
 % This script does not require you to enter repository credentials because

@@ -1,32 +1,30 @@
 %%% RemoteDataToolbox Copyright (c) 2015 The RemoteDataToolbox Team.
 %
-% Publish an artifact to a Maven repository.
+% Publish an artifact to a remote repository.
 %   @param file local name or path to the file to publish as an artifact
-%   @param groupId string id of the artifact's group (required)
+%   @param remotePath string remote path to the artifact (required)
 %   @param artifactId string id of the artifact itself (defaults to file name)
 %   @param version string artifact version (defaults to '1')
 %   @param configuration optional RemoteDataToolbox configuration struct
 %
 % @details
-% Publishes the given @a file as artifact to a Maven respository.  If @a
-% configuration is provided, publishes to the server at @a
-% configuration.repositoryUrl.  Otherwise, uses the configuration returned
-% from rdtConfiguration().
+% Publishes the given @a file as an artifact to a remote respository.  @a
+% configuration.repositoryUrl should point to the repository root.
 %
 % @details
 % Returns a struct of metadata about the published artifact, including its
-% groupId, artifactId, server url, and local file path within the artifact
-% cache.  See rdtArtifact().
+% remotePath, artifactId, server url, and local file path within the
+% artifact cache.  See rdtArtifact().
 %
 % @details
 % If the publication fails, returns [].
 %
 % @details
 % Usage:
-%   artifact = rdtPublishArtifact(file, groupId, artifactId, version, configuration)
+%   artifact = rdtPublishArtifact(file, remotePath, artifactId, version, configuration)
 %
 % @ingroup artifacts
-function artifact = rdtPublishArtifact(file, groupId, artifactId, version, configuration)
+function artifact = rdtPublishArtifact(file, remotePath, artifactId, version, configuration)
 
 artifact = [];
 
@@ -48,7 +46,7 @@ end
 [localPath, type] = gradlePublishArtifact(configuration.repositoryUrl, ...
     configuration.username, ...
     configuration.password, ...
-    groupId, ...
+    remotePath, ...
     artifactId, ...
     version, ...
     file, ...
@@ -59,9 +57,9 @@ if isempty(localPath)
 end
 
 %% Build an artifact struct for the fetched artifact.
-remoteUrl = [configuration.repositoryUrl '/' groupId '/' artifactId '/' version];
+remoteUrl = [configuration.repositoryUrl '/' remotePath '/' artifactId '/' version];
 artifact = rdtArtifact( ...
-    'groupId', groupId, ...
+    'remotePath', remotePath, ...
     'artifactId', artifactId, ...
     'version', version, ...
     'type', type, ...

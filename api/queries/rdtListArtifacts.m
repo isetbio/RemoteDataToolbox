@@ -1,25 +1,25 @@
 %%% RemoteDataToolbox Copyright (c) 2015 The RemoteDataToolbox Team.
 %
-% Query an Archiva Maven repository to list all artifact in a group.
-%   @param groupId string id of the group from which to list artifacts
+% Query an Archiva Maven repository for artifacts under a remote path.
+%   @param remotePath string remote path under which to list artifacts
 %   @param configuration optional RemoteDataToolbox configuration struct
 %
 % @details
-% Requests a list of all artifacts from the given groupId, from an Archiva
-% Maven repository.  If @a configuration is provided, queries the server at
-% @a configuration.serverUrl.  Otherwise, uses the configuration returned
-% from rdtConfiguration().
+% Requests a list of all artifacts under the given @a remotePath, from an
+% Archiva Maven repository.  @a configuration.serverUrl should point to the
+% Archiva server root.  @a configuration.repositoryName shold contain the
+% name of a on the same server.
 %
 % @details
-% Returns a struct array describing artifacts in the given @a groupId, or
-% else [] if the query failed.
+% Returns a struct array describing artifacts under the given @a
+% remotePath, or else [] if the query failed.
 %
 % @details
 % Usage:
-%   artifacts = rdtListArtifacts(groupId, configuration)
+%   artifacts = rdtListArtifacts(remotePath, configuration)
 %
 % @ingroup queries
-function artifacts = rdtListArtifacts(groupId, configuration)
+function artifacts = rdtListArtifacts(remotePath, configuration)
 
 artifacts = [];
 
@@ -34,7 +34,7 @@ resourcePath = '/restServices/archivaServices/searchService/searchArtifacts';
 
 % hack: repeat repositoryName forces JSON array, not scalar string
 searchRequest.repositories = {configuration.repositoryName, configuration.repositoryName};
-searchRequest.groupId = groupId;
+searchRequest.groupId = remotePath;
 
 response = rdtRequestWeb(resourcePath, [], searchRequest, configuration);
 if isempty(response)
@@ -44,6 +44,8 @@ end
 nArtifacts = numel(response);
 artifactCell = cell(1, nArtifacts);
 for ii = 1:nArtifacts
-    artifactCell{ii} = rdtArtifact(response{ii});
+    r = response{ii};
+    r.remotePath = r.groupId;
+    artifactCell{ii} = rdtArtifact(r);
 end
 artifacts = [artifactCell{:}];

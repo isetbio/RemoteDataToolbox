@@ -1,22 +1,21 @@
 %%% RemoteDataToolbox Copyright (c) 2015 The RemoteDataToolbox Team.
 %
-% Publish multiple artifacts to a Maven repository group.
+% Publish multiple artifacts to a remote repository path.
 %   @param folder local path to a folder containing artifacts to publish
-%   @param groupId string groupId for all artifacts (defaults to folder name)
+%   @param remotePath string remote path for all artifacts (defaults to folder name)
 %   @param version string artifact version for all artifacts (defaults to '1')
 %   @param type optional file exension to filter files in the @a folder
 %   @param configuration optional RemoteDataToolbox configuration struct
 %
 % @details
 % Publishes each of the files in the given @a folder as an artifact to a
-% Maven respository.  If @a configuration is provided, publishes to the
-% server at @a configuration.repositoryUrl.  Otherwise, uses the
-% configuration returned from rdtConfiguration().
+% remote respository.  @a configuration.repositoryUrl should point to the
+% repository root.
 %
 % @details
-% Each published artifact will use the same @a groupId and @a version.  The
-% artifactId of each artifact will be the same as the file base name.  The
-% type of each artifact will be the same as the file extension.
+% Each published artifact will use the same @a remotePath and @a version.
+% The artifactId of each artifact will be the same as the file base name.
+% The type of each artifact will be the same as the file extension.
 %
 % @details
 % By default, attempts to publish all of the files in the given @a folder.
@@ -34,10 +33,10 @@
 %
 % @details
 % Usage:
-%   artifacts = rdtPublishArtifacts(folder, groupId, version, type, configuration)
+%   artifacts = rdtPublishArtifacts(folder, remotePath, version, type, configuration)
 %
 % @ingroup artifacts
-function artifacts = rdtPublishArtifacts(folder, groupId, version, type, configuration)
+function artifacts = rdtPublishArtifacts(folder, remotePath, version, type, configuration)
 
 artifacts = [];
 
@@ -88,7 +87,7 @@ for ii = 1:nArtifacts
     file = fullfile(folder, chosenListing(ii).name);
     [filePath, artifactId] = fileparts(file);
     artifactCell{ii} = rdtPublishArtifact(file, ...
-        groupId, ...
+        remotePath, ...
         artifactId, ...
         version, ...
         configuration);

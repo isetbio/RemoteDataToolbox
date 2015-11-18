@@ -1,15 +1,13 @@
 %%% RemoteDataToolbox Copyright (c) 2015 The RemoteDataToolbox Team.
 %
-% Fetch multiple artifacts from a Maven repository an read them into Matlab.
+% Fetch multiple artifacts from a remote repository an read them into Matlab.
 %   @param artifacts struct array of artifact metadata
 %   @param configuration optional RemoteDataToolbox configuration struct
 %
 % @details
-% Fetches multiple artifacts from a Maven respository, caches each in the
-% local file system, and loads each into a Matlab variable.  If @a
-% configuration is provided, queries the server at @a
-% configuration.repositoryUrl.  Otherwise, uses the configuration returned
-% from rdtConfiguration().
+% Fetches multiple artifacts from a remote respository, caches each in the
+% local file system, and loads each into a Matlab variable.  @a
+% configuration.repositoryUrl should point to the repository root.
 %
 % @details
 % @a artifacts must be a struct array of artifact metadata, with one
@@ -26,7 +24,7 @@
 %
 % @details
 % Usage:
-%   artifacts = rdtListGroups(configuration)
+%   [datas, artifacts] = rdtReadArtifacts(artifacts, configuration)
 %
 % @ingroup artifacts
 function [datas, artifacts] = rdtReadArtifacts(artifacts, configuration)
@@ -45,7 +43,7 @@ nArtifacts = numel(artifacts);
 datas = cell(1, nArtifacts);
 for ii = 1:nArtifacts
     artifact = artifacts(ii);
-    [datas{ii}, artifacts(ii)] = rdtReadArtifact(artifact.groupId, ...
+    [datas{ii}, artifacts(ii)] = rdtReadArtifact(artifact.remotePath, ...
         artifact.artifactId, ...
         artifact.version, ...
         artifact.type, ...

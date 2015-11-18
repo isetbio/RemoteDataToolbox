@@ -1,27 +1,25 @@
 %%% RemoteDataToolbox Copyright (c) 2015 The RemoteDataToolbox Team.
 %
-% Query an Archiva Maven repository to list all artifact groups.
-%   @param configuration optional RemoteDataToolbox configuration struct
+% Query an Archiva Maven repository to list available paths to artifacts.
+%   @param configuration RemoteDataToolbox configuration info
 %
 % @details
-% Requests a list of all artifact groups from an Archiva Maven repository.
-% If @a configuration is provided, queries the server at @a
-% configuration.serverUrl.  Otherwise, uses the configuration returned
-% from rdtConfiguration().
+% Requests a list of paths to artifacts on an Archiva Maven repository.
+% @a configuration.serverUrl should point to the Archiva server root.
 %
 % @details
-% Returns a cell array string groupIds returned from the Archiva
+% Returns a cell array string paths returned from the Archiva
 % respository, or {} if the query failed.  Also returns the name of the
-% repository whose groups are listed.
+% repository whose paths are listed.
 %
 % @details
 % Usage:
-%   [groupIds, repositoryName] = rdtListGroups(configuration)
+%   [remotePaths, repositoryName] = rdtListRemotePaths(configuration)
 %
 % @ingroup queries
-function [groupIds, repositoryName] = rdtListGroups(configuration)
+function [remotePaths, repositoryName] = rdtListRemotePaths(configuration)
 
-groupIds = {};
+remotePaths = {};
 
 if nargin < 1 || isempty(configuration)
     configuration = rdtConfiguration();
@@ -37,4 +35,4 @@ response = rdtRequestWeb(resourcePath, params, [], configuration);
 if isempty(response) || ~isfield(response, 'groupIds')
     return;
 end
-groupIds = response.groupIds;
+remotePaths = response.groupIds;

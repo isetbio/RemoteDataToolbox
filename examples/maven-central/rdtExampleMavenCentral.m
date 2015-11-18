@@ -27,11 +27,11 @@ rdtOpenBrowser(configuration);
 %% Read an arbitrary artifact.
 
 % arbitrary artifact from the Jython project
-groupId = 'jython';
+remotePath = 'jython';
 artifactId = 'jython';
 version = '2.1';
 type = 'pom';
-[data, artifact] = rdtReadArtifact(groupId, artifactId, version, type, configuration);
+[data, artifact] = rdtReadArtifact(remotePath, artifactId, version, type, configuration);
 
 % we got a bit of xml metadata
 disp('Got an artifact:');
