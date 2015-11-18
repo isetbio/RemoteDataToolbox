@@ -14,4 +14,9 @@
 % @ingroup utilities
 function data = rdtFromJson(jsonString)
 
+parser = rdtInputParser();
+parser.addRequired('jsonString', @ischar);
+parser.parse(jsonString);
+jsonString = parser.Results.jsonString;
+
 data = loadjson(jsonString);

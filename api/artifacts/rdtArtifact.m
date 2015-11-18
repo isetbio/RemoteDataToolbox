@@ -7,7 +7,7 @@
 % Returns a struct of metadata about a remote artifact, with required
 % fields defined, such as @b remotePath, @b artifactId, and @b version.
 % The given @a varargin may be a struct or a list of name-value pairs to
-% replace fill in the required fields.
+% fill in the required fields.
 %
 % @details
 % Usage:
@@ -16,27 +16,16 @@
 % @ingroup utilities
 function artifact = rdtArtifact(varargin)
 
-%% What did the user pass in?
-artifactArgs = struct();
-if 1 == nargin
-    % passed in name-value paris
-    argin = varargin{1};
-    if isstruct(argin)
-        artifactArgs = argin;
-    end
-elseif 1 < nargin && 0 == mod(nargin, 2)
-    % passed in name-value paris
-    artifactArgs = struct(varargin{:});
-end
+parser = rdtInputParser();
+parser.StructExpand = true;
+parser.addParameter('url', '');
+parser.addParameter('localPath', '');
+parser.addParameter('repositoryId', '');
+parser.addParameter('remotePath', '');
+parser.addParameter('artifactId', '');
+parser.addParameter('version', '');
+parser.addParameter('type', '');
 
-%% Source of truth for artifact metadata expected fields.
-artifact = struct( ...
-    'url', '', ...
-    'localPath', '', ...
-    'repositoryId', '', ...
-    'remotePath', '', ...
-    'artifactId', '', ...
-    'version', '', ...
-    'type', '');
-
-artifact = rdtMergeStructs(artifact, artifactArgs, false);
+%% Parse the input through the input scheme.
+parser.parse(varargin{:});
+artifact = parser.Results;

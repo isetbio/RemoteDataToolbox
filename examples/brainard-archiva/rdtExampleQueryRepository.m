@@ -34,7 +34,7 @@ disp(remotePaths)
 %% What artifacts are available under each remote path?
 for ii = 1:nPaths
     remotePath = remotePaths{ii};
-    artifacts = rdtListArtifacts(remotePath, 'brainard-archiva');
+    artifacts = rdtListArtifacts('brainard-archiva', remotePath);
     nArtifacts = numel(artifacts);
     
     fprintf('Remote path "%s" contains %d artifacts:\n', remotePath, nArtifacts);
@@ -47,7 +47,7 @@ end
 
 % should see the same artifact as in rdtExamplePublishData.m
 
-demoArtifacts = rdtSearchArtifacts('demo', '', '', '', '', 'brainard-archiva');
+demoArtifacts = rdtSearchArtifacts('brainard-archiva', 'demo');
 nArtifacts = numel(demoArtifacts);
 fprintf('%d artifacts match the term "demo":\n', nArtifacts);
 for jj = 1:nArtifacts
@@ -55,7 +55,7 @@ for jj = 1:nArtifacts
 end
 
 %% Which artifacts match the term "test"?
-testArtifacts = rdtSearchArtifacts('test', '', '', '', '', 'brainard-archiva');
+testArtifacts = rdtSearchArtifacts('brainard-archiva', 'test');
 nArtifacts = numel(testArtifacts);
 fprintf('%d artifacts match the term "test":\n', nArtifacts);
 for jj = 1:nArtifacts
@@ -63,7 +63,7 @@ for jj = 1:nArtifacts
 end
 
 %% Which *text* artifacts match the term "test"?
-testTxtArtifacts = rdtSearchArtifacts('test', '', '', '', 'txt', 'brainard-archiva');
+testTxtArtifacts = rdtSearchArtifacts('brainard-archiva', 'test', 'type', 'txt');
 nArtifacts = numel(testTxtArtifacts);
 fprintf('%d artifacts of type "txt" match the term "test":\n', nArtifacts);
 for jj = 1:nArtifacts
@@ -71,7 +71,7 @@ for jj = 1:nArtifacts
 end
 
 %% Which *version 2* artifacts match the term "test"?
-testV2Artifacts = rdtSearchArtifacts('test', '', '', '2', '', 'brainard-archiva');
+testV2Artifacts = rdtSearchArtifacts('brainard-archiva', 'test', 'version', '2');
 nArtifacts = numel(testV2Artifacts);
 fprintf('%d artifacts at version 2 match the term "test":\n', nArtifacts);
 for jj = 1:nArtifacts

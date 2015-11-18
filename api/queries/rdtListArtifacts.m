@@ -1,8 +1,8 @@
 %%% RemoteDataToolbox Copyright (c) 2015 The RemoteDataToolbox Team.
 %
 % Query an Archiva Maven repository for artifacts under a remote path.
+%   @param configuration RemoteDataToolbox configuration info
 %   @param remotePath string remote path under which to list artifacts
-%   @param configuration optional RemoteDataToolbox configuration struct
 %
 % @details
 % Requests a list of all artifacts under the given @a remotePath, from an
@@ -16,18 +16,19 @@
 %
 % @details
 % Usage:
-%   artifacts = rdtListArtifacts(remotePath, configuration)
+%   artifacts = rdtListArtifacts(configuration, remotePath)
 %
 % @ingroup queries
-function artifacts = rdtListArtifacts(remotePath, configuration)
+function artifacts = rdtListArtifacts(configuration, remotePath)
+
+parser = rdtInputParser();
+parser.addRequired('configuration');
+parser.addRequired('remotePath', @ischar);
+parser.parse(configuration, remotePath);
+configuration = rdtConfiguration(parser.Results.configuration);
+remotePath = parser.Results.remotePath;
 
 artifacts = [];
-
-if nargin < 2 || isempty(configuration)
-    configuration = rdtConfiguration();
-else
-    configuration = rdtConfiguration(configuration);
-end
 
 %% Query the Archiva server.
 resourcePath = '/restServices/archivaServices/searchService/searchArtifacts';
@@ -36,7 +37,7 @@ resourcePath = '/restServices/archivaServices/searchService/searchArtifacts';
 searchRequest.repositories = {configuration.repositoryName, configuration.repositoryName};
 searchRequest.groupId = remotePath;
 
-response = rdtRequestWeb(resourcePath, [], searchRequest, configuration);
+response = rdtRequestWeb(configuration, resourcePath, 'requestBody', searchRequest);
 if isempty(response)
     return;
 end

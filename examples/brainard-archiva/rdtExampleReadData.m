@@ -25,7 +25,9 @@ clc;
 %% Fetch an image from the repository.
 
 % this is a one-liner because repository config is in rdt-config-brainard-archiva.json.
-[data, artifact] = rdtReadArtifact('project-demo', 'demo-image', '42', 'png', 'brainard-archiva');
+[data, artifact] = rdtReadArtifact('brainard-archiva', 'project-demo', 'demo-image', ...
+    'version', '42', ...
+    'type', 'png');
 
 %% See metadata about the artifact we just fetched.
 disp(artifact)

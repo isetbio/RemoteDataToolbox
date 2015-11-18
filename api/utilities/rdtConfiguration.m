@@ -54,12 +54,8 @@ else
 end
 
 %% Declare expected args and default values.
-parser = inputParser();
-parser.CaseSensitive = true;
-parser.KeepUnmatched = true;
-parser.PartialMatching = false;
+parser = rdtInputParser();
 parser.StructExpand = true;
-
 parser.addParameter('serverUrl', '');
 parser.addParameter('repositoryUrl', '');
 parser.addParameter('repositoryName', '');

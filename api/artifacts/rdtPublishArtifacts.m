@@ -1,11 +1,11 @@
 %%% RemoteDataToolbox Copyright (c) 2015 The RemoteDataToolbox Team.
 %
 % Publish multiple artifacts to a remote repository path.
+%   @param configuration RemoteDataToolbox configuration info
 %   @param folder local path to a folder containing artifacts to publish
-%   @param remotePath string remote path for all artifacts (defaults to folder name)
+%   @param remotePath string remote path for all artifacts
 %   @param version string artifact version for all artifacts (defaults to '1')
 %   @param type optional file exension to filter files in the @a folder
-%   @param configuration optional RemoteDataToolbox configuration struct
 %
 % @details
 % Publishes each of the files in the given @a folder as an artifact to a
@@ -33,26 +33,25 @@
 %
 % @details
 % Usage:
-%   artifacts = rdtPublishArtifacts(folder, remotePath, version, type, configuration)
+%   artifacts = rdtPublishArtifacts(configuration, folder, remotePath, version, type)
 %
 % @ingroup artifacts
-function artifacts = rdtPublishArtifacts(folder, remotePath, version, type, configuration)
+function artifacts = rdtPublishArtifacts(configuration, folder, remotePath, varargin)
+
+parser = rdtInputParser();
+parser.addRequired('configuration');
+parser.addRequired('folder', @ischar);
+parser.addRequired('remotePath', @ischar);
+parser.addParameter('version', '1', @ischar);
+parser.addParameter('type', '', @ischar);
+parser.parse(configuration, folder, remotePath, varargin{:});
+configuration = rdtConfiguration(parser.Results.configuration);
+folder = parser.Results.folder;
+remotePath = parser.Results.remotePath;
+version = parser.Results.version;
+type = parser.Results.type;
 
 artifacts = [];
-
-if nargin < 3 || isempty(version)
-    version = '1';
-end
-
-if nargin < 4 || isempty(type)
-    type = '';
-end
-
-if nargin < 5 || isempty(configuration)
-    configuration = rdtConfiguration();
-else
-    configuration = rdtConfiguration(configuration);
-end
 
 %% Choose artifacts to publish.
 folderListing = dir(folder);
@@ -86,11 +85,11 @@ artifactCell = cell(1, nArtifacts);
 for ii = 1:nArtifacts
     file = fullfile(folder, chosenListing(ii).name);
     [filePath, artifactId] = fileparts(file);
-    artifactCell{ii} = rdtPublishArtifact(file, ...
+    artifactCell{ii} = rdtPublishArtifact(configuration, ...
+        file, ...
         remotePath, ...
-        artifactId, ...
-        version, ...
-        configuration);
+        'artifactId', artifactId, ...
+        'version', version);
 end
 
 artifacts = [artifactCell{:}];

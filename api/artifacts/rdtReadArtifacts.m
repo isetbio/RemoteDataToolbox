@@ -1,8 +1,8 @@
 %%% RemoteDataToolbox Copyright (c) 2015 The RemoteDataToolbox Team.
 %
 % Fetch multiple artifacts from a remote repository an read them into Matlab.
+%   @param configuration RemoteDataToolbox configuration info
 %   @param artifacts struct array of artifact metadata
-%   @param configuration optional RemoteDataToolbox configuration struct
 %
 % @details
 % Fetches multiple artifacts from a remote respository, caches each in the
@@ -24,16 +24,17 @@
 %
 % @details
 % Usage:
-%   [datas, artifacts] = rdtReadArtifacts(artifacts, configuration)
+%   [datas, artifacts] = rdtReadArtifacts(configuration, artifacts)
 %
 % @ingroup artifacts
-function [datas, artifacts] = rdtReadArtifacts(artifacts, configuration)
+function [datas, artifacts] = rdtReadArtifacts(configuration, artifacts)
 
-if nargin < 2 || isempty(configuration)
-    configuration = rdtConfiguration();
-else
-    configuration = rdtConfiguration(configuration);
-end
+parser = rdtInputParser();
+parser.addRequired('configuration');
+parser.addRequired('artifacts', @isstruct);
+parser.parse(configuration, artifacts);
+configuration = rdtConfiguration(parser.Results.configuration);
+artifacts = parser.Results.artifacts;
 
 % TODO: optimize the multiple-artifact fetch by including all artifacts in
 % a single invocation of Gradle.  This should remove significant overhead
@@ -43,9 +44,9 @@ nArtifacts = numel(artifacts);
 datas = cell(1, nArtifacts);
 for ii = 1:nArtifacts
     artifact = artifacts(ii);
-    [datas{ii}, artifacts(ii)] = rdtReadArtifact(artifact.remotePath, ...
+    [datas{ii}, artifacts(ii)] = rdtReadArtifact(configuration, ...
+        artifact.remotePath, ...
         artifact.artifactId, ...
-        artifact.version, ...
-        artifact.type, ...
-        configuration);
+        'version', artifact.version, ...
+        'type', artifact.type);
 end

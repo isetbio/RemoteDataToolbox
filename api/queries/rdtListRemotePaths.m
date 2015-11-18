@@ -19,19 +19,15 @@
 % @ingroup queries
 function [remotePaths, repositoryName] = rdtListRemotePaths(configuration)
 
-remotePaths = {};
+configuration = rdtConfiguration(configuration);
 
-if nargin < 1 || isempty(configuration)
-    configuration = rdtConfiguration();
-else
-    configuration = rdtConfiguration(configuration);
-end
+remotePaths = {};
 
 %% Query the Archiva server.
 resourcePath = '/restServices/archivaServices/searchService/getAllGroupIds';
 repositoryName = configuration.repositoryName;
 params.selectedRepos = repositoryName;
-response = rdtRequestWeb(resourcePath, params, [], configuration);
+response = rdtRequestWeb(configuration, resourcePath, 'queryParams', params);
 if isempty(response) || ~isfield(response, 'groupIds')
     return;
 end

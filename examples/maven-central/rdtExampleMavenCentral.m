@@ -31,7 +31,9 @@ remotePath = 'jython';
 artifactId = 'jython';
 version = '2.1';
 type = 'pom';
-[data, artifact] = rdtReadArtifact(remotePath, artifactId, version, type, configuration);
+[data, artifact] = rdtReadArtifact(configuration, remotePath, artifactId, ...
+    'version', version, ...
+    'type', type);
 
 % we got a bit of xml metadata
 disp('Got an artifact:');

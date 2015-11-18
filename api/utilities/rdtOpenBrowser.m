@@ -1,7 +1,7 @@
 %%% RemoteDataToolbox Copyright (c) 2015 The RemoteDataToolbox Team.
 %
 % Open a repository url in a web browser.
-%   @param configOrArtifact RemoteDataToolbox config. or artifact struct
+%   @param configOrArtifact RemoteDataToolbox config or artifact struct
 %   @param whichUrl optional field name to open as a url
 %
 % @details
@@ -15,10 +15,6 @@
 % of the default.
 %
 % @details
-% If @configOrArtifact is omitted, uses the default confuguration struct
-% returned from rdtConfiguration().
-%
-% @details
 % Returns the url that was passed to the web browser for browsing.
 %
 % @details
@@ -26,19 +22,17 @@
 %   url = rdtOpenBrowser(configOrArtifact, whichUrl)
 %
 % @ingroup utilities
-function url = rdtOpenBrowser(configOrArtifact, whichUrl)
+function url = rdtOpenBrowser(configOrArtifact, varargin)
 
-if nargin < 1 || isempty(configOrArtifact)
-    configOrArtifact = rdtConfiguration();
-else
-    configOrArtifact = rdtConfiguration(configOrArtifact);
-end
-
-if nargin < 2 || isempty(whichUrl)
-    whichUrl = '';
-end
+parser = rdtInputParser();
+parser.addRequired('configOrArtifact', @isstruct);
+parser.addOptional('whichUrl', '', @ischar);
+parser.parse(configOrArtifact, varargin{:});
+configOrArtifact = rdtConfiguration(parser.Results.configOrArtifact);
+whichUrl = parser.Results.whichUrl;
 
 url = '';
+
 if ~isempty(whichUrl) && isfield(configOrArtifact, whichUrl)
     % custom field as url
     url = configOrArtifact.(whichUrl);

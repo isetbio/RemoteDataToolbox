@@ -18,17 +18,14 @@
 % @ingroup utilities
 function target = rdtMergeStructs(target, source, allowNewFields)
 
-if nargin < 1 || ~isstruct(target)
-    return;
-end
-
-if nargin < 2 || ~isstruct(source)
-    return;
-end
-
-if nargin < 3 || isempty(allowNewFields)
-    allowNewFields = true;
-end
+parser = rdtInputParser();
+parser.addRequired('target', @isstruct);
+parser.addRequired('source', @isstruct);
+parser.addOptional('allowNewFields', true);
+parser.parse(target, source, allowNewFields);
+target = parser.Results.target;
+source = parser.Results.source;
+allowNewFields = parser.Results.allowNewFields;
 
 fields = fieldnames(source);
 for ii = 1:numel(fields)

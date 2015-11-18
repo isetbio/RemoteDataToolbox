@@ -1,12 +1,12 @@
 %%% RemoteDataToolbox Copyright (c) 2015 The RemoteDataToolbox Team.
 %
 % Search an Archiva Maven repository with fuzzy matching of free text.
+%   @param configuration RemoteDataToolbox configuration info
 %   @param searchText free text of search terms to match
 %   @param remotePath optional remote path to restrict search
 %   @param artifactId optional artifactId to restrict search
 %   @param version optional artifact version to restrict search
 %   @param type optional artifact type to restrict search
-%   @param configuration optional RemoteDataToolbox configuration struct
 %
 % @details
 % Searches an Archiva Maven repository for artifacts matching the search
@@ -25,43 +25,32 @@
 %
 % @details
 % Usage:
-%   artifacts = rdtSearchArtifacts(searchText, remotePath, artifactId, version, type, configuration)
+%   artifacts = rdtSearchArtifacts(configuration, searchText, remotePath, artifactId, version, type)
 %
 % @ingroup queries
-function artifacts = rdtSearchArtifacts(searchText, remotePath, artifactId, version, type, configuration)
+function artifacts = rdtSearchArtifacts(configuration, searchText, varargin)
+
+parser = rdtInputParser();
+parser.addRequired('configuration');
+parser.addRequired('searchText', @ischar);
+parser.addParameter('remotePath', '', @ischar);
+parser.addParameter('artifactId', '', @ischar);
+parser.addParameter('version', '', @ischar);
+parser.addParameter('type', '', @ischar);
+parser.parse(configuration, searchText, varargin{:});
+configuration = rdtConfiguration(parser.Results.configuration);
+searchText = parser.Results.searchText;
+remotePath = parser.Results.remotePath;
+artifactId = parser.Results.artifactId;
+version = parser.Results.version;
+type = parser.Results.type;
 
 artifacts = [];
-
-if nargin < 1 || isempty(searchText)
-    searchText = '';
-end
-
-if nargin < 2 || isempty(remotePath)
-    remotePath = '';
-end
-
-if nargin < 3 || isempty(artifactId)
-    artifactId = '';
-end
-
-if nargin < 4 || isempty(version)
-    version = '';
-end
-
-if nargin < 5 || isempty(type)
-    type = '';
-end
-
-if nargin < 6 || isempty(configuration)
-    configuration = rdtConfiguration();
-else
-    configuration = rdtConfiguration(configuration);
-end
 
 %% Query the Archiva server with fuzzy matching on searchText.
 resourcePath = '/restServices/archivaServices/searchService/quickSearch';
 query.queryString = searchText;
-response = rdtRequestWeb(resourcePath, query, [], configuration);
+response = rdtRequestWeb(configuration, resourcePath, 'queryParams', query);
 if isempty(response)
     return;
 end

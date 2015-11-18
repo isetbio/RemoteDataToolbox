@@ -1,11 +1,11 @@
 %%% RemoteDataToolbox Copyright (c) 2015 The RemoteDataToolbox Team.
 %
 % Fetch an artifact from a remote repository an read it into Matlab.
-%   @param groupId string id of the artifact's group (required)
+%   @param configuration RemoteDataToolbox configuration info
+%   @param remotePath remote path to the artifact (required)
 %   @param artifactId string id of the artifact itself (required)
 %   @param version string artifact version (defaults to latest)
 %   @param type string file type of the artifact (defaults to 'mat')
-%   @param configuration optional RemoteDataToolbox configuration struct
 %
 % @details
 % Fetches an artifact from a remote respository, caches it in the local
@@ -31,35 +31,26 @@
 %
 % @details
 % Usage:
-%   [data, artifact] = rdtReadArtifact(remotePath, artifactId, version, type, configuration)
+%   [data, artifact] = rdtReadArtifact(configuration, remotePath, artifactId, varargin)
 %
 % @ingroup artifacts
-function [data, artifact] = rdtReadArtifact(remotePath, artifactId, version, type, configuration)
+function [data, artifact] = rdtReadArtifact(configuration, remotePath, artifactId, varargin)
+
+parser = rdtInputParser();
+parser.addRequired('configuration');
+parser.addRequired('remotePath', @ischar);
+parser.addRequired('artifactId', @ischar);
+parser.addParameter('version', '+', @ischar);
+parser.addParameter('type', 'mat', @ischar);
+parser.parse(configuration, remotePath, artifactId, varargin{:});
+configuration = rdtConfiguration(parser.Results.configuration);
+remotePath = parser.Results.remotePath;
+artifactId = parser.Results.artifactId;
+version = parser.Results.version;
+type = parser.Results.type;
 
 data = [];
 artifact = [];
-
-if nargin < 1 || isempty(remotePath) || ~ischar(remotePath)
-    error('rdtReadArtifact:missingRemotePath', 'remotePath must be a string');
-end
-
-if nargin < 2 || isempty(artifactId) || ~ischar(artifactId)
-    error('rdtReadArtifact:missingArtifactId', 'artifactId must be a string');
-end
-
-if nargin < 3 || isempty(version)
-    version = '+';
-end
-
-if nargin < 4 || isempty(type)
-    type = 'mat';
-end
-
-if nargin < 5 || isempty(configuration)
-    configuration = rdtConfiguration();
-else
-    configuration = rdtConfiguration(configuration);
-end
 
 %% Fetch the artifact.
 localPath = gradleFetchArtifact(configuration.repositoryUrl, ...

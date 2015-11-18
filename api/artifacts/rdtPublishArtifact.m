@@ -1,11 +1,11 @@
 %%% RemoteDataToolbox Copyright (c) 2015 The RemoteDataToolbox Team.
 %
 % Publish an artifact to a remote repository.
+%   @param configuration RemoteDataToolbox configuration info
 %   @param file local name or path to the file to publish as an artifact
 %   @param remotePath string remote path to the artifact (required)
 %   @param artifactId string id of the artifact itself (defaults to file name)
 %   @param version string artifact version (defaults to '1')
-%   @param configuration optional RemoteDataToolbox configuration struct
 %
 % @details
 % Publishes the given @a file as an artifact to a remote respository.  @a
@@ -21,26 +21,29 @@
 %
 % @details
 % Usage:
-%   artifact = rdtPublishArtifact(file, remotePath, artifactId, version, configuration)
+%   artifact = rdtPublishArtifact(configuration, file, remotePath, artifactId, version)
 %
 % @ingroup artifacts
-function artifact = rdtPublishArtifact(file, remotePath, artifactId, version, configuration)
+function artifact = rdtPublishArtifact(configuration, file, remotePath, varargin)
+
+parser = rdtInputParser();
+parser.addRequired('configuration');
+parser.addRequired('file', @ischar);
+parser.addRequired('remotePath', @ischar);
+parser.addParameter('artifactId', '', @ischar);
+parser.addParameter('version', '1', @ischar);
+parser.parse(configuration, file, remotePath, varargin{:});
+configuration = rdtConfiguration(parser.Results.configuration);
+file = parser.Results.file;
+remotePath = parser.Results.remotePath;
+artifactId = parser.Results.artifactId;
+version = parser.Results.version;
+
+if isempty(artifactId)
+    [~, artifactId] = fileparts(file);
+end
 
 artifact = [];
-
-if nargin < 3 || isempty(artifactId)
-    artifactId = '';
-end
-
-if nargin < 4 || isempty(version)
-    version = '1';
-end
-
-if nargin < 5 || isempty(configuration)
-    configuration = rdtConfiguration();
-else
-    configuration = rdtConfiguration(configuration);
-end
 
 %% Publish the artifact.
 [localPath, type] = gradlePublishArtifact(configuration.repositoryUrl, ...

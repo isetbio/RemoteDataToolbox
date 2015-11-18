@@ -1,15 +1,14 @@
 %%% RemoteDataToolbox Copyright (c) 2015 The RemoteDataToolbox Team.
 %
 % Make an http request to a web server.
+%   @param configuration RemoteDataToolbox configuration info
 %   @param resourcePath request path to append to the server url
 %   @param queryParams struct of query params to add to the request path
 %   @param requestBody string or struct for 'post' request body
-%   @param configuration optional RemoteDataToolbox configuration struct
 %
 % @details
-% Performs an http request to a web server.  If @a configuration is
-% provided, sends the request to the server at @a configuration.serverUrl.
-% Otherwise, uses the configuration returned from rdtConfiguration().
+% Performs an http request to a web server.  Ssends the request to the
+% server at @a configuration.serverUrl.
 %
 % @details
 % Appends the given @a resourcePath to @a configuration serverUrl to form a
@@ -42,30 +41,23 @@
 %
 % @details
 % Usage:
-%   response = rdtRequestWeb(resourcePath, queryParams, requestBody, configuration)
+%   response = rdtRequestWeb(configuration, resourcePath, ... )
 %
 % @ingroup queries
-function response = rdtRequestWeb(resourcePath, queryParams, requestBody, configuration)
+function response = rdtRequestWeb(configuration, resourcePath, varargin)
+
+parser = rdtInputParser();
+parser.addRequired('configuration');
+parser.addRequired('resourcePath', @ischar);
+parser.addParameter('queryParams', struct(), @isstruct);
+parser.addParameter('requestBody', '');
+parser.parse(configuration, resourcePath, varargin{:});
+configuration = rdtConfiguration(parser.Results.configuration);
+resourcePath = parser.Results.resourcePath;
+queryParams = parser.Results.queryParams;
+requestBody = parser.Results.requestBody;
 
 response = '';
-
-if nargin < 1 || isempty(resourcePath)
-    resourcePath = '';
-end
-
-if nargin < 2 || isempty(queryParams)
-    queryParams = struct();
-end
-
-if nargin < 3 || isempty(requestBody)
-    requestBody = '';
-end
-
-if nargin < 4 || isempty(configuration)
-    configuration = rdtConfiguration();
-else
-    configuration = rdtConfiguration(configuration);
-end
 
 %% Build the request URL.
 serverUrl = configuration.serverUrl;

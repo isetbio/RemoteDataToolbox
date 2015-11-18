@@ -16,7 +16,7 @@ classdef RdtRequestWebTests < matlab.unittest.TestCase
     methods (Test)
         
         function testSimpleGet(testCase)
-            response = rdtRequestWeb('/posts/1', [], [], testCase.testConfig);
+            response = rdtRequestWeb(testCase.testConfig, '/posts/1');
             testCase.assertNotEmpty(response);
             testCase.assertInstanceOf(response, 'struct');
             testCase.assertThat(response, matlab.unittest.constraints.HasField('id'));
@@ -25,7 +25,7 @@ classdef RdtRequestWebTests < matlab.unittest.TestCase
         
         function testQueryGet(testCase)
             query.postId = 1;
-            response = rdtRequestWeb('/comments', query, [], testCase.testConfig);
+            response = rdtRequestWeb(testCase.testConfig, '/comments', 'queryParams', query);
             testCase.assertNotEmpty(response);
             testCase.assertInstanceOf(response, 'cell');
             testCase.assertSize(response, [1, 5]);
@@ -38,7 +38,7 @@ classdef RdtRequestWebTests < matlab.unittest.TestCase
         
         function testPost(testCase)
             postData.foo = 'bar';
-            response = rdtRequestWeb('/posts', [], postData, testCase.testConfig);
+            response = rdtRequestWeb(testCase.testConfig, '/posts', 'requestBody', postData);
             testCase.assertNotEmpty(response);
             testCase.assertInstanceOf(response, 'struct');
             testCase.assertThat(response, matlab.unittest.constraints.HasField('foo'));

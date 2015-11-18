@@ -24,9 +24,12 @@
 % @ingroup utilities
 function [filePath, foldersSearched] = rdtSearchParentFolders(fileName, folder)
 
-if nargin < 2 || isempty(folder)
-    folder = pwd();
-end
+parser = rdtInputParser();
+parser.addRequired('fileName', @ischar);
+parser.addOptional('folder', pwd(), @ischar);
+parser.parse(fileName, folder);
+fileName = parser.Results.fileName;
+folder = parser.Results.folder;
 
 filePath = '';
 foldersSearched = {};
