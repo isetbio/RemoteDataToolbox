@@ -1,30 +1,22 @@
-%%% RemoteDataToolbox Copyright (c) 2015 The RemoteDataToolbox Team.
-%
-% Initialize configuration struct and prompt for user credentials.
-%   @param varargin a file path, a struct, or multiple name-value pairs
-%
-% @details
-% This funciton allows you to enter you username and password for use with
-% Remote Data Toolbox, without typing your password into the command
-% window.  This is good because others may be able to read what you type in
-% the command window.
-%
-% @details
-% @a varargin will be passed to rdtConfiguration() to create an initial
-% configuration struct.  Then a dialog will be raised to prompt for a
-% username and password.  These values will be saved in the configuration
-% struct.
-%
-% @details
-% Returns a struct of RemoteDataToolbox configuration which may include
-% secret credentials.
-%
-% @details
-% Usage:
-%   configuration = rdtConfiguration(varargin)
-%
-% @ingroup utilities
 function configuration = rdtCredentialsDialog(varargin)
+%% Initialize RemoteDataToolbox configuration and prompt for credentials.
+%
+% This funciton allows you to enter a username and password for use with
+% Remote Data Toolbox, without typing your password into the command
+% window.  Others may be able to read what you type in the command window
+% or view your command history, so you should avoid typing secrets there.
+%
+% configuration = rdtConfiguration(varargin) passes varargin to
+% rdtConfiguration() to obtain an initial config struct.  Then prompts you
+% to enter a username and password into a dialog which will obscure what
+% you type.
+%
+% Returns a struct with toolbox configuration which may include the
+% username and password that you typed.
+%
+% See also rdtConfiguration
+%
+% Copyright (c) 2015 RemoteDataToolbox Team
 
 configuration = rdtConfiguration(varargin{:});
 

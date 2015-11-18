@@ -1,17 +1,12 @@
-%%% RemoteDataToolbox Copyright (c) 2015 The RemoteDataToolbox Team.
-%
-% Get an inputParser configured with Remote Data Toolbox conventions.
-%
-% @details
-% Returns an instance of the built-in inputParser with properties set for
-% Remote Data Toolbox
-%
-% @details
-% Usage:
-%   parser = rdtInputParser()
-%
-% @ingroup utilities
 function parser = rdtInputParser()
+%% Get an inputParser configured with Remote Data Toolbox conventions.
+%
+% parser = rdtInputParser() returns an instance of the built-in inputParser
+% class, with its properties set to Remote Data Toolbox defaults.
+%
+% See also inputParser
+%
+% Copyright (c) 2015 RemoteDataToolbox Team
 
 parser = inputParser();
 

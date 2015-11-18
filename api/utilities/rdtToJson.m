@@ -1,18 +1,12 @@
-%%% RemoteDataToolbox Copyright (c) 2015 The RemoteDataToolbox Team.
-%
-% Convert the given struct or array to a JSON string.
-%   @param data struct or array to convert to JSON
-%
-% @details
-% Returns a reasonable JSON string representation of the given @a data.
-% See also rdtFromJson().
-%
-% @details
-% Usage:
-%   jsonString = rdtToJson(data)
-%
-% @ingroup utilities
 function jsonString = rdtToJson(data)
+%% Convert a Matlab struct or array to a JSON string.
+%
+% jsonString = rdtToJson(data) takes the given Matlab data, which may be a
+% struct, numeric array, or cell array, and converts it to a JSON string.
+%
+% See also rdtFromJson
+%
+% Copyright (c) 2015 RemoteDataToolbox Team
 
 parser = rdtInputParser();
 parser.addRequired('data', @(data) isstruct(data) || iscell(data) || isnumeric(data));

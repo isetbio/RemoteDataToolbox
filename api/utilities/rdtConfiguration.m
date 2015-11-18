@@ -1,35 +1,29 @@
-%%% RemoteDataToolbox Copyright (c) 2015 The RemoteDataToolbox Team.
-%
-% Initialize a struct with RemoteDataToolbox configuration
-%   @param varargin a project name, file path, struct, or name-value pairs
-%
-% @details
-% @a varargin may have one of four forms:
-%   - a string project name used to find a JSON-file
-%   - an explicit file path to a JSON-file
-%   - a struct containing multiple field-value pairs of configuration
-%   - a list of multiple name-value pairs of configuration
-%
-% @details
-% If @a varargin is a project name, for example @b foo, searches for a file
-% named @b rdt-config-foo.json.  First searches the current folder (pwd()),
-% then the parent folders of pwd(), then the Matlab path.
-%
-% @details
-% Initializes a struct containing RemoteDataToolbox configuration.
-% Configuration values begin with defaults declared in this function.
-% These may be overridden by values from the named JSON-file or given
-% struct or name-value pairs.
-%
-% @details
-% Returns a struct of RemoteDataToolbox configuration.
-%
-% @details
-% Usage:
-%   configuration = rdtConfiguration(varargin)
-%
-% @ingroup utilities
 function configuration = rdtConfiguration(varargin)
+%% Initialize a struct with RemoteDataToolbox configuration.
+%
+% This function initializes a config struct that you can pass to other
+% toolbox functions.  Config fields begin with default values declared in
+% this function.  These may be amended with values read from a named
+% JSON-file or passed in as a struct or name-value pairs.
+%
+% configuration = rdtConfiguration(projectName) uses the given name to
+% locate a JSON file that contains configuraiton values.  For example, if
+% projectName is "foo", searches for the file "rdt-config-foo.json".  First
+% searches pwd(), then the parent folders of pwd(), then the Matlab path.
+%
+% configuration = rdtConfiguration(jsonFile) loads configuration values
+% from the given jsonFile.
+%
+% configuration = rdtConfiguration(initialConfig) amends the default
+% configuration using fields from the given initialConfig struct.
+%
+% configuration = rdtConfiguration('field1', value1, 'field2', value2, ...)
+% amends the default configuration using the named field-value pairs.
+%
+% Returns a struct with toolbox configuration with at least the default
+% fields and values.
+%
+% Copyright (c) 2015 RemoteDataToolbox Team
 
 %% What did the user pass in?
 configArgs = {};
