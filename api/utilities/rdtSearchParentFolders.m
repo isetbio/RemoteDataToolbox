@@ -1,28 +1,20 @@
-%%% RemoteDataToolbox Copyright (c) 2015 The RemoteDataToolbox Team.
+function [filePath, foldersSearched] = rdtSearchParentFolders(fileName, folder)
+%% Search a folder and its parents to find a file with the given name.
 %
-% Search a folder and its parents to find a file with the given name.
-%   @param fileName the name of a file to look for
-%   @param folder path where to start looking for @a fileName
+% [filePath, foldersSearched] = rdtSearchParentFolders(fileName) searches
+% pwd() and its parent folders for a file with the given fileName.  Returns
+% as soon as such a file is found, or the file system root is reached.
 %
-% @details
-% Recursively searches @a folder and its parent folder for the given @a
-% fileName. If @a folder is omitted, uses pwd().  Returns as soon as @a
-% fileName is found, or when the file system root is reached.
+% [filePath, foldersSearched] = rdtSearchParentFolders(fileName, folder)
+% does the same thing, starting at the given folder instead of pwd().
 %
-% @details
-% Returns the full path to the given @a fileName, or '' if no such file was
-% found.
-%
-% @details
-% Also returns a cell array containing all of the folders that were
+% Returns the full path to the given fileName, or '' if no such file was
+% found.  Also returns a cell array containing all of the folders that were
 % searched.
 %
-% @details
-% Usage:
-%   [filePath, foldersSearched] = rdtSearchParentFolders(fileName, folder)
+% See also pwd
 %
-% @ingroup utilities
-function [filePath, foldersSearched] = rdtSearchParentFolders(fileName, folder)
+% Copyright (c) 2015 RemoteDataToolbox Team
 
 parser = rdtInputParser();
 parser.addRequired('fileName', @ischar);
@@ -40,7 +32,7 @@ while isempty(filePath)
     
     % does the file exist in this folder?
     candidatePath = fullfile(folder, fileName);
-    if exist(candidatePath, 'file') && ~exist(candidatePath, 'dir')
+    if ~isempty(dir(candidatePath))
         filePath = candidatePath;
         return;
     end
