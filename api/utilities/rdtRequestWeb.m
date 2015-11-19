@@ -34,6 +34,8 @@ function response = rdtRequestWeb(configuration, resourcePath, varargin)
 %
 % See also rdtFromJson rdtToJson
 %
+% response = rdtRequestWeb(configuration, resourcePath, varargin)
+%
 % Copyright (c) 2015 RemoteDataToolbox Team
 
 parser = rdtInputParser();

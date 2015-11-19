@@ -15,6 +15,8 @@ function artifact = rdtArtifact(varargin)
 % Returns a struct with artifat metadata with at least the default
 % values and only the expected fields defined.
 %
+% artifact = rdtArtifact(varargin)
+%
 % Copyright (c) 2015 RemoteDataToolbox Team
 
 parser = rdtInputParser();

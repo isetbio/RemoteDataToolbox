@@ -12,6 +12,8 @@ function artifacts = rdtListArtifacts(configuration, remotePath)
 %
 % See also rdtListRemotePaths, rdtSearchArtifacts, rdtArtifact
 %
+% artifacts = rdtListArtifacts(configuration, remotePath)
+%
 % Copyright (c) 2015 RemoteDataToolbox Team
 
 parser = rdtInputParser();

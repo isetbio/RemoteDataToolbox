@@ -14,6 +14,8 @@ function [filePath, foldersSearched] = rdtSearchParentFolders(fileName, folder)
 %
 % See also pwd
 %
+% [filePath, foldersSearched] = rdtSearchParentFolders(fileName, folder)
+%
 % Copyright (c) 2015 RemoteDataToolbox Team
 
 parser = rdtInputParser();

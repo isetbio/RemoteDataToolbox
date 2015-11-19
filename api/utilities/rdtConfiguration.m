@@ -23,6 +23,8 @@ function configuration = rdtConfiguration(varargin)
 % Returns a struct with toolbox configuration with at least the default
 % fields and values.
 %
+% configuration = rdtConfiguration(varargin)
+%
 % Copyright (c) 2015 RemoteDataToolbox Team
 
 %% What did the user pass in?

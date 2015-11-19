@@ -16,6 +16,8 @@ function url = rdtOpenBrowser(configOrArtifact, varargin)
 %
 % See also rdtConfiguration, rdtArtifact
 %
+% url = rdtOpenBrowser(configOrArtifact, varargin)
+%
 % Copyright (c) 2015 RemoteDataToolbox Team
 
 parser = rdtInputParser();

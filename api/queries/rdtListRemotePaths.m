@@ -13,6 +13,8 @@ function [remotePaths, repositoryName] = rdtListRemotePaths(configuration)
 %
 % See also rdtListArtifacts, rdtSearchArtifacts
 %
+% [remotePaths, repositoryName] = rdtListRemotePaths(configuration)
+%
 % Copyright (c) 2015 RemoteDataToolbox Team
 
 configuration = rdtConfiguration(configuration);

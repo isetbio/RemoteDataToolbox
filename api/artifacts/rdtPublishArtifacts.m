@@ -20,6 +20,8 @@ function artifacts = rdtPublishArtifacts(configuration, folder, remotePath, vara
 %
 % See also rdtArtifact rdtPublishArtifact
 %
+% artifacts = rdtPublishArtifacts(configuration, folder, remotePath, varargin)
+%
 % Copyright (c) 2015 RemoteDataToolbox Team
 
 parser = rdtInputParser();

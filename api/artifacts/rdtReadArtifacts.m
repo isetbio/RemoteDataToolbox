@@ -15,6 +15,8 @@ function [datas, artifacts] = rdtReadArtifacts(configuration, artifacts)
 %
 % See also rdtFetchArtifact rdtListArtifacts rdtSearchArtifacts
 %
+% [datas, artifacts] = rdtReadArtifacts(configuration, artifacts)
+%
 % Copyright (c) 2015 RemoteDataToolbox Team
 
 parser = rdtInputParser();

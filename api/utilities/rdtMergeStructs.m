@@ -13,6 +13,8 @@ function target = rdtMergeStructs(target, source, allowNewFields)
 % Returns the given target struct, which may have been updated with values
 % from the source struct.
 %
+% target = rdtMergeStructs(target, source, allowNewFields)
+%
 % Copyright (c) 2015 RemoteDataToolbox Team
 
 parser = rdtInputParser();

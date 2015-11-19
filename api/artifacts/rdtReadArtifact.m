@@ -24,6 +24,8 @@ function [data, artifact] = rdtReadArtifact(configuration, remotePath, artifactI
 %
 % See also rdtArtifact rdtReadArtifacts imformat imread
 %
+% [data, artifact] = rdtReadArtifact(configuration, remotePath, artifactId, varargin)
+%
 % Copyright (c) 2015 RemoteDataToolbox Team
 
 parser = rdtInputParser();

@@ -6,6 +6,8 @@ function parser = rdtInputParser()
 %
 % See also inputParser
 %
+% parser = rdtInputParser()
+%
 % Copyright (c) 2015 RemoteDataToolbox Team
 
 parser = inputParser();

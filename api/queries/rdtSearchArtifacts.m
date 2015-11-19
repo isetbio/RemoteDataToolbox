@@ -22,6 +22,8 @@ function artifacts = rdtSearchArtifacts(configuration, searchText, varargin)
 %
 % See also rdtListRemotePaths, rdtListArtifacts, rdtArtifact
 %
+% artifacts = rdtSearchArtifacts(configuration, searchText, varargin)
+%
 % Copyright (c) 2015 RemoteDataToolbox Team
 
 parser = rdtInputParser();

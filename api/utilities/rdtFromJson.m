@@ -6,6 +6,8 @@ function data = rdtFromJson(jsonString)
 %
 % See also rdtToJson
 %
+% data = rdtFromJson(jsonString)
+%
 % Copyright (c) 2015 RemoteDataToolbox Team
 
 parser = rdtInputParser();

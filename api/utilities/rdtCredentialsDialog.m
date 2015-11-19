@@ -16,6 +16,8 @@ function configuration = rdtCredentialsDialog(varargin)
 %
 % See also rdtConfiguration
 %
+% configuration = rdtCredentialsDialog(varargin)
+%
 % Copyright (c) 2015 RemoteDataToolbox Team
 
 configuration = rdtConfiguration(varargin{:});
