@@ -1,6 +1,4 @@
-%%% RemoteDataToolbox Copyright (c) 2015 The RemoteDataToolbox Team.
-%
-% This is a tutorial for working with the Remote Data Toolbox.
+%% This is a tutorial for working with the Remote Data Toolbox.
 %
 % This script shows how you might query a project's Archiva server to find
 % out things like:
@@ -16,10 +14,9 @@
 % all we are doing is querying for artifacts that someone else published.
 % We can do this with the default "guest" account.
 %
-% See the rdtExamplePublishData.m to see how to publish data in the
-% first place.
+% See also rdtExamplePublishData
 %
-% @ingroup examples
+% Copyright (c) 2015 RemoteDataToolbox Team
 
 clear;
 clc;

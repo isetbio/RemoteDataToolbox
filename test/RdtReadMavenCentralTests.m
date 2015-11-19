@@ -1,8 +1,7 @@
 classdef RdtReadMavenCentralTests < matlab.unittest.TestCase
-    % Test that we can read artifacts from a general-purpose Maven
-    % repository, regardless of how we configure our own server.  These
-    % tests rely on Maven Central, which is a popular, public Maven
-    % repository:
+    % Test that we can read artifacts from a general-purpose Maven repo.
+    % These tests rely on Maven Central, which is a popular, public Maven
+    % repository, independent of us:
     %   https://repo1.maven.org/maven2/
     
     properties (Access = private)

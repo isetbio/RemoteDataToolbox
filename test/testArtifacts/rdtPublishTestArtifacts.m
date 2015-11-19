@@ -1,7 +1,4 @@
-%%% RemoteDataToolbox Copyright (c) 2015 The RemoteDataToolbox Team.
-%
-% This script will help you set up an Archiva server suitable for testing
-% the RemoteDataToolbox.
+%% Publish remote artifacts needed for toolbox tests.
 %
 % This assumes you have set up an Archiva server.  See the quick start
 % guide here:
@@ -11,19 +8,23 @@
 % workstation.  Visit the web UI:
 %   http://localhost:8080
 %
-% Create the default admin user with the following credentials:
+% By default, this script points at a public server called
+% brainard-archiva, hosted by UPenn.  Visit the web UI:
+%   http://52.32.77.154/
+%
+% You should create a Maven2 repository with the following name:
+%   test-repository
+%
+% You should create a test user with the following credentials:
 %   test:test123
 %
-% Create a Maven2 repository with the following name:
-%   test-repository
+% You should give the test user write permissions for the test repository
+% (add the repository manager role).
 %
 % Then run this script to publish the artifacts expected by
 % RemoteDataToolbox tests.
 %
-% By default, this script points at a public server called
-% brainard-archiva, hosted at UPenn, which was set up as above:
-%   http://52.32.77.154/
-%
+% Copyright (c) 2015 RemoteDataToolbox Team
 
 clear;
 clc;

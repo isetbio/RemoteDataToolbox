@@ -1,9 +1,8 @@
 classdef RdtReadTests < matlab.unittest.TestCase
-    % Test that we can read artifacts with expected content from our own
-    % remote repository server.  These tests attempt to connect to a public
-    % Archiva server called brainard-archiva, using expected test
-    % credentials and repository contents. If the expected server can't be
-    % found, skips these tests.
+    % Test that we can read artifacts from our own remote repository.
+    % These tests attempt to connect to our public Archiva server called
+    % brainard-archiva, using expected test credentials and repository
+    % contents. If the expected server can't be found, skips these tests.
     
     properties (Access = private)
         testConfig = rdtConfiguration( ...

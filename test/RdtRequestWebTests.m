@@ -1,7 +1,7 @@
 classdef RdtRequestWebTests < matlab.unittest.TestCase
-    % Test that we can make Web requests.  These tests rely on a handy
-    % RESTful test server that lets us perform requests and sends us
-    % well-known responses:
+    % Test that we can make Web requests.
+    % These tests rely on a handy RESTful test server that lets us perform
+    % requests and sends us predictable responses:
     %   http://jsonplaceholder.typicode.com/
     
     properties (Access = private)

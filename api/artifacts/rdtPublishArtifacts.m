@@ -1,47 +1,9 @@
-%%% RemoteDataToolbox Copyright (c) 2015 The RemoteDataToolbox Team.
-%
-% Publish multiple artifacts to a remote repository path.
-%   @param configuration RemoteDataToolbox configuration info
-%   @param folder local path to a folder containing artifacts to publish
-%   @param remotePath string remote path for all artifacts
-%   @param version string artifact version for all artifacts (defaults to '1')
-%   @param type optional file exension to filter files in the @a folder
-%
-% @details
-% Publishes each of the files in the given @a folder as an artifact to a
-% remote respository.  @a configuration.repositoryUrl should point to the
-% repository root.
-%
-% @details
-% Each published artifact will use the same @a remotePath and @a version.
-% The artifactId of each artifact will be the same as the file base name.
-% The type of each artifact will be the same as the file extension.
-%
-% @details
-% By default, attempts to publish all of the files in the given @a folder.
-% If @a type is provided, only publishes files that have that file
-% extension.  Ignores files that start with '.', end with "~", or have
-% extension ".ASV" or ".asv".
-%
-% @details
-% Returns a struct array of metadata about the published artifacts,
-% including their artifactIds, server urls, and local file paths within the
-% artifact cache.  See rdtArtifact().
-%
-% @details
-% If the publication fails, returns [].
-%
-% @details
-% Usage:
-%   artifacts = rdtPublishArtifacts(configuration, folder, remotePath, version, type)
-%
-% @ingroup artifacts
 function artifacts = rdtPublishArtifacts(configuration, folder, remotePath, varargin)
 %% Publish multiple artifacts to a remote repository path.
 %
 % artifacts = rdtPublishArtifacts(configuration, folder, remotePath)
 % publishes each of the files in the given folder as an artifact to a 
-% remote respository.  @a configuration.repositoryUrl must point to the
+% remote respository.  configuration.repositoryUrl must point to the
 % repository root.
 %
 % The artifactId of each artifact will be the same as the file base name.

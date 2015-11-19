@@ -1,10 +1,9 @@
 classdef RdtQueryTests < matlab.unittest.TestCase
     % Test that we can make Archiva RESTful queries.
-    % These tests attempt to connect to a public Archiva
-    % server called brainard-archiva, using expected test credentials and
-    % repository contents. If the expected server can't be found, skips
-    % these tests.
-        
+    % These tests attempt to connect to our public Archiva server called
+    % brainard-archiva, using expected test credentials and repository
+    % contents. If the expected server can't be found, skips these tests.
+    
     properties (Access = private)
         testConfig = rdtConfiguration( ...
             'serverUrl', 'http://52.32.77.154', ...

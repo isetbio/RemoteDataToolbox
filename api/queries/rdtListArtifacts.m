@@ -2,12 +2,12 @@ function artifacts = rdtListArtifacts(configuration, remotePath)
 %% Query an Archiva Maven repository for artifacts under a remote path.
 %
 % artifacts = rdtListArtifacts(configuration, remotePath) requests a list
-% of all artifacts under the given @a remotePath, from an
-% Archiva Maven repository.  @a configuration.serverUrl must point to the
-% Archiva server root.  @a configuration.repositoryName must contain the
+% of all artifacts under the given remotePath, from an
+% Archiva Maven repository.  configuration.serverUrl must point to the
+% Archiva server root.  configuration.repositoryName must contain the
 % name of a repository on the server.
 %
-% Returns a struct array describing artifacts under the given @a
+% Returns a struct array describing artifacts under the given
 % remotePath, or else [] if the query failed.
 %
 % See also rdtListRemotePaths, rdtSearchArtifacts, rdtArtifact

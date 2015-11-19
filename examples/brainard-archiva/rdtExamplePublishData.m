@@ -1,6 +1,4 @@
-%%% RemoteDataToolbox Copyright (c) 2015 The RemoteDataToolbox Team.
-%
-% This is a tutorial for working with the Remote Data Toolbox.
+%% This is a tutorial for working with the Remote Data Toolbox.
 %
 % This script shows how you might generate some data as part of a project
 % and publish that data as an artifact to the project's remote data
@@ -16,10 +14,9 @@
 % dialog window.  For this demo, use the user name "test" and password
 % "test123".
 %
-% See the rdtExampleProjectReadData.m to see how to read data that's
-% already been published.
+% See also rdtExampleReadData
 %
-% @ingroup examples
+% Copyright (c) 2015 RemoteDataToolbox Team
 
 clear;
 clc;

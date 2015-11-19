@@ -1,16 +1,22 @@
-%% Proof of concept for fetching an artifact via Gradle.
-%   @param repository
-%   @param username
-%   @param password
-%   @param group
-%   @param id
-%   @param version
-%   @param extension
-%   @param refreshCached
-%   @param cacheFolder
-%
-%   filePath = gradleFetchArtifact(repository, username, password, group, id, version, extension, refreshCached, cacheFolder)
 function filePath = gradleFetchArtifact(repository, username, password, group, id, version, extension, refreshCached, cacheFolder)
+%% Use Gradle to fetch an artifact from a Maven repository.
+%
+% filePath = gradleFetchArtifact(repository, username, password, group, id, version, extension)
+% fetches an artifact from the given repository url, with the given
+% credentials and artifact coordinates.
+%
+% filePath = gradleFetchArtifact( ... refreshCached ...) obeys the optional
+% refreshCached flag.  If refreshCached is true, refreshes the local cache
+% for the fetched artifact.
+%
+% filePath = gradleFetchArtifact( ... cacheFolder) uses the optional
+% cacheFolder for the local artifact cache.
+%
+% Returns the local file path to the fetched, cached file.
+%
+% See also gradlePublishArtifact
+%
+% Copyright (c) 2015 RemoteDataToolbox Team
 
 filePath = '';
 

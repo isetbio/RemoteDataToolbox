@@ -1,6 +1,4 @@
-%%% RemoteDataToolbox Copyright (c) 2015 The RemoteDataToolbox Team.
-%
-% This is a tutorial for working with the Remote Data Toolbox.
+%% This is a tutorial for working with the Remote Data Toolbox.
 %
 % This script shows how you can access any public Maven repository, like
 % the popular open source repository at Maven Central.
@@ -9,7 +7,7 @@
 % This adds an argument to each toolbox function call.  But it adds
 % flaxibility and allows this script to be self-contained.
 %
-% @ingroup examples
+% Copyright (c) 2015 RemoteDataToolbox Team
 
 clear;
 clc;

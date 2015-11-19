@@ -3,7 +3,7 @@ function [remotePaths, repositoryName] = rdtListRemotePaths(configuration)
 %
 % [remotePaths, repositoryName] = rdtListRemotePaths(configuration)
 % requests a list of paths to artifacts on an Archiva Maven repository.
-% @a configuration.serverUrl must point to the Archiva server root.  @a
+% configuration.serverUrl must point to the Archiva server root.
 % configuration.repositoryName must contain the name of a repository on the
 % server.
 %

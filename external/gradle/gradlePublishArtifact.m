@@ -1,15 +1,20 @@
-%% Proof of concept for publishing an artifact via Gradle.
-%   @param repository
-%   @param username
-%   @param password
-%   @param group
-%   @param id
-%   @param version
-%   @param file
-%   @param cacheFolder
-%
-%	[filePath, extension] = gradlePublishArtifact(repository, username, password, group, id, version, file, cacheFolder)
 function [filePath, extension] = gradlePublishArtifact(repository, username, password, group, id, version, file, cacheFolder)
+%% Use Gradle to publish an artifact to a Maven repository.
+%
+% [filePath, extension] = gradlePublishArtifact(repository, username, password, group, id, version, file)
+% publishes the given file as an artifact to the given repository url, with
+% the given credentials and artifact coordinates.
+%
+% filePath = gradleFetchArtifact( ... cacheFolder) uses the optional
+% cacheFolder for the local artifact cache.
+%
+% Returns the local file path to the published, cached file.  Also returns
+% the published artifact type, which is the same as the given file
+% extendsion.
+%
+% See also gradleFetchArtifact
+%
+% Copyright (c) 2015 RemoteDataToolbox Team
 
 filePath = '';
 
