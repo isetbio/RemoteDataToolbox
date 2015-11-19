@@ -37,6 +37,28 @@
 %
 % @ingroup artifacts
 function artifacts = rdtPublishArtifacts(configuration, folder, remotePath, varargin)
+%% Publish multiple artifacts to a remote repository path.
+%
+% artifacts = rdtPublishArtifacts(configuration, folder, remotePath)
+% publishes each of the files in the given folder as an artifact to a 
+% remote respository.  @a configuration.repositoryUrl must point to the
+% repository root.
+%
+% The artifactId of each artifact will be the same as the file base name.
+% The type of each artifact will be the same as the file extension.
+%
+% artifact = rdtPublishArtifacts(... 'version', version) uses the
+% given version for all published artifacts instead of the default '1'.
+%
+% artifact = rdtPublishArtifacts(... 'type', type) restricts publication to
+% only files that have the same file extension as the given type.
+%
+% Returns a struct array of metadata about the published artifacts, or []
+% if the publication failed.
+%
+% See also rdtArtifact rdtPublishArtifact
+%
+% Copyright (c) 2015 RemoteDataToolbox Team
 
 parser = rdtInputParser();
 parser.addRequired('configuration');

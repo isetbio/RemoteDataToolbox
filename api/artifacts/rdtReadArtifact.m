@@ -1,40 +1,30 @@
-%%% RemoteDataToolbox Copyright (c) 2015 The RemoteDataToolbox Team.
+function [data, artifact] = rdtReadArtifact(configuration, remotePath, artifactId, varargin)
+%% Fetch an artifact from a remote repository an read it into Matlab.
 %
-% Fetch an artifact from a remote repository an read it into Matlab.
-%   @param configuration RemoteDataToolbox configuration info
-%   @param remotePath remote path to the artifact (required)
-%   @param artifactId string id of the artifact itself (required)
-%   @param version string artifact version (defaults to latest)
-%   @param type string file type of the artifact (defaults to 'mat')
+% [data, artifact] = rdtReadArtifact(configuration, remotePath, artifactId)
+% fetches an artifact from a remote respository, under the given remotePath
+% and with the given artifactId.  Loads the artifact data into a Matlab
+% variable.  configuration.repositoryUrl must point at the repository root.
 %
-% @details
-% Fetches an artifact from a remote respository, caches it in the local
-% file system, and loads the artifact into a Matlab variable.  @a
-% configuration.repositoryUrl should point at the repository root.
+% [data, artifact] = rdtReadArtifact( ... 'version', version) fetches an
+% artifact with the given version instead of the default, which is the
+% latest version available.
 %
-% @details
+% [data, artifact] = rdtReadArtifact( ... 'type', type) fetches an
+% artifact with the given type instead of the default 'mat'.
+%
 % Returns a Matlab variable containing the artifact data.  The class of the
-% returned variable depends on the given @a type:
+% returned variable depends on the artifact type:
 %   - 'mat': struct of variables from the built-in load()
 %   - 'json': struct or arry of JSON data from loadjson()
 %   - image (see imformat()): array of image data from built-in imread()
 %   - default: char array from fread(..., '*char')
-%   .
 %
-% @details
-% Also returns a struct of metadata about the artifact, including its
-% remotePath, artifactId, server url, and local file path.  See
-% rdtArtifact().
+% Also returns a struct of metadata about the artifact.
 %
-% @details
-% If the fetch fails or the requested artifact doesn't exist, returns [].
+% See also rdtArtifact rdtReadArtifacts imformat imread
 %
-% @details
-% Usage:
-%   [data, artifact] = rdtReadArtifact(configuration, remotePath, artifactId, varargin)
-%
-% @ingroup artifacts
-function [data, artifact] = rdtReadArtifact(configuration, remotePath, artifactId, varargin)
+% Copyright (c) 2015 RemoteDataToolbox Team
 
 parser = rdtInputParser();
 parser.addRequired('configuration');

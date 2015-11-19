@@ -1,23 +1,19 @@
-%%% RemoteDataToolbox Copyright (c) 2015 The RemoteDataToolbox Team.
-%
-% Query an Archiva Maven repository to list available paths to artifacts.
-%   @param configuration RemoteDataToolbox configuration info
-%
-% @details
-% Requests a list of paths to artifacts on an Archiva Maven repository.
-% @a configuration.serverUrl should point to the Archiva server root.
-%
-% @details
-% Returns a cell array string paths returned from the Archiva
-% respository, or {} if the query failed.  Also returns the name of the
-% repository whose paths are listed.
-%
-% @details
-% Usage:
-%   [remotePaths, repositoryName] = rdtListRemotePaths(configuration)
-%
-% @ingroup queries
 function [remotePaths, repositoryName] = rdtListRemotePaths(configuration)
+%% Query an Archiva Maven repository to list available paths to artifacts.
+%
+% [remotePaths, repositoryName] = rdtListRemotePaths(configuration)
+% requests a list of paths to artifacts on an Archiva Maven repository.
+% @a configuration.serverUrl must point to the Archiva server root.  @a
+% configuration.repositoryName must contain the name of a repository on the
+% server.
+%
+% Returns a cell array string paths returned from the Archiva respository,
+% or {} if the query failed.  Also returns the name of the repository whose
+% paths are listed.
+%
+% See also rdtListArtifacts, rdtSearchArtifacts
+%
+% Copyright (c) 2015 RemoteDataToolbox Team
 
 configuration = rdtConfiguration(configuration);
 

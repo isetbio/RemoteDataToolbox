@@ -1,25 +1,18 @@
-%%% RemoteDataToolbox Copyright (c) 2015 The RemoteDataToolbox Team.
+function artifacts = rdtListArtifacts(configuration, remotePath)
+%% Query an Archiva Maven repository for artifacts under a remote path.
 %
-% Query an Archiva Maven repository for artifacts under a remote path.
-%   @param configuration RemoteDataToolbox configuration info
-%   @param remotePath string remote path under which to list artifacts
+% artifacts = rdtListArtifacts(configuration, remotePath) requests a list
+% of all artifacts under the given @a remotePath, from an
+% Archiva Maven repository.  @a configuration.serverUrl must point to the
+% Archiva server root.  @a configuration.repositoryName must contain the
+% name of a repository on the server.
 %
-% @details
-% Requests a list of all artifacts under the given @a remotePath, from an
-% Archiva Maven repository.  @a configuration.serverUrl should point to the
-% Archiva server root.  @a configuration.repositoryName shold contain the
-% name of a on the same server.
-%
-% @details
 % Returns a struct array describing artifacts under the given @a
 % remotePath, or else [] if the query failed.
 %
-% @details
-% Usage:
-%   artifacts = rdtListArtifacts(configuration, remotePath)
+% See also rdtListRemotePaths, rdtSearchArtifacts, rdtArtifact
 %
-% @ingroup queries
-function artifacts = rdtListArtifacts(configuration, remotePath)
+% Copyright (c) 2015 RemoteDataToolbox Team
 
 parser = rdtInputParser();
 parser.addRequired('configuration');

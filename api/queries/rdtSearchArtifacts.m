@@ -1,34 +1,28 @@
-%%% RemoteDataToolbox Copyright (c) 2015 The RemoteDataToolbox Team.
-%
-% Search an Archiva Maven repository with fuzzy matching of free text.
-%   @param configuration RemoteDataToolbox configuration info
-%   @param searchText free text of search terms to match
-%   @param remotePath optional remote path to restrict search
-%   @param artifactId optional artifactId to restrict search
-%   @param version optional artifact version to restrict search
-%   @param type optional artifact type to restrict search
-%
-% @details
-% Searches an Archiva Maven repository for artifacts matching the search
-% terms in the given @a searchText.  @a configuration.serverUrl should
-% point to the Archiva server root.
-%
-% @details
-% By default, searches for any artifact that matches the given @a
-% searchText.  If @a remotePath, @a artifactId, @a version, or @a type is
-% provided the search will be restricted to only those artifacts that match
-% the given restriction.
-%
-% @details
-% Returns a struct array describing artifacts that matched the given @a
-% searchText, or else [] if the query failed.
-%
-% @details
-% Usage:
-%   artifacts = rdtSearchArtifacts(configuration, searchText, remotePath, artifactId, version, type)
-%
-% @ingroup queries
 function artifacts = rdtSearchArtifacts(configuration, searchText, varargin)
+%% Search an Archiva Maven repository with fuzzy matching of free text.
+%
+% artifacts = rdtSearchArtifacts(configuration, searchText) searches an
+% Archiva Maven repository for artifacts matching the given searchText.
+% configuration.serverUrl must point to the Archiva server root.
+%
+% artifacts = rdtSearchArtifacts( ... 'remotePath', remotePath) restricts
+% search results to artifacts with exactly the given remotePath.
+%
+% artifacts = rdtSearchArtifacts( ... 'artifactId', artifactId) restricts
+% search results to artifacts with exactly the given artifactId.
+%
+% artifacts = rdtSearchArtifacts( ... 'version', version) restricts
+% search results to artifacts with exactly the given version.
+%
+% artifacts = rdtSearchArtifacts( ... 'type', type) restricts
+% search results to artifacts with exactly the given type.
+%
+% Returns a struct array describing artifacts that matched the given
+% searchText and other restrictions, or else [] if the query failed.
+%
+% See also rdtListRemotePaths, rdtListArtifacts, rdtArtifact
+%
+% Copyright (c) 2015 RemoteDataToolbox Team
 
 parser = rdtInputParser();
 parser.addRequired('configuration');

@@ -1,33 +1,21 @@
-%%% RemoteDataToolbox Copyright (c) 2015 The RemoteDataToolbox Team.
-%
-% Fetch multiple artifacts from a remote repository an read them into Matlab.
-%   @param configuration RemoteDataToolbox configuration info
-%   @param artifacts struct array of artifact metadata
-%
-% @details
-% Fetches multiple artifacts from a remote respository, caches each in the
-% local file system, and loads each into a Matlab variable.  @a
-% configuration.repositoryUrl should point to the repository root.
-%
-% @details
-% @a artifacts must be a struct array of artifact metadata, with one
-% element per artifact to fetch.  See rdtArtifact() for the expected fields
-% of the struct array. See also rdtListArtifacts() and
-% rdtSearchArtifacts(), which return such struct arrays.
-%
-% @details
-% Returns a cell array of data loaded from each artifact.  See
-% rdtReadArtifact() for the expected data formats.
-%
-% @details
-% Also returns a the given @a artifacts, with local file paths filled in.
-%
-% @details
-% Usage:
-%   [datas, artifacts] = rdtReadArtifacts(configuration, artifacts)
-%
-% @ingroup artifacts
 function [datas, artifacts] = rdtReadArtifacts(configuration, artifacts)
+%% Fetch multiple artifacts from a remote repository an read them into Matlab.
+%
+% [datas, artifacts] = rdtReadArtifacts(configuration, artifacts) fetches
+% multiple artifacts from a remote respository and loads each into a Matlab
+% variable.  configuration.repositoryUrl must point to the repository root.
+%
+% The given artifacts must be a struct array of artifact metadata, with one
+% element per artifact to fetch.  rdtListArtifacts() and
+% rdtSearchArtifacts() return suitable struct arrays.
+%
+% Returns a cell array of loaded Matlab data with one element per artifact.
+% rdtFetchArtifact describes the expected data formats.  Also returns the
+% given artifacts struct array with some local data filled in.
+%
+% See also rdtFetchArtifact rdtListArtifacts rdtSearchArtifacts
+%
+% Copyright (c) 2015 RemoteDataToolbox Team
 
 parser = rdtInputParser();
 parser.addRequired('configuration');

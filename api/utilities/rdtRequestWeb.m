@@ -1,50 +1,40 @@
-%%% RemoteDataToolbox Copyright (c) 2015 The RemoteDataToolbox Team.
-%
-% Make an http request to a web server.
-%   @param configuration RemoteDataToolbox configuration info
-%   @param resourcePath request path to append to the server url
-%   @param queryParams struct of query params to add to the request path
-%   @param requestBody string or struct for 'post' request body
-%
-% @details
-% Performs an http request to a web server.  Ssends the request to the
-% server at @a configuration.serverUrl.
-%
-% @details
-% Appends the given @a resourcePath to @a configuration serverUrl to form a
-% complete resource URL.  If @a queryParams is provided, it must be a
-% struct with string field values.  Fields and values are included in the
-% request as query parameters.
-%
-% @details
-% By default, performs an http GET request.  If @a request body is
-% provided, performs an http POST request including @a requestBody as the
-% body.  If @a requestBody is a string, it is included verbatim.
-% If @a requestBody is a struct, it is coverted to a string and included.
-%
-% @details
-% The value of @a configuration.requestMediaType determines how a @a
-% requestBody struct may be converted to string:
-%   - 'application/json': converted to JSON string (default)
-%   - so far that's the only option!
-%   .
-%
-% @details
-% Returns a string or struct representing the server's response to the http
-% request.  If the request failed, returns ''.  By default returns the
-% response body verbatim as a string.  The value of @a
-% configuration.responseMediaType determines whether and how the reponse
-% should be converted to a struct:
-%   - 'application/json': treated as JSON string (default)
-%   - so far that's the only option!
-%   .
-%
-% @details
-% Usage:
-%   response = rdtRequestWeb(configuration, resourcePath, ... )
-%
-% @ingroup queries
 function response = rdtRequestWeb(configuration, resourcePath, varargin)
+%% Make an HTTP request to a Web server.
+%
+% response = rdtRequestWeb(configuration, resourcePath) performs an HTTP
+% GET request to the server at configuration.serverUrl with the given
+% resourcePath.
+%
+% For example, if configuration.serverUrl is "https://en.wikipedia.org" and
+% resourcePath is "wiki/World_Wide_Web", GETs the content at
+% "https://en.wikipedia.org/wiki/World_Wide_Web".
+%
+% response = rdtRequestWeb( ... 'queryParams', params) takes a params
+% struct and adds the fields and values of params to the GET request as
+% query parameters.
+%
+% response = rdtRequestWeb( ... 'requesteBody', body) performs a POST
+% request instead of a GET request.  The given body is added to the request
+% as the request body.
+%
+% The value of configuration.requestMediaType determines how a request body
+% is treated:
+%   - 'application/json': body may be a struct or array and is
+%   automatically converted to JSON string
+%   - otherwise: body must be a string and is added to the request as-is
+%
+% The value of configuration.acceptMediaType determines how the response is
+% treated:
+%   - 'application/json': response is treated as a JSON string and
+%   automatically converted to a struct or array
+%   - otherwise: response is treated as a string and returned as-is
+%
+% Returns the server response as a string, struct, or array, or the empty
+% '' if the request failed.
+%
+% See also rdtFromJson rdtToJson
+%
+% Copyright (c) 2015 RemoteDataToolbox Team
 
 parser = rdtInputParser();
 parser.addRequired('configuration');

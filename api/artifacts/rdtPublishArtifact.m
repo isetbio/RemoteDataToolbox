@@ -1,30 +1,23 @@
-%%% RemoteDataToolbox Copyright (c) 2015 The RemoteDataToolbox Team.
-%
-% Publish an artifact to a remote repository.
-%   @param configuration RemoteDataToolbox configuration info
-%   @param file local name or path to the file to publish as an artifact
-%   @param remotePath string remote path to the artifact (required)
-%   @param artifactId string id of the artifact itself (defaults to file name)
-%   @param version string artifact version (defaults to '1')
-%
-% @details
-% Publishes the given @a file as an artifact to a remote respository.  @a
-% configuration.repositoryUrl should point to the repository root.
-%
-% @details
-% Returns a struct of metadata about the published artifact, including its
-% remotePath, artifactId, server url, and local file path within the
-% artifact cache.  See rdtArtifact().
-%
-% @details
-% If the publication fails, returns [].
-%
-% @details
-% Usage:
-%   artifact = rdtPublishArtifact(configuration, file, remotePath, artifactId, version)
-%
-% @ingroup artifacts
 function artifact = rdtPublishArtifact(configuration, file, remotePath, varargin)
+%% Publish an artifact to a remote repository.
+%
+% artifact = rdtPublishArtifact(configuration, file, remotePath) publishes
+% the given file as an artifact to a remote respository, at the given
+% remotePath.  configuration.repositoryUrl must point to the repository
+% root.
+%
+% artifact = rdtPublishArtifact(... 'artifactId', artifactId) uses the
+% given artifactId instead of the default file base name.
+%
+% artifact = rdtPublishArtifact(... 'version', version) uses the
+% given version instead of the default '1'.
+%
+% Returns a struct of metadata about the published artifact, or [] if the
+% publication failed.
+%
+% See also rdtArtifact rdtPublishArtifacts
+%
+% Copyright (c) 2015 RemoteDataToolbox Team
 
 parser = rdtInputParser();
 parser.addRequired('configuration');
