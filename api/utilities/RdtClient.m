@@ -132,26 +132,21 @@ classdef RdtClient < handle
             remotePath = parser.Results.remotePath;
             
             [data, artifact] = rdtReadArtifact(obj.configuration, ...
-                artifactId, varargin{:}, 'remotePath', remotePath);
+                remotePath, artifactId, varargin{:});
         end
         
-        function [datas, artifacts] = readArtifacts(obj, varargin)
+        function [datas, artifacts] = readArtifacts(obj, pathOrArtifacts)
             % Read data for multiple artifacts into Matlab.
             %   [datas, artifacts] = obj.readArtifacts() all under pwrp()
             %   obj.readArtifacts(remotePath) remotePath instead of pwrp()
             %   obj.readArtifacts(artifacts) explicit artifact struct array
             
-            parser = rdtInputParser();
-            parser.addOptional('pathOrArtifacts', []);
-            parser.parse(varargin{:});
-            pathOrArtifacts = parser.Results.whichUrlOrArtifact;
-            
             datas = {};
             artifacts = {};
             
-            if isempty(pathOrArtifacts)
+            if nargin < 2 || isempty(pathOrArtifacts)
                 % all under pwrp()
-                artifacts = rdtListArtifacts(obj.configuration, obj.workingRemotePath);
+                artifacts = obj.listArtifacts();
                 [datas, artifacts] = rdtReadArtifacts(obj.configuration, artifacts);
                 
             elseif ischar(pathOrArtifacts)
@@ -185,7 +180,7 @@ classdef RdtClient < handle
         
         function artifacts = publishArtifacts(obj, folder, varargin)
             % Publish files in a folder as artifacts to a remote repository.
-            %   artifact = obj.publishArtifact(file)
+            %   artifact = obj.publishArtifact(folder)
             %   ( ... 'remotePath', remotePath) remotePath instead of pwrp()
             %   ( ... 'version', version) version instead of default '1'
             %   ( ... 'type', type) restruct to type

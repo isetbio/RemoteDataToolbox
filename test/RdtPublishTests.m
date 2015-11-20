@@ -13,6 +13,7 @@ classdef RdtPublishTests < matlab.unittest.TestCase
             'password', 'test123', ...
             'requestMediaType', 'application/json', ...
             'acceptMediaType', 'application/json');
+        
         testArtifactFile = fullfile(tempdir(), 'temp-artifact.mat');
     end
     

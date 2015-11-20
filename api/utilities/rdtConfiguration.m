@@ -38,14 +38,12 @@ elseif 1 == nargin
         configArgs = {configFromJson(arg)};
     elseif isstruct(arg)
         % explicit struct
-        fprintf('Using config from explicit struct.\n');
         configArgs = {arg};
     else
         fprintf('Using default config.\n');
     end
 else
     % explicit name-value pairs
-    fprintf('Using config from explicit name-value pairs.\n');
     configArgs = varargin;
 end
 
