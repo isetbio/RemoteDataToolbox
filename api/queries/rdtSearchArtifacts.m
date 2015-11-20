@@ -54,8 +54,8 @@ end
 nArtifacts = numel(response);
 artifactCell = cell(1, nArtifacts);
 for ii = 1:nArtifacts
-    r =response{ii};
-    r.remotePath = r.groupId;
+    r = response{ii};
+    r.remotePath = rdtPathDotsToSlashes(r.groupId);
     artifactCell{ii} = rdtArtifact(r);
 end
 artifacts = [artifactCell{:}];

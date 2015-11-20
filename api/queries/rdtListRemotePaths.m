@@ -29,4 +29,10 @@ response = rdtRequestWeb(configuration, resourcePath, 'queryParams', params);
 if isempty(response) || ~isfield(response, 'groupIds')
     return;
 end
-remotePaths = response.groupIds;
+
+% convert group names with dots to paths with slashes
+nPaths = numel(response.groupIds);
+remotePaths = cell(1, nPaths);
+for ii = 1:nPaths
+    remotePaths{ii} = rdtPathDotsToSlashes(response.groupIds{ii});
+end

@@ -32,7 +32,7 @@ classdef RdtPathTests < matlab.unittest.TestCase
                 testCase.withBoth, ...
                 testCase.withNeither);
             
-            testCase.roundTrip(allPaths, allPaths, {'separator', '/'});
+            testCase.roundTrip(allPaths, allPaths, {});
         end
         
         function testSubstituteDots(testCase)
@@ -55,7 +55,7 @@ classdef RdtPathTests < matlab.unittest.TestCase
         end
         
         function testTrimLeading(testCase)
-            fullPathArgs = {'separator', '/', 'trimLeading', true};
+            fullPathArgs = {'trimLeading', true};
             testCase.roundTrip(testCase.withoutTrailing, testCase.withNeither, fullPathArgs);
             testCase.roundTrip(testCase.withoutLeading, testCase.withoutLeading, fullPathArgs);
             testCase.roundTrip(testCase.withBoth, testCase.withoutLeading, fullPathArgs);
@@ -63,7 +63,7 @@ classdef RdtPathTests < matlab.unittest.TestCase
         end
         
         function testTrimTrailing(testCase)
-            fullPathArgs = {'separator', '/', 'trimTrailing', true};
+            fullPathArgs = {'trimTrailing', true};
             testCase.roundTrip(testCase.withoutTrailing, testCase.withoutTrailing, fullPathArgs);
             testCase.roundTrip(testCase.withoutLeading, testCase.withNeither, fullPathArgs);
             testCase.roundTrip(testCase.withBoth, testCase.withoutTrailing, fullPathArgs);
@@ -71,7 +71,7 @@ classdef RdtPathTests < matlab.unittest.TestCase
         end
         
         function testTrimBoth(testCase)
-            fullPathArgs = {'separator', '/', 'trimTrailing', true, 'trimLeading', true};
+            fullPathArgs = {'trimTrailing', true, 'trimLeading', true};
             testCase.roundTrip(testCase.withoutTrailing, testCase.withNeither, fullPathArgs);
             testCase.roundTrip(testCase.withoutLeading, testCase.withNeither, fullPathArgs);
             testCase.roundTrip(testCase.withBoth, testCase.withNeither, fullPathArgs);
@@ -85,7 +85,7 @@ classdef RdtPathTests < matlab.unittest.TestCase
                 original = originals{ii};
                 expected = expecteds{ii};
                 
-                pathParts = rdtPathParts(original, 'separator', '/');
+                pathParts = rdtPathParts(original);
                 remade = rdtFullPath(pathParts, fullPathArgs{:});
                 
                 testCase.assertEqual(remade, expected);

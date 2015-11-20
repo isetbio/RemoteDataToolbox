@@ -2,7 +2,7 @@ function fullPath = rdtFullPath(pathParts, varargin)
 %% Build a full path string from a list of parts.
 %
 % fullPath = rdtFullPath(pathParts) builds a path string from the given
-% cell array of path parts, with parts delimited by filesep().
+% cell array of path parts, with parts delimited by '/'.
 %
 % Empty path parts will cause extra delimiters to be inserted.
 %
@@ -10,7 +10,7 @@ function fullPath = rdtFullPath(pathParts, varargin)
 % path "/foo/bar".
 %
 % converted = rdtConvertPathStyle(... 'separator', separator) uses the
-% given separator character instead of the default filesep().
+% given separator character instead of the default '/'.
 %
 % fullPath = rdtFullPath( ... 'trimLeading', trimLeading) obeys the
 % optional trimLeading flag.  When trimLeading is true, an empty leading
@@ -30,7 +30,7 @@ function fullPath = rdtFullPath(pathParts, varargin)
 
 parser = rdtInputParser();
 parser.addRequired('pathParts', @iscellstr);
-parser.addParameter('separator', filesep(), @(sep) ischar(sep) && 1 == numel(sep));
+parser.addParameter('separator','/', @(sep) ischar(sep) && 1 == numel(sep));
 parser.addParameter('trimLeading', false, @islogical);
 parser.addParameter('trimTrailing', false, @islogical);
 parser.parse(pathParts, varargin{:});

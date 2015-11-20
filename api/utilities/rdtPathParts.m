@@ -2,7 +2,7 @@ function pathParts = rdtPathParts(original, varargin)
 %% Break a path string into parts delimited by a separator character.
 %
 % parts = rdtPathParts(original) breaks the given original path into parts
-% delimited by filesep().
+% delimited by '/'.
 %
 % If the original path stirng contains a leading or trailing separator,
 % an empty leading or trailing empty path part will be included.
@@ -11,11 +11,11 @@ function pathParts = rdtPathParts(original, varargin)
 % parts: '', 'foo', and 'bar'.
 %
 % converted = rdtConvertPathStyle(... 'separator', separator) uses the
-% given separator character instead of the default filesep().
+% given separator character instead of the default '/'.
 %
 % Returns a cell array containing the broken up path parts.
 %
-% See also rdtFullPath filesep
+% See also rdtFullPath
 %
 % pathParts = rdtPathParts(original, varargin)
 %
@@ -23,7 +23,7 @@ function pathParts = rdtPathParts(original, varargin)
 
 parser = rdtInputParser();
 parser.addRequired('original', @ischar);
-parser.addParameter('separator', filesep(), @(sep) ischar(sep) && 1 == numel(sep));
+parser.addParameter('separator', '/', @(sep) ischar(sep) && 1 == numel(sep));
 parser.parse(original, varargin{:});
 original = parser.Results.original;
 separator = parser.Results.separator;

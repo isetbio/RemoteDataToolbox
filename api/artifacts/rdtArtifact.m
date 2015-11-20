@@ -1,5 +1,5 @@
 function artifact = rdtArtifact(varargin)
-%% Initialize a struct of metadata abouta remote artifact.
+%% Initialize a struct of metadata abouta a remote artifact.
 %
 % This function initializes a struct with metadata describing a remote
 % artifact.  Metadata fields begin with default values declared in 

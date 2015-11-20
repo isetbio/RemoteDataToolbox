@@ -30,7 +30,7 @@ resourcePath = '/restServices/archivaServices/searchService/searchArtifacts';
 
 % hack: repeat repositoryName forces JSON array, not scalar string
 searchRequest.repositories = {configuration.repositoryName, configuration.repositoryName};
-searchRequest.groupId = remotePath;
+searchRequest.groupId = rdtPathSlashesToDots(remotePath);
 
 response = rdtRequestWeb(configuration, resourcePath, 'requestBody', searchRequest);
 if isempty(response)
@@ -41,7 +41,7 @@ nArtifacts = numel(response);
 artifactCell = cell(1, nArtifacts);
 for ii = 1:nArtifacts
     r = response{ii};
-    r.remotePath = r.groupId;
+    r.remotePath = rdtPathDotsToSlashes(r.groupId);
     artifactCell{ii} = rdtArtifact(r);
 end
 artifacts = [artifactCell{:}];
