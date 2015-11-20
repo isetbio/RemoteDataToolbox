@@ -6,8 +6,8 @@ function configuration = rdtCredentialsDialog(varargin)
 % window.  Others may be able to read what you type in the command window
 % or view your command history, so you should avoid typing secrets there.
 %
-% configuration = rdtConfiguration(varargin) passes varargin to
-% rdtConfiguration() to obtain an initial config struct.  Then prompts you
+% configuration = rdtCredentialsDialog(varargin) passes varargin to
+% rdtConfiguration() to obtain an initial config struct, then prompts you
 % to enter a username and password into a dialog which will obscure what
 % you type.
 %

@@ -1,6 +1,6 @@
 classdef RdtClient < handle
     % RdtClient Utility for browsing a remote repository.
-    %   Holds toolbox configuration and other arguments to simplify
+    %   Holds toolbox configuration and working to simplify
     %   calls to the plain-old-function API.
     
     properties
@@ -19,15 +19,23 @@ classdef RdtClient < handle
             obj.configuration = rdtConfiguration(configuration);
             
             % start out at repository root
-            obj.cd();
+            obj.crp();
         end
         
-        function wrp = cd(obj, varargin)
+        function wrp = pwrp(obj)
+            % Print and return the working remote path.
+            
+            wrp = obj.workingRemotePath;
+            disp(wrp);
+        end
+        
+        function wrp = crp(obj, varargin)
             % Change the working remote path.
-            %   wrp = obj.cd() reset to repository root
-            %   wrp = obj.cd('foo') append to the working path
-            %   wrp = obj.cd('/foo') set the whole working path
-            %   wrp = obj.cd('..') back up to path parent
+            %   wrp = obj.crp() just return working path
+            %   wrp = obj.crp('/') reset to repository root
+            %   wrp = obj.crp('/foo') set the whole working path
+            %   wrp = obj.crp('foo') append to the working path
+            %   wrp = obj.crp('..') back up to path parent
             
             parser = rdtInputParser();
             parser.addOptional('remotePath', '', @ischar);
@@ -36,14 +44,14 @@ classdef RdtClient < handle
             
             if isempty(remotePath)
                 % reset to root
-                wrp = '/';
+                wrp = obj.workingRemotePath;
+            elseif '/' == remotePath(1)
+                % set absolute
+                wrp = remotePath;
             elseif strcmp('..', remotePath)
                 % back up
                 parentPath = fileparts(obj.workingRemotePath);
                 wrp = parentPath;
-            elseif '/' == remotePath(1)
-                % set absolute
-                wrp = remotePath;
             else
                 % set relative
                 wrp = fullfile(obj.workingRemotePath, remotePath);
@@ -51,9 +59,15 @@ classdef RdtClient < handle
             obj.workingRemotePath = wrp;
         end
         
+        function remotePaths = listRemotePaths(obj)
+            % List remote paths to artifacts.
+            %   remotePaths = obj.listRemotePaths() list all paths
+            remotePaths = rdtListRemotePaths(obj.configuration);
+        end
+        
         function artifacts = listArtifacts(obj, varargin)
             % List remote artifacts under a remote path.
-            %   artifacts = obj.listArtifacts() use obj.workingRemotePath
+            %   artifacts = obj.listArtifacts() use pwrp()
             %   artifacts = obj.listArtifacts(remotePath) use remotePath
             
             parser = rdtInputParser();
@@ -78,53 +92,159 @@ classdef RdtClient < handle
             end
         end
         
-        function remotePaths = listRemotePaths(obj)
-            % List remote paths to artifacts.
-            %   remotePaths = obj.listRemotePaths() list all paths
-            remotePaths = rdtListRemotePaths(obj.configuration);
+        function artifacts = searchArtifacts(obj, searchText, varargin)
+            % Search for artifacts by fuzzy text matching.
+            %   artifacts = obj.searchArtifacts(text) match against text
+            %   ( ... 'remotePath', remotePath) remotePath instead of pwrp()
+            %   ( ... 'artifactId', artifactId) restrict to artifactId
+            %   ( ... 'version', version) restrict to version
+            %   ( ... 'type', type) restrict to type
+            
+            parser = rdtInputParser();
+            parser.addRequired('searchText', @ischar);
+            parser.addParameter('remotePath', obj.workingRemotePath, @ischar);
+            parser.parse(searchText, varargin{:});
+            searchText = parser.Results.searchText;
+            remotePath = parser.Results.remotePath;
+            
+            if remotePath == '/'
+                remotePath = '';
+            end
+            
+            artifacts = rdtSearchArtifacts(obj.configuration, ...
+                searchText, varargin{:}, 'remotePath', remotePath);
         end
         
-        % search artifacts
+        function [data, artifact] = readArtifact(obj, artifactId, varargin)
+            % Read data for one artifact into Matlab.
+            %   [data, artifact] = obj.readArtifact(artifactId)
+            %   ( ... 'remotePath', remotePath) remotePath instead of pwrp()
+            %   ( ... 'version', version) version instead of default latest
+            %   ( ... 'type', type) type instead of default 'mat'
+            
+            parser = rdtInputParser();
+            parser.addRequired('artifactId', @ischar);
+            parser.addParameter('remotePath', obj.workingRemotePath, @ischar);
+            parser.parse(artifactId, varargin{:});
+            artifactId = parser.Results.artifactId;
+            remotePath = parser.Results.remotePath;
+            
+            if remotePath == '/'
+                remotePath = '';
+            end
+            
+            [data, artifact] = rdtReadArtifact(obj.configuration, ...
+                artifactId, varargin{:}, 'remotePath', remotePath);
+        end
         
-        % read artifact (optional remotePath)
+        function [datas, artifacts] = readArtifacts(obj, varargin)
+            % Read data for multiple artifacts into Matlab.
+            %   [datas, artifacts] = obj.readArtifacts() all under pwrp()
+            %   obj.readArtifacts(remotePath) remotePath instead of pwrp()
+            %   obj.readArtifacts(artifacts) explicit artifact struct array
+            
+            parser = rdtInputParser();
+            parser.addOptional('pathOrArtifacts', []);
+            parser.parse(varargin{:});
+            pathOrArtifacts = parser.Results.whichUrlOrArtifact;
+            
+            datas = {};
+            artifacts = {};
+            
+            if isempty(pathOrArtifacts)
+                % all under pwrp()
+                artifacts = rdtListArtifacts(obj.configuration, obj.workingRemotePath);
+                [datas, artifacts] = rdtReadArtifacts(obj.configuration, artifacts);
+                
+            elseif ischar(pathOrArtifacts)
+                % all under remote path
+                artifacts = rdtListArtifacts(obj.configuration, pathOrArtifacts);
+                [datas, artifacts] = rdtReadArtifacts(obj.configuration, artifacts);
+                
+            elseif isstruct(pathOrArtifacts)
+                % explicit struct array
+                [datas, artifacts] = rdtReadArtifacts(obj.configuration, pathOrArtifacts);
+            end
+        end
         
-        % read artifats
+        function artifact = publishArtifact(obj, file, varargin)
+            % Publish a file as an artifact to a remote repository.
+            %   artifact = obj.publishArtifact(file)
+            %   ( ... 'remotePath', remotePath) remotePath instead of pwrp()
+            %   ( ... 'artifactId', artifactId) artifactId instead of name
+            %   ( ... 'version', version) version instead of default '1'
+            
+            parser = rdtInputParser();
+            parser.addRequired('file', @ischar);
+            parser.addParameter('remotePath', obj.workingRemotePath, @ischar);
+            parser.parse(file, varargin{:});
+            file = parser.Results.file;
+            remotePath = parser.Results.remotePath;
+            
+            artifact = rdtPublishArtifact(obj.configuration, ...
+                file, remotePath, varargin{:});
+        end
         
-        % artifact url (extract url for artifact or artifacts)
+        function artifacts = publishArtifacts(obj, folder, varargin)
+            % Publish file in a folder as artifacts to a remote repository.
+            %   artifact = obj.publishArtifact(file)
+            %   ( ... 'remotePath', remotePath) remotePath instead of pwrp()
+            %   ( ... 'version', version) version instead of default '1'
+            %   ( ... 'type', type) restruct to type
+            
+            parser = rdtInputParser();
+            parser.addRequired('folder', @ischar);
+            parser.addParameter('remotePath', obj.workingRemotePath, @ischar);
+            parser.parse(folder, varargin{:});
+            folder = parser.Results.folder;
+            remotePath = parser.Results.remotePath;
+            
+            artifacts = rdtPublishArtifacts(obj.configuration, ...
+                folder, remotePath, varargin{:});
+        end
         
-        % credentials dialog
+        function credentialsDialog(obj)
+            obj.configuration = rdtCredentialsDialog(obj.configuration);
+        end
         
-        % open browser (server, repo, or artifact?)
-        
-        % publish artifact
-        
-        % publish artifacts
+        function url = openBrowser(obj, varargin)
+            % View a server, repository or artifact in a browser.
+            %   url = openBrowser() open pwrp()
+            %   url = openBrowser(whichUrl) open obj.configuration.whichUrl
+            %   url = openBrowser(artifact) open artifact.url
+            
+            parser = rdtInputParser();
+            parser.addOptional('whichUrlOrArtifact', []);
+            parser.parse(varargin{:});
+            whichUrlOrArtifact = parser.Results.whichUrlOrArtifact;
+            
+            url = '';
+            
+            if isempty(whichUrlOrArtifact)
+                % open pwrp()
+                repoParts = rdtPathParts(obj.configuration.repositoryUrl, 'separator', '/');
+                remotePathParts = rdtPathParts(obj.workingRemotePath, 'separator', '/');
+                pathParts = cat(2, repoParts, remotePathParts);
+                url = rdtFullPath(pathParts, 'separator', '/');
+                placeholder.url = url;
+                rdtOpenBrowser(placeholder, 'url');
+                
+            elseif isstruct(whichUrlOrArtifact)
+                % open artifact
+                url = rdtOpenBrowser(whichUrlOrArtifact);
+                
+            elseif ischar(whichUrlOrArtifact)
+                % open whichUrl
+                url = rdtOpenBrowser(obj.configuration, whichUrlOrArtifact);
+            end
+        end
     end
     
     methods (Static)
         function withDots = slashesToDots(withSlashes)
-            % Swap path style from slashes to dots: /foo/bar/ -> foo.bar
-            
-            if isempty(withSlashes)
-                withDots = '';
-                return;
-            end
-            
-            % strip off extra delimiters at the ends
-            if '/' == withSlashes(1)
-                first = 2;
-            else
-                first = 1;
-            end
-            if '/' == withSlashes(end)
-                last = numel(withSlashes) - 1;
-            else
-                last = numel(withSlashes);
-            end
-            withDots = withSlashes(first:last);
-            
-            % convert path separators to subgroup dots
-            withDots('/' == withDots) = '.';
+            pathParts = rdtPathParts(withSlashes, 'separator', '/');
+            withDots = rdtFullPath(pathParts, 'separator', '.', ...
+                'trimLeading', true, 'trimTrailing', true);
         end
     end
 end
