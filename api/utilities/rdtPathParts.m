@@ -34,6 +34,10 @@ if isempty(original)
 end
 
 % split up the original
-pathParts = strsplit(original, separator, ...
-    'DelimiterType', 'Simple', ...
-    'CollapseDelimiters', true);
+if verLessThan('matlab', 'R2015b')
+    pathParts = strsplit(original, separator);
+else
+    pathParts = strsplit(original, separator, ...
+        'DelimiterType', 'Simple', ...
+        'CollapseDelimiters', true);
+end
