@@ -1,11 +1,18 @@
-%% This is a tutorial for working with the Remote Data Toolbox.
+%% This is a tutorial for the Remote Data Toolbox plain-old-function API.
 %
 % This script shows how you can access any public Maven repository, like
 % the popular open source repository at Maven Central.
 %
-% This script uses explicit Matlab code to configure the RemoteDataToolbox.
-% This adds an argument to each toolbox function call.  But it adds
-% flaxibility and allows this script to be self-contained.
+% This script uses explicit Matlab code to configure the RemoteDataToolbox
+% and explicitly passes a configuration struct to each toolbox function
+% call.
+%
+% This plain-old-function API is more verbose than the object-oriented API
+% based on RdtClient.  Sometimes verbose and explicit is what you want.
+% For example, RdtClient remembers its "working remote directory", which
+% can cause unexpected results if you forget to set the working remote
+% directory beforehand.  In contrast, the plain-old-function API doesn't
+% remember anything, so you can't make this type of mistake.
 %
 % Copyright (c) 2015 RemoteDataToolbox Team
 

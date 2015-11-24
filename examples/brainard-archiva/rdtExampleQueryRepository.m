@@ -1,4 +1,4 @@
-%% This is a tutorial for working with the Remote Data Toolbox.
+%% This is a tutorial for the Remote Data Toolbox object-oriented API.
 %
 % This script shows how you might query a project's Archiva server to find
 % out things like:
@@ -6,9 +6,9 @@
 %   - What artifacts are located under each remote path?
 %   - What artifacts match a search term?
 %
-% This script uses a JSON file to configure the Remote Data Toolbox with
-% things like the Url of the project's Archiva server.  This simplifies
-% various calls to the Remote Data Toolbox functions.
+% This script uses a JSON file to configure a Remote Data Toolbox client
+% object with things like the Url of the project's remote repository.  This
+% simplifies various calls to the Remote Data Toolbox functions.
 %
 % This script does not require you to enter repository credentials because
 % all we are doing is querying for artifacts that someone else published.
@@ -21,30 +21,37 @@
 clear;
 clc;
 
+%% Get a client configured for our repository.
+client = RdtClient('brainard-archiva');
+
 %% What remote paths are available?
-[remotePaths, repositoryName] = rdtListRemotePaths('brainard-archiva');
+remotePaths = client.listRemotePaths();
 nPaths = numel(remotePaths);
 
-fprintf('There are %d remote paths in the repository "%s":\n', nPaths, repositoryName);
+fprintf('There are %d remote paths in the repository "%s":\n', ...
+    nPaths, ...
+    client.configuration.repositoryName);
 disp(remotePaths)
 
 %% What artifacts are available under each remote path?
 for ii = 1:nPaths
-    remotePath = remotePaths{ii};
-    artifacts = rdtListArtifacts('brainard-archiva', remotePath);
+    client.crp(remotePaths{ii});
+    artifacts = client.listArtifacts();
     nArtifacts = numel(artifacts);
     
-    fprintf('Remote path "%s" contains %d artifacts:\n', remotePath, nArtifacts);
+    fprintf('Remote path "%s" contains %d artifacts:\n', client.pwrp(), nArtifacts);
     for jj = 1:nArtifacts
         disp(artifacts(jj));
     end
 end
 
 %% Which artifacts match the term "demo"?
+% should see our image artifact from rdtExamplePublishData.m
 
-% should see the same artifact as in rdtExamplePublishData.m
+% change to repository root so we don't miss any artifacts
+client.crp('/');
 
-demoArtifacts = rdtSearchArtifacts('brainard-archiva', 'demo');
+demoArtifacts = client.searchArtifacts('demo');
 nArtifacts = numel(demoArtifacts);
 fprintf('%d artifacts match the term "demo":\n', nArtifacts);
 for jj = 1:nArtifacts
@@ -52,7 +59,7 @@ for jj = 1:nArtifacts
 end
 
 %% Which artifacts match the term "test"?
-testArtifacts = rdtSearchArtifacts('brainard-archiva', 'test');
+testArtifacts = client.searchArtifacts('test');
 nArtifacts = numel(testArtifacts);
 fprintf('%d artifacts match the term "test":\n', nArtifacts);
 for jj = 1:nArtifacts
@@ -60,7 +67,7 @@ for jj = 1:nArtifacts
 end
 
 %% Which *text* artifacts match the term "test"?
-testTxtArtifacts = rdtSearchArtifacts('brainard-archiva', 'test', 'type', 'txt');
+testTxtArtifacts = client.searchArtifacts('test', 'type', 'txt');
 nArtifacts = numel(testTxtArtifacts);
 fprintf('%d artifacts of type "txt" match the term "test":\n', nArtifacts);
 for jj = 1:nArtifacts
@@ -68,7 +75,7 @@ for jj = 1:nArtifacts
 end
 
 %% Which *version 2* artifacts match the term "test"?
-testV2Artifacts = rdtSearchArtifacts('brainard-archiva', 'test', 'version', '2');
+testV2Artifacts = client.searchArtifacts('test', 'version', '2');
 nArtifacts = numel(testV2Artifacts);
 fprintf('%d artifacts at version 2 match the term "test":\n', nArtifacts);
 for jj = 1:nArtifacts
