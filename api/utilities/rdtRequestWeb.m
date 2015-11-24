@@ -43,11 +43,13 @@ parser.addRequired('configuration');
 parser.addRequired('resourcePath', @ischar);
 parser.addParameter('queryParams', struct(), @isstruct);
 parser.addParameter('requestBody', '');
+parser.addParameter('forceFallback', false, @islogical);
 parser.parse(configuration, resourcePath, varargin{:});
 configuration = rdtConfiguration(parser.Results.configuration);
 resourcePath = parser.Results.resourcePath;
 queryParams = parser.Results.queryParams;
 requestBody = parser.Results.requestBody;
+forceFallback = parser.Results.forceFallback;
 
 response = '';
 
@@ -63,7 +65,7 @@ end
 
 requestUrl = [serverUrl '/' resourcePath];
 
-%% Parse query params.
+%% Parse query params if any.
 queryNames = fieldnames(queryParams);
 queryValues = struct2cell(queryParams);
 nQueryParams = numel(queryNames);
@@ -71,26 +73,45 @@ queryPairs = cell(1, 2*nQueryParams);
 queryPairs(1:2:end) = queryNames;
 queryPairs(2:2:end) = queryValues;
 
-%% Set up Matlab web request options.
-options = weboptions( ...
-    'UserName', configuration.username, ...
-    'Password', configuration.password, ...
-    'ContentType', 'text', ...
-    'KeyName', 'Accept', ...
-    'KeyValue', configuration.acceptMediaType);
-
-%% Perform GET or POST?
-if isempty(requestBody)
-    responseText = webread(requestUrl, queryPairs{:}, options);
-else
-    if isstruct(requestBody)
-        switch configuration.requestMediaType
-            case 'application/json'
-                requestBody = rdtToJson(requestBody);
-        end
+%% Encode request body if any.
+if ~isempty(requestBody) && isstruct(requestBody)
+    switch configuration.requestMediaType
+        case 'application/json'
+            requestBody = rdtToJson(requestBody);
     end
-    options.MediaType = configuration.requestMediaType;
-    responseText = webwrite(requestUrl, requestBody, options);
+end
+
+if forceFallback || verLessThan('matlab', 'R2015b')
+    %% Fall back on third-party RESTful utility.
+    headers = encodeHeaders(configuration);
+    
+    % GET or POST?
+    if isempty(requestBody)
+        encodedUrl = encodeQueryUrl(requestUrl, queryPairs);
+        responseText = urlread2(encodedUrl, 'GET', '', headers, ...
+            'CAST_OUTPUT', true);
+    else
+        responseText = urlread2(requestUrl, 'POST', requestBody, headers, ...
+            'CAST_OUTPUT', true);
+    end
+    
+else
+    %% Use official RESTful utility
+    options = weboptions( ...
+        'UserName', configuration.username, ...
+        'Password', configuration.password, ...
+        'ContentType', 'text', ...
+        'KeyName', 'Accept', ...
+        'KeyValue', configuration.acceptMediaType);
+    
+    % GET or POST?
+    if isempty(requestBody)
+        responseText = webread(requestUrl, queryPairs{:}, options);
+    else
+        options.MediaType = configuration.requestMediaType;
+        responseText = webwrite(requestUrl, requestBody, options);
+    end
+    
 end
 
 if isempty(responseText)
@@ -105,3 +126,54 @@ switch configuration.acceptMediaType
         response = responseText;
 end
 
+%% Encode HTTP headers from toolbox config.
+function headers = encodeHeaders(configuration)
+
+headers = [];
+
+if ~isempty(configuration.requestMediaType)
+    contentType = configuration.requestMediaType;
+    headers = [headers, http_createHeader('Content-Type', contentType)];
+end
+
+if ~isempty(configuration.acceptMediaType)
+    acceptType = configuration.acceptMediaType;
+    headers = [headers, http_createHeader('Accept', acceptType)];
+end
+
+if ~isempty(configuration.username) || ~isempty(configuration.password)
+    % Basic Auth is a standard not likely to change.
+    %   stole: MATLAB/R2015b/toolbox/matlab/iofun/private/urlreadwrite.m
+    import org.apache.commons.codec.binary.Base64;
+    usernamePassword = [configuration.username ':' configuration.password];
+    usernamePasswordBytes = int8(usernamePassword)';
+    usernamePasswordBase64 = char(Base64.encodeBase64(usernamePasswordBytes)');
+    basicAuth = ['Basic ' usernamePasswordBase64];
+    
+    headers = [headers, http_createHeader('Authorization', basicAuth)];
+end
+
+%% Url-encode query params and append to a url.
+function queryUrl = encodeQueryUrl(requestUrl, queryPairs)
+
+if isempty(queryPairs)
+    queryUrl = requestUrl;
+    return;
+end
+
+nParams = numel(queryPairs) / 2;
+queryCell = cell(4, nParams);
+queryCell{1,1} = '?';
+[queryCell{1,2:end}] = deal('&');
+[queryCell{3,1:end}] = deal('=');
+for ii = 1:nParams
+    name = queryPairs{2 * ii - 1};
+    value = queryPairs{2 * ii};
+    if ~ischar(value)
+        value = num2str(value);
+    end
+    queryCell{2,ii} = urlencode(name);
+    queryCell{4,ii} = urlencode(value);
+end
+
+queryUrl = [requestUrl queryCell{:}];
