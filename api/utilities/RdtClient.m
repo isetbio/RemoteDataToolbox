@@ -23,10 +23,9 @@ classdef RdtClient < handle
         end
         
         function wrp = pwrp(obj)
-            % Print and return the working remote path.
+            % Just return the working remote path.
             
             wrp = obj.workingRemotePath;
-            disp(wrp);
         end
         
         function wrp = crp(obj, varargin)

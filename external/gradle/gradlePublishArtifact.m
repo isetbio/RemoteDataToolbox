@@ -1,12 +1,16 @@
-function [filePath, extension] = gradlePublishArtifact(repository, username, password, group, id, version, file, cacheFolder)
+function [filePath, extension] = gradlePublishArtifact(repository, username, password, group, id, version, file, varargin)
 %% Use Gradle to publish an artifact to a Maven repository.
 %
 % [filePath, extension] = gradlePublishArtifact(repository, username, password, group, id, version, file)
 % publishes the given file as an artifact to the given repository url, with
 % the given credentials and artifact coordinates.
 %
-% filePath = gradleFetchArtifact( ... cacheFolder) uses the optional
-% cacheFolder for the local artifact cache.
+% filePath = gradlePublishArtifact( ... 'cacheFolder', cacheFolder) uses
+% the optional cacheFolder for the local artifact cache.
+%
+% filePath = gradlePublishArtifact( ... 'verbose', verbose) obeys the
+% optional vebose flag.  If verbose is true, prints additional details to
+% the command window.
 %
 % Returns the local file path to the published, cached file.  Also returns
 % the published artifact type, which is the same as the given file
@@ -16,11 +20,28 @@ function [filePath, extension] = gradlePublishArtifact(repository, username, pas
 %
 % Copyright (c) 2015 RemoteDataToolbox Team
 
-filePath = '';
+parser = rdtInputParser();
+parser.addRequired('repository', @ischar);
+parser.addRequired('username', @ischar);
+parser.addRequired('password', @ischar);
+parser.addRequired('group', @ischar);
+parser.addRequired('id', @ischar);
+parser.addRequired('version', @ischar);
+parser.addRequired('file', @ischar);
+parser.addParameter('cacheFolder', '', @ischar);
+parser.addParameter('verbose', false, @islogical);
+parser.parse(repository, username, password, group, id, version, file, varargin{:});
+repository = parser.Results.repository;
+username = parser.Results.username;
+password = parser.Results.password;
+group = parser.Results.group;
+id = parser.Results.id;
+version = parser.Results.version;
+file = parser.Results.file;
+cacheFolder = parser.Results.cacheFolder;
+verbose = parser.Results.verbose;
 
-if nargin < 8 || isempty(cacheFolder)
-    cacheFolder = '';
-end
+filePath = '';
 
 [inputPath, inputBase, inputExtension] = fileparts(file);
 extension = inputExtension(inputExtension ~= '.');
@@ -60,11 +81,23 @@ command = sprintf('%s %s --daemon %s %s -b %s publish', ...
     cache, ...
     publishDotGradle);
 
-disp(command);
+if verbose
+    disp(command);
+end
+
 [status, result] = system(command);
 if 0 ~= status
     error('PublishArtifact:BadStatus', 'error status %d (%s)', status, result)
 end
 
 %% Fetch the file and report the path into the local cache.
-filePath = gradleFetchArtifact(repository, username, password, group, id, version, extension, true);
+filePath = gradleFetchArtifact(repository, ...
+    username, ...
+    password, ...
+    group, ...
+    id, ...
+    version, ...
+    extension, ...
+    'refreshCached', true, ...
+    'cacheFolder', cacheFolder, ...
+    'verose', verbose);
