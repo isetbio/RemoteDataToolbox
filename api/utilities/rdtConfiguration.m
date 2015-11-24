@@ -68,7 +68,8 @@ function configArgs = configFromJson(arg)
 
 configArgs = struct();
 
-if 2 == exist(arg, 'file')
+[~, argBase, argExt] = fileparts(arg);
+if strcmp('.json', argExt) && 2 == exist(arg, 'file')
     % got explicit path to a JSON file
     fprintf('Using config from explicit file: %s\n', arg);
     configArgs = rdtFromJson(arg);
@@ -76,7 +77,7 @@ if 2 == exist(arg, 'file')
 end
 
 % got a project name foo, search for rdt-config-foo.json
-jsonFileName = ['rdt-config-' arg '.json'];
+jsonFileName = ['rdt-config-' argBase '.json'];
 
 % search the current folder and its parents
 projectConfig = rdtSearchParentFolders(jsonFileName, pwd());

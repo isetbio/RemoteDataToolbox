@@ -22,6 +22,12 @@ classdef RdtConfigurationTests < matlab.unittest.TestCase
             testCase.assertEqual('alternate-repository-name', configuration.repositoryName);
         end
         
+        function testExplicitFileMustBeJson(testCase)
+            existingFile = 'RdtConfigurationTests';
+            configuration = rdtConfiguration(existingFile);
+            testCase.assertEmpty(configuration.repositoryName);
+        end
+        
         function testFromStructArg(testCase)
             configArgs.repositoryName = 'random-repository-name';
             configuration = rdtConfiguration(configArgs);
