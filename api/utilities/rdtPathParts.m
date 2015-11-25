@@ -34,7 +34,7 @@ if isempty(original)
 end
 
 % split up the original
-if verLessThan('matlab', 'R2015b')
+if verLessThan('matlab', '8.6')
     pathParts = strsplit(original, separator);
 else
     pathParts = strsplit(original, separator, ...

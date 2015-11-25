@@ -81,7 +81,7 @@ if ~isempty(requestBody) && isstruct(requestBody)
     end
 end
 
-if forceFallback || verLessThan('matlab', 'R2015b')
+if forceFallback || verLessThan('matlab', '8.6')
     %% Fall back on third-party RESTful utility.
     headers = encodeHeaders(configuration);
     
