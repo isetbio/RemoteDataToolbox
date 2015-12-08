@@ -55,10 +55,7 @@ if isempty(localPath)
 end
 
 %% Build an artifact struct for the fetched artifact.
-repoParts = rdtPathParts(configuration.repositoryUrl);
-remotePathParts = rdtPathParts(remotePath);
-pathParts = cat(2, repoParts, remotePathParts, {artifactId, version});
-remoteUrl = rdtFullPath(pathParts);
+remoteUrl = rdtBuildArtifactUrl(configuration.repositoryUrl, remotePath, artifactId, version);
 artifact = rdtArtifact( ...
     'remotePath', remotePath, ...
     'artifactId', artifactId, ...
