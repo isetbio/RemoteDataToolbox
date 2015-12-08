@@ -20,6 +20,12 @@ function configuration = rdtConfiguration(varargin)
 % configuration = rdtConfiguration('field1', value1, 'field2', value2, ...)
 % amends the default configuration using the named field-value pairs.
 %
+% This function may pop up a dialog prompting you to enter a username and
+% password to include in the configuration.  The dialog will only pop up if
+% two conditions are met:
+%   1. configuration.username is not empty and not "guest", and
+%   2. configuration.password is empty
+%
 % Returns a struct with toolbox configuration with at least the default
 % fields and values.
 %
@@ -59,9 +65,18 @@ parser.addParameter('requestMediaType', 'application/json');
 parser.addParameter('acceptMediaType', 'application/json');
 parser.addParameter('cacheFolder', '');
 
-%% Parse the input through the input scheme.
+%% Parse given config through the declared config scheme.
 parser.parse(configArgs{:});
 configuration = rdtMergeStructs(parser.Results, parser.Unmatched, true);
+
+%% Prompt for credentials if needed.
+if isempty(configuration.password) ...
+        && ~isempty(configuration.username) ...
+        && ~strcmp('guest', configuration.username)
+    
+    % got a real username and no password -- ask for the password
+    configuration = rdtCredentialsDialog(configuration);
+end
 
 %% Load config from a JSON file.
 function configArgs = configFromJson(arg)
