@@ -22,7 +22,7 @@ Alternatively, project-specific configuration can be placed in a JSON configurat
 The RemoteDataToolbox distribution includes [JSONlab](http://www.mathworks.com/matlabcentral/fileexchange/33381-jsonlab--a-toolbox-to-encode-decode-json-files-in-matlab-octave) for converting JSON data to and from Matlab structs.
 
 # Examples
-We have several [examples](https://github.com/isetbio/RemoteDataToolbox/tree/bshApi/examples) in the form of Matlab scripts.
+We have several [examples](https://github.com/isetbio/RemoteDataToolbox/tree/master/examples) in the form of Matlab scripts.
 
 # Have Fun!
 Brian
