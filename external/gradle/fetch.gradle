@@ -1,0 +1,28 @@
+
+repositories {
+    maven {
+        credentials {
+            username System.getProperty("USERNAME")
+            password System.getProperty("PASSWORD")
+        }
+        url System.getProperty("REPOSITORY")
+    }
+}
+
+configurations {
+  fetch
+}
+
+dependencies {
+  fetch System.getProperty("GROUP") + 
+    ":" + System.getProperty("ID") + 
+    ":" + System.getProperty("VERSION") + 
+    "@" + System.getProperty("EXTENSION")
+}
+
+task fetchIt << {
+  configurations.fetch.resolve().each {
+    file -> println "FETCHED " + file.getPath()
+  }
+}
+

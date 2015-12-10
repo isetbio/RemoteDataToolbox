@@ -1,0 +1,27 @@
+
+apply plugin: "base"
+apply plugin: "maven-publish"
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId System.getProperty("GROUP")
+            artifactId System.getProperty("ID")
+            version System.getProperty("VERSION")
+
+            artifact(System.getProperty("FILE")) {
+                extension System.getProperty("EXTENSION")
+            }
+        }
+    }
+    
+    repositories {
+        maven {
+            credentials {
+                username System.getProperty("USERNAME")
+                password System.getProperty("PASSWORD")
+            }
+            url System.getProperty("REPOSITORY")
+        }
+    }
+}

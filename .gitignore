@@ -1,1 +1,3 @@
+external/gradle/.gradle/
+external/gradle/build/
 *~
