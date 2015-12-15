@@ -12,6 +12,11 @@ publishing {
             artifact(System.getProperty("FILE")) {
                 extension System.getProperty("EXTENSION")
             }
+
+            pom.withXml {
+                asNode().appendNode('description', System.getProperty("DESCRIPTION"));
+                asNode().appendNode('name', System.getProperty("NAME"));
+            }
         }
     }
     

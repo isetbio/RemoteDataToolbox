@@ -1,9 +1,16 @@
-function [filePath, extension] = gradlePublishArtifact(repository, username, password, group, id, version, file, varargin)
+function [filePath, pomPath, extension] = gradlePublishArtifact(repository, username, password, group, id, version, file, varargin)
 %% Use Gradle to publish an artifact to a Maven repository.
 %
 % [filePath, extension] = gradlePublishArtifact(repository, username, password, group, id, version, file)
 % publishes the given file as an artifact to the given repository url, with
 % the given credentials and artifact coordinates.
+%
+% filePath = gradlePublishArtifact( ... 'description', description) adds
+% the given description to the artifact metadata.  The default is no
+% description.
+%
+% filePath = gradlePublishArtifact( ... 'name', name) adds the given
+% name to the artifact metadata.  The default is no name.
 %
 % filePath = gradlePublishArtifact( ... 'cacheFolder', cacheFolder) uses
 % the optional cacheFolder for the local artifact cache.
@@ -13,7 +20,8 @@ function [filePath, extension] = gradlePublishArtifact(repository, username, pas
 % the command window.
 %
 % Returns the local file path to the published, cached file.  Also returns
-% the published artifact type, which is the same as the given file
+% the path to the "pom" file, which is Xml with artifact metadata.  Also
+% returns  the published artifact type, which is the same as the given file
 % extendsion.
 %
 % See also gradleFetchArtifact
@@ -28,6 +36,8 @@ parser.addRequired('group', @ischar);
 parser.addRequired('id', @ischar);
 parser.addRequired('version', @ischar);
 parser.addRequired('file', @ischar);
+parser.addParameter('description', '', @ischar);
+parser.addParameter('name', '', @ischar);
 parser.addParameter('cacheFolder', '', @ischar);
 parser.addParameter('verbose', false, @islogical);
 parser.parse(repository, username, password, group, id, version, file, varargin{:});
@@ -38,10 +48,13 @@ group = parser.Results.group;
 id = parser.Results.id;
 version = parser.Results.version;
 file = parser.Results.file;
+description = parser.Results.description;
+name = parser.Results.name;
 cacheFolder = parser.Results.cacheFolder;
 verbose = parser.Results.verbose;
 
 filePath = '';
+pomPath = '';
 
 [inputPath, inputBase, inputExtension] = fileparts(file);
 extension = inputExtension(inputExtension ~= '.');
@@ -49,14 +62,16 @@ extension = inputExtension(inputExtension ~= '.');
 %% Pass args to Gradle via enviromnent variables.
 %% -D Define system properties.
 systemProps = [ ...
-    '-DREPOSITORY=' repository ' ' ...
-    '-DUSERNAME=' username ' ' ...
-    '-DPASSWORD=' password ' ' ...
-    '-DGROUP=' group ' ' ...
-    '-DID=' id ' ' ...
-    '-DVERSION=' version ' ' ...
-    '-DEXTENSION=' extension ' ' ...
-    '-DFILE=' file ' '];
+    '-DREPOSITORY="' repository '" ' ...
+    '-DUSERNAME="' username '" ' ...
+    '-DPASSWORD="' password '" ' ...
+    '-DGROUP="' group '" ' ...
+    '-DID="' id '" ' ...
+    '-DVERSION="' version '" ' ...
+    '-DEXTENSION="' extension '" ' ...
+    '-DDESCRIPTION="' description '" ' ...
+    '-DNAME="' name '" ' ...
+    '-DFILE="' file '" '];
 
 %% Locate the gradle wrapper.
 thisScript = mfilename('fullpath');
@@ -91,7 +106,7 @@ if 0 ~= status
 end
 
 %% Fetch the file and report the path into the local cache.
-filePath = gradleFetchArtifact(repository, ...
+[filePath, pomPath] = gradleFetchArtifact(repository, ...
     username, ...
     password, ...
     group, ...

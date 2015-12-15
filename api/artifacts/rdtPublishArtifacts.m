@@ -2,7 +2,7 @@ function artifacts = rdtPublishArtifacts(configuration, folder, remotePath, vara
 %% Publish multiple artifacts to a remote repository path.
 %
 % artifacts = rdtPublishArtifacts(configuration, folder, remotePath)
-% publishes each of the files in the given folder as an artifact to a 
+% publishes each of the files in the given folder as an artifact to a
 % remote respository.  configuration.repositoryUrl must point to the
 % repository root.
 %
@@ -11,6 +11,13 @@ function artifacts = rdtPublishArtifacts(configuration, folder, remotePath, vara
 %
 % artifact = rdtPublishArtifacts(... 'version', version) uses the
 % given version for all published artifacts instead of the default '1'.
+%
+% artifact = rdtPublishArtifacts( ... 'description', description) adds
+% the given description to the metadata for each artifact.  The default is
+% no description.
+%
+% artifact = rdtPublishArtifacts( ... 'name', name) adds the given
+% name to the metadata for each artifact.  The default is no name.
 %
 % artifact = rdtPublishArtifacts(... 'type', type) restricts publication to
 % only files that have the same file extension as the given type.
@@ -30,12 +37,16 @@ parser.addRequired('folder', @ischar);
 parser.addRequired('remotePath', @ischar);
 parser.addParameter('version', '1', @ischar);
 parser.addParameter('type', '', @ischar);
+parser.addParameter('description', '', @ischar);
+parser.addParameter('name', '', @ischar);
 parser.parse(configuration, folder, remotePath, varargin{:});
 configuration = rdtConfiguration(parser.Results.configuration);
 folder = parser.Results.folder;
 remotePath = parser.Results.remotePath;
 version = parser.Results.version;
 type = parser.Results.type;
+description = parser.Results.description;
+name = parser.Results.name;
 
 artifacts = [];
 
@@ -75,7 +86,9 @@ for ii = 1:nArtifacts
         file, ...
         remotePath, ...
         'artifactId', artifactId, ...
-        'version', version);
+        'version', version, ...
+        'description', description, ...
+        'name', name);
 end
 
 artifacts = [artifactCell{:}];

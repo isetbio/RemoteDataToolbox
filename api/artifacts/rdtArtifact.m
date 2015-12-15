@@ -28,6 +28,8 @@ parser.addParameter('remotePath', '');
 parser.addParameter('artifactId', '');
 parser.addParameter('version', '');
 parser.addParameter('type', '');
+parser.addParameter('description', '');
+parser.addParameter('name', '');
 
 %% Parse the input through the input scheme.
 parser.parse(varargin{:});

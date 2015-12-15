@@ -49,7 +49,10 @@ client.crp('project-demo');
 version = '42';
 
 % supply the configuration, which now contains publishing credentials
-artifact = client.publishArtifact(imageFile, 'version', version);
+artifact = client.publishArtifact(imageFile, ...
+    'version', version, ...
+    'description', 'This is a test image with random-colored vertical stripes.', ...
+    'name', 'Dr. Stripes');
 
 %% See metadata about the new artifact!
 disp(artifact)

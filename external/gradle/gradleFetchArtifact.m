@@ -1,4 +1,4 @@
-function filePath = gradleFetchArtifact(repository, username, password, group, id, version, extension, varargin)
+function [filePath, pomPath] = gradleFetchArtifact(repository, username, password, group, id, version, extension, varargin)
 %% Use Gradle to fetch an artifact from a Maven repository.
 %
 % filePath = gradleFetchArtifact(repository, username, password, group, id, version, extension)
@@ -16,7 +16,8 @@ function filePath = gradleFetchArtifact(repository, username, password, group, i
 % optional vebose flag.  If verbose is true, prints additional details to
 % the command window.
 %
-% Returns the local file path to the fetched, cached file.
+% Returns the local file path to the fetched, cached file.  Also returns
+% the path to the "pom" file, which is Xml metadata about the fetched file.
 %
 % See also gradlePublishArtifact
 %
@@ -48,6 +49,7 @@ cacheFolder = parser.Results.cacheFolder;
 verbose = parser.Results.verbose;
 
 filePath = '';
+pomPath = '';
 
 %% -D Define system properties.
 systemProps = [ ...
@@ -98,10 +100,14 @@ if 0 ~= status
     error('FetchArtifact:BadStatus', 'error status %d (%s)', status, result)
 end
 
-%% Scrape out the fetched file.
-lineEnds = strfind(result, char(10));
-fetched = strfind(result, 'FETCHED');
-nextLines = lineEnds(lineEnds > fetched);
-pathStart = fetched + 8;
-pathEnd = nextLines(1);
-filePath = result(pathStart:pathEnd-1);
+%% Scrape out the fetched files.
+fileMatches = regexp(result, 'FETCHED "([^"]*)"', 'tokens');
+
+% assume artifact comes before pom, the order specified in fetch.gradle.
+if numel(fileMatches) > 0
+    filePath = fileMatches{1}{1};
+end
+
+if numel(fileMatches) > 1
+    pomPath = fileMatches{2}{1};
+end

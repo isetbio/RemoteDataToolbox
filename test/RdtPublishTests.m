@@ -53,11 +53,15 @@ classdef RdtPublishTests < matlab.unittest.TestCase
                 testCase.testArtifactFile, ...
                 'publish-group', ...
                 'artifactId', 'publish-id', ...
-                'version', '42');
+                'version', '42', ...
+                'name', 'Dr. Test', ...
+                'description', 'This is only a test.');
             
             testCase.assertNotEmpty(artifact);
             testCase.assertInstanceOf(artifact, 'struct');
             testCase.assertEqual(artifact.artifactId, 'publish-id');
+            testCase.assertEqual(artifact.name, 'Dr. Test');
+            testCase.assertEqual(artifact.description, 'This is only a test.');
             
             % fetch artifact and verify the latest data
             datas = rdtReadArtifacts(testCase.testConfig, artifact);
@@ -79,7 +83,9 @@ classdef RdtPublishTests < matlab.unittest.TestCase
             artifacts = rdtPublishArtifacts(testCase.testConfig, ...
                 artifactFolder, ...
                 'publish-multiple-group', ...
-                'version', '123');
+                'version', '123', ...
+                'name', 'Test', ...
+                'description', 'This is one of several tests.');
             
             testCase.assertNotEmpty(artifacts);
             testCase.assertInstanceOf(artifacts, 'struct');
@@ -88,6 +94,9 @@ classdef RdtPublishTests < matlab.unittest.TestCase
                 originalFile = fullfile(artifactFolder, ...
                     [artifacts(ii).artifactId '.' artifacts(ii).type]);
                 testCase.assertEqual(exist(originalFile, 'file'), 2);
+                
+                testCase.assertEqual(artifacts(ii).name, 'Test');
+                testCase.assertEqual(artifacts(ii).description, 'This is one of several tests.');
             end
         end
         
