@@ -17,7 +17,7 @@ Also includes utilities for querying the repository.  These assume that the Mave
 ### JSON Project Configuration
 All RemoteDataToolbox functions can be used "as is", by passing in explicit configuration in the form of a struct.  This configuration would incluld things like the url of the Maven repository.
 
-Alternatively, project-specific configuration can be placed in a JSON configuration file.  RemoteDataToolbox functions will search the current folder, its parent folder, and so on, until finding a file named `remote-data-toolbox.json`.  This file must contain configuration, such as the url of the Maven repository.
+Alternatively, project-specific configuration can be placed in a JSON configuration file.  RemoteDataToolbox functions will search the current folder, its parent folder and so on, and the Matlab path until finding a file named `rdt-config-myproject.json` (where `myproject` can be any project name).  This file must contain configuration, such as the url of the Maven repository.
 
 The RemoteDataToolbox distribution includes [JSONlab](http://www.mathworks.com/matlabcentral/fileexchange/33381-jsonlab--a-toolbox-to-encode-decode-json-files-in-matlab-octave) for converting JSON data to and from Matlab structs.
 
