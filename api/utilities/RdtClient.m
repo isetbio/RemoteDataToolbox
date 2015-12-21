@@ -1,7 +1,12 @@
 classdef RdtClient < handle
-    % RdtClient Utility for browsing a remote repository.
-    %   Holds toolbox configuration and working remote path to simplify
-    %   calls to the plain-old-function API.
+    % RdtClient Utility for interactions with a remote Archiva repository.
+    %
+    % Data slots in this object are:
+    %
+    %   configuration: Holds the remote configuration 
+    %   workingRemotePath: Holds a working remote path 
+    %
+    % The remote path simplifies calls to the plain-old-function API.
     
     properties
         % toolbox configuration
@@ -23,13 +28,14 @@ classdef RdtClient < handle
         end
         
         function wrp = pwrp(obj)
-            % Just return the working remote path.
-            
+            % Print working remote path
             wrp = obj.workingRemotePath;
         end
         
         function wrp = crp(obj, varargin)
-            % Change the working remote path.
+            % Change the working remote path. (For consistency, could be
+            % cwrp, rather than crp - BW).
+            %
             %   wrp = obj.crp() just return working remote path
             %   wrp = obj.crp('/') reset to repository root
             %   wrp = obj.crp('/foo') set the whole working path
@@ -214,19 +220,23 @@ classdef RdtClient < handle
             url = '';
             
             if isempty(whichUrlOrArtifact)
+                % If there is no argument, then we open the repository URL,
+                % appending the working directory.
                 % open pwrp()
                 repoParts = rdtPathParts(obj.configuration.repositoryUrl);
                 remotePathParts = rdtPathParts(obj.workingRemotePath);
                 pathParts = cat(2, repoParts, remotePathParts);
                 url = rdtFullPath(pathParts);
+                
+                % Tell the open browser that we are sending in a full URL
                 rdtOpenBrowser(struct('url', url), 'url');
                 
             elseif isstruct(whichUrlOrArtifact)
-                % open artifact
+                % open the browser at the URL of the named artifact
                 url = rdtOpenBrowser(whichUrlOrArtifact);
                 
             elseif ischar(whichUrlOrArtifact)
-                % open whichUrl
+                % A string was sent in.  We assume this is the URL
                 url = rdtOpenBrowser(obj.configuration, whichUrlOrArtifact);
             end
         end

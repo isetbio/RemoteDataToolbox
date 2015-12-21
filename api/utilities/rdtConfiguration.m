@@ -6,18 +6,24 @@ function [configuration, flavor] = rdtConfiguration(varargin)
 % in this function.  These may be amended with values read from a named
 % JSON-file or passed in as a struct or name-value pairs.
 %
-% configuration = rdtConfiguration(projectName) uses the given name to
-% locate a JSON file that contains configuraiton values.  For example, if
-% projectName is "foo", searches for the file "rdt-config-foo.json".  First
-% searches pwd(), then the parent folders of pwd(), then the Matlab path.
+%   configuration = rdtConfiguration(projectName) 
 %
-% configuration = rdtConfiguration(jsonFile) loads configuration values
-% from the given jsonFile.
+% uses the given name to locate a JSON file that contains configuration
+% values.  For example, if projectName is "foo", searches for the file
+% "rdt-config-foo.json".  First searches pwd(), then the parent folders of
+% pwd(), then the Matlab path.
 %
-% configuration = rdtConfiguration(initialConfig) amends the default
-% configuration using fields from the given initialConfig struct.
+%   configuration = rdtConfiguration(jsonFile) 
 %
-% configuration = rdtConfiguration('field1', value1, 'field2', value2, ...)
+% loads configuration values from the given jsonFile.
+%
+%   configuration = rdtConfiguration(initialConfig) 
+%
+% amends the default configuration using fields from the given
+% initialConfig struct.
+%
+%   configuration = rdtConfiguration('field1', value1, 'field2', value2, ...)
+% 
 % amends the default configuration using the named field-value pairs.
 %
 % This function may pop up a dialog prompting you to enter a configuration
@@ -26,11 +32,13 @@ function [configuration, flavor] = rdtConfiguration(varargin)
 %   1. configuration.username is not empty and not "guest", and
 %   2. configuration.password is empty
 %
+% Used this way:
+%
+%   [configuration, flavor] = rdtConfiguration(varargin)
+%
 % Returns a struct with toolbox configuration with at least the default
 % fields and values.  Also returns a "flavor" string describing where the
-% configuraiton came from (e.g. "defaults", "foo.json", etc.).
-%
-% [configuration, flavor] = rdtConfiguration(varargin)
+% configuration came from (e.g. "defaults", "foo.json", etc.).
 %
 % Copyright (c) 2015 RemoteDataToolbox Team
 

@@ -1,10 +1,11 @@
 function url = rdtOpenBrowser(configOrArtifact, varargin)
-%% Open a repository url in a web browser.
+%% Open a server or repository url in a web browser.
 %
-% url = rdtOpenBrowser(configuration) takes the given render toolbox config
-% struct and opens configuration.serverUrl in a web browser.  If
-% configuration.serverUrl is missing, opens configuration.repositoryUrl
-% instead.
+%   url = rdtOpenBrowser(configuration) 
+%
+% Takes the given render toolbox config struct and opens
+% configuration.serverUrl in a web browser.  If configuration.serverUrl is
+% missing, opens configuration.repositoryUrl instead.
 %
 % url = rdtOpenBrowser(artifact) takes the given render toolbox artifact
 % struct and opens artifact.url in a web browser.
