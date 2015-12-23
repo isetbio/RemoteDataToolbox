@@ -33,8 +33,9 @@ classdef RdtClient < handle
         end
         
         function wrp = crp(obj, varargin)
-            % Change the working remote path. (For consistency, could be
-            % cwrp, rather than crp - BW).
+            % Change the working remote path. 
+            % (For consistency, could be cwrp, rather than crp - BW).
+            % This works exactly the way cd works.
             %
             %   wrp = obj.crp() just return working remote path
             %   wrp = obj.crp('/') reset to repository root
@@ -124,6 +125,7 @@ classdef RdtClient < handle
         
         function [data, artifact] = readArtifact(obj, artifactId, varargin)
             % Read data for one artifact into Matlab.
+            % The artifactID 
             %   [data, artifact] = obj.readArtifact(artifactId)
             %   ( ... 'remotePath', remotePath) remotePath instead of pwrp()
             %   ( ... 'version', version) version instead of default latest
@@ -205,6 +207,23 @@ classdef RdtClient < handle
             % Prompt for username and password with obsucre typing.
             obj.configuration = rdtCredentialsDialog(obj.configuration);
         end
+        
+        % Print to the console, hiding the password
+        function disp(obj)
+            c = obj.configuration;
+            fprintf('\n');
+            fprintf('Repository:     %s\n',c.repositoryName);
+            fprintf('User:           %s\n',c.username);
+            fprintf('Repository URL: %s\n',c.repositoryUrl');
+            fprintf('Sever URL:      %s\n',c.serverUrl);
+            if isempty(obj.workingRemotePath)
+                fprintf('Root working path\n');
+            else
+                fprintf('Working path:   %s\n',obj.workingRemotePath);
+            end
+            fprintf('\n');
+        end
+        
         
         function url = openBrowser(obj, varargin)
             % View a server, repository, or artifact in a Web browser.
