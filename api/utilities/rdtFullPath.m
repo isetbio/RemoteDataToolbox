@@ -66,6 +66,11 @@ if isempty(pathParts)
 end
 
 %% Print parts and delimiter.
+
+% We need to handle the case in which the first string is http:, in which
+% case we need to have two separators (//) instead of just one.  So we add
+% a /.
+if strcmp(pathParts{1},'http:'), pathParts{1}='http:/'; end
 withExtraSeparator = sprintf(['%s' separator], pathParts{:});
 fullPath = withExtraSeparator(1:end-1);
 
