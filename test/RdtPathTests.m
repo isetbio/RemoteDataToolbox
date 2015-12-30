@@ -77,6 +77,24 @@ classdef RdtPathTests < matlab.unittest.TestCase
             testCase.roundTrip(testCase.withBoth, testCase.withNeither, fullPathArgs);
             testCase.roundTrip(testCase.withNeither, testCase.withNeither, fullPathArgs);
         end
+
+        function testHasProtocol(testCase)
+            % insert double separator after first path part
+            pathParts = {'http:', 'foo', 'bar'};
+            withSingleSlash = rdtFullPath(pathParts);
+            testCase.assertEqual(withSingleSlash, 'http:/foo/bar');
+
+            withDoubleSlash = rdtFullPath(pathParts, 'hasProtocol', true);
+            testCase.assertEqual(withDoubleSlash, 'http://foo/bar');
+
+            % but don't insert an extra separator if it's already there
+            pathPartsWithDouble = {'http:', '', 'foo', 'bar'};
+            alreadyDoubleSlash = rdtFullPath(pathPartsWithDouble);
+            testCase.assertEqual(alreadyDoubleSlash, 'http://foo/bar');
+
+            withoutExtraSlash = rdtFullPath(pathPartsWithDouble, 'hasProtocol', true);
+            testCase.assertEqual(withoutExtraSlash, 'http://foo/bar');
+        end
     end
     
     methods

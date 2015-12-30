@@ -33,11 +33,13 @@ parser.addRequired('pathParts', @iscellstr);
 parser.addParameter('separator','/', @(sep) ischar(sep) && 1 == numel(sep));
 parser.addParameter('trimLeading', false, @islogical);
 parser.addParameter('trimTrailing', false, @islogical);
+parser.addParameter('hasProtocol', false, @islogical);
 parser.parse(pathParts, varargin{:});
 pathParts = parser.Results.pathParts;
 separator = parser.Results.separator;
 trimLeading = parser.Results.trimLeading;
 trimTrailing = parser.Results.trimTrailing;
+hasProtocol = parser.Results.hasProtocol;
 
 if isempty(pathParts)
     fullPath = '';
@@ -66,6 +68,14 @@ if isempty(pathParts)
 end
 
 %% Print parts and delimiter.
+
+% We need to handle the case in which the first string is http:, in which
+% case we need to have two separators (//) instead of just one.  So we add
+% a /.
+if hasProtocol && ~isempty(pathParts{2})
+    pathParts = cat(2, pathParts(1), {''}, pathParts(2:end));
+end
+
 withExtraSeparator = sprintf(['%s' separator], pathParts{:});
 fullPath = withExtraSeparator(1:end-1);
 

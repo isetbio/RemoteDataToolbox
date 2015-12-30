@@ -14,7 +14,10 @@
 % dialog window.  For this demo, use the user name "test" and password
 % "test123".
 %
-% See also rdtExampleReadData
+% We need to add an example here that uses a configuration structure to
+% publish a collection of artifacts, not just a single artifact.  
+%
+% See also rdtExampleReadData, rdtPublishArtifacts
 %
 % Copyright (c) 2015 RemoteDataToolbox Team
 
@@ -46,7 +49,7 @@ client.credentialsDialog();
 client.crp('project-demo');
 
 % each artifact must have a version, the default is version '1'
-version = '42';
+version = '40';
 
 % supply the configuration, which now contains publishing credentials
 artifact = client.publishArtifact(imageFile, ...

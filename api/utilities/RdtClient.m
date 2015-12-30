@@ -35,6 +35,7 @@ classdef RdtClient < handle
         function wrp = crp(obj, varargin)
             % Change the working remote path. 
             % (For consistency, could be cwrp, rather than crp - BW).
+            % (Was attempting to mimic shell commands cd and pwd - BSH).
             % This works exactly the way cd works.
             %
             %   wrp = obj.crp() just return working remote path
@@ -245,7 +246,7 @@ classdef RdtClient < handle
                 repoParts = rdtPathParts(obj.configuration.repositoryUrl);
                 remotePathParts = rdtPathParts(obj.workingRemotePath);
                 pathParts = cat(2, repoParts, remotePathParts);
-                url = rdtFullPath(pathParts);
+                url = rdtFullPath(pathParts, 'hasProtocol', true);
                 
                 % Tell the open browser that we are sending in a full URL
                 rdtOpenBrowser(struct('url', url), 'url');
