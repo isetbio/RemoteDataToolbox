@@ -122,5 +122,7 @@ if ~isempty(pathConfig)
     return;
 end
 
-% unable to locate JSON
+% unable to locate JSON.  Return in flavor and issue a warning.
 flavor = sprintf('json not found: %s or %s', arg, jsonFileName);
+warning('rdt:jsonNotFound','json file not found')
+

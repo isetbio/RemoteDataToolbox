@@ -34,8 +34,6 @@ classdef RdtClient < handle
         
         function wrp = crp(obj, varargin)
             % Change the working remote path. 
-            % (For consistency, could be cwrp, rather than crp - BW).
-            % (Was attempting to mimic shell commands cd and pwd - BSH).
             % This works exactly the way cd works.
             %
             %   wrp = obj.crp() just return working remote path
@@ -191,7 +189,7 @@ classdef RdtClient < handle
             %   artifact = obj.publishArtifact(folder)
             %   ( ... 'remotePath', remotePath) remotePath instead of pwrp()
             %   ( ... 'version', version) version instead of default '1'
-            %   ( ... 'type', type) restruct to type
+            %   ( ... 'type', type) restrict to type
             
             parser = rdtInputParser();
             parser.addRequired('folder', @ischar);
