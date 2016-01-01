@@ -209,17 +209,20 @@ classdef RdtClient < handle
         
         % Print to the console, hiding the password
         function disp(obj)
+            % We use the actual variable names here so we can set them.
             c = obj.configuration;
             fprintf('\n');
-            fprintf('Repository:     %s\n',c.repositoryName);
-            fprintf('User:           %s\n',c.username);
-            fprintf('Repository URL: %s\n',c.repositoryUrl');
-            fprintf('Sever URL:      %s\n',c.serverUrl);
+            fprintf('repositoryName:     %s\n',c.repositoryName);
+            fprintf('repositoryUrl:      %s\n',c.repositoryUrl');
+            fprintf('serverUrl:          %s\n',c.serverUrl);
             if isempty(obj.workingRemotePath)
-                fprintf('Root working path\n');
+                fprintf('workingRemotePath:  Root\n');
             else
-                fprintf('Working path:   %s\n',obj.workingRemotePath);
+                fprintf('workingRemotePath:  %s\n',obj.workingRemotePath);
             end
+            fprintf('username:           %s\n',c.username);
+            fprintf('password:           %s\n','****');
+            fprintf('verbosity:          %d\n',c.verbosity);
             fprintf('\n');
         end
         

@@ -1,7 +1,7 @@
 function configuration = rdtCredentialsDialog(configuration)
 %% Initialize RemoteDataToolbox configuration and prompt for credentials.
 %
-% This funciton allows you to enter a username and password for use with
+% This function allows you to enter a username and password for use with
 % Remote Data Toolbox, without typing your password into the command
 % window.  Others may be able to read what you type in the command window
 % or view your command history, so you should avoid typing secrets there.
