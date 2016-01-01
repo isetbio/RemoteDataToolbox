@@ -35,7 +35,7 @@ disp(remotePaths)
 
 %% What artifacts are available under each remote path?
 for ii = 1:nPaths
-    client.crp(remotePaths{ii});
+    client.crp(fullfile('/',remotePaths{ii}));
     artifacts = client.listArtifacts();
     nArtifacts = numel(artifacts);
     
