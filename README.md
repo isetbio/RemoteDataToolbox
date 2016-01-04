@@ -21,6 +21,8 @@ Alternatively, project-specific configuration can be placed in a JSON configurat
 
 The RemoteDataToolbox distribution includes [JSONlab](http://www.mathworks.com/matlabcentral/fileexchange/33381-jsonlab--a-toolbox-to-encode-decode-json-files-in-matlab-octave) for converting JSON data to and from Matlab structs.
 
+[JDK/JRE] - You must have a java run environment installed on your computer. Matlab sends you to an Oracle site where this can be downloaded if you do not already have the JRE/JDK installed.
+
 # Examples
 We have several [examples](https://github.com/isetbio/RemoteDataToolbox/tree/master/examples) in the form of Matlab scripts.
 
