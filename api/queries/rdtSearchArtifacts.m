@@ -5,6 +5,10 @@ function artifacts = rdtSearchArtifacts(configuration, searchText, varargin)
 % Archiva Maven repository for artifacts matching the given searchText.
 % configuration.serverUrl must point to the Archiva server root.
 %
+% By default the server restricts the number of search results to 30.  To
+% get more results at once, use rdtListArtifacts() with a large value for
+% the the 'pageSize' parameter.
+%
 % artifacts = rdtSearchArtifacts( ... 'remotePath', remotePath) restricts
 % search results to artifacts with exactly the given remotePath.
 %
