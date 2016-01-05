@@ -1,4 +1,4 @@
-function artifacts = rdtListArtifacts(configuration, remotePath)
+function artifacts = rdtListArtifacts(configuration, remotePath, varargin)
 %% Query an Archiva Maven repository for artifacts under a remote path.
 %
 % artifacts = rdtListArtifacts(configuration, remotePath) requests a list
@@ -23,7 +23,7 @@ parser = rdtInputParser();
 parser.addRequired('configuration');
 parser.addRequired('remotePath', @ischar);
 parser.addParameter('pageSize', 1000);
-parser.parse(configuration, remotePath);
+parser.parse(configuration, remotePath, varargin{:});
 configuration = rdtConfiguration(parser.Results.configuration);
 remotePath = parser.Results.remotePath;
 pageSize = parser.Results.pageSize;

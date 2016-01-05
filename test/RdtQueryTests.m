@@ -54,6 +54,22 @@ classdef RdtQueryTests < matlab.unittest.TestCase
             testCase.checkPathArtifacts(artifacts, 'test-group-2');
         end
         
+        function testListArtifactsPageSize(testCase)
+            % large page size, return all results
+            artifacts = rdtListArtifacts(testCase.testConfig, 'test-group-1', ...
+                'pageSize', 1e6);
+            testCase.assertNotEmpty(artifacts);
+            testCase.assertInstanceOf(artifacts, 'struct');
+            testCase.assertNumElements(artifacts, 4);
+            
+            % small page size, restrict results
+            artifacts = rdtListArtifacts(testCase.testConfig, 'test-group-1', ...
+                'pageSize', 2);
+            testCase.assertNotEmpty(artifacts);
+            testCase.assertInstanceOf(artifacts, 'struct');
+            testCase.assertNumElements(artifacts, 2);
+        end
+        
         function testSearchEmptyTerms(testCase)
             artifacts = rdtSearchArtifacts(testCase.testConfig, '');
             testCase.assertEmpty(artifacts);
