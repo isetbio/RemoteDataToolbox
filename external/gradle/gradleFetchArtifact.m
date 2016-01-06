@@ -100,6 +100,8 @@ if 0 ~= status
     error('FetchArtifact:BadStatus', 'error status %d (%s)', status, result)
 end
 
+result
+
 %% Scrape out the fetched files.
 fileMatches = regexp(result, 'FETCHED "([^"]*)"', 'tokens');
 
