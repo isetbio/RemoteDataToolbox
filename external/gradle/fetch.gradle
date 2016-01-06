@@ -10,23 +10,39 @@ repositories {
 }
 
 configurations {
-  fetch
+  fetchWithoutClassifier
+  fetchWithClassifier
+  fetchPom
 }
 
 dependencies {
-  fetch System.getProperty("GROUP") + 
+  fetchWithoutClassifier System.getProperty("GROUP") + 
+    ":" + System.getProperty("ID") + 
+    ":" + System.getProperty("VERSION") + 
+    "@" + System.getProperty("EXTENSION")
+
+  fetchWithClassifier System.getProperty("GROUP") + 
     ":" + System.getProperty("ID") + 
     ":" + System.getProperty("VERSION") + 
     ":" + System.getProperty("EXTENSION") +
     "@" + System.getProperty("EXTENSION")
-  fetch System.getProperty("GROUP") + 
+
+  fetchPom System.getProperty("GROUP") + 
     ":" + System.getProperty("ID") + 
     ":" + System.getProperty("VERSION") + 
     "@" + "pom"
 }
 
 task fetchIt << {
-  configurations.fetch.resolve().each {
-    file -> println "FETCHED \"" + file.getPath() + "\""
+  configurations.each {
+    config ->
+    try {
+      config.resolve().each {
+        file ->
+        println "FETCHED " + config.name + " " + file.getPath()
+      }
+    } catch (Exception e) {
+      println "ERROR " + config.name + " " + e.getMessage()
+    }
   }
 }

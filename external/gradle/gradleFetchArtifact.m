@@ -1,4 +1,4 @@
-function [filePath, pomPath] = gradleFetchArtifact(repository, username, password, group, id, version, extension, varargin)
+function [filePath, pomPath, downloads] = gradleFetchArtifact(repository, username, password, group, id, version, extension, varargin)
 %% Use Gradle to fetch an artifact from a Maven repository.
 %
 % filePath = gradleFetchArtifact(repository, username, password, group, id, version, extension)
@@ -18,6 +18,8 @@ function [filePath, pomPath] = gradleFetchArtifact(repository, username, passwor
 %
 % Returns the local file path to the fetched, cached file.  Also returns
 % the path to the "pom" file, which is Xml metadata about the fetched file.
+% Also returns a cell array of urls to files that had to be downloaded from
+% the server (i.e. were not cached locally), if any.
 %
 % See also gradlePublishArtifact
 %
@@ -50,6 +52,7 @@ verbose = parser.Results.verbose;
 
 filePath = '';
 pomPath = '';
+downloads = {};
 
 %% -D Define system properties.
 systemProps = [ ...
@@ -100,16 +103,43 @@ if 0 ~= status
     error('FetchArtifact:BadStatus', 'error status %d (%s)', status, result)
 end
 
-result
+%% Scrape printed-out results.
 
-%% Scrape out the fetched files.
-fileMatches = regexp(result, 'FETCHED "([^"]*)"', 'tokens');
+% what was downloaded from the server?
+% Download http://52.32.77.154/repository/demo-repository/classifiers/test/1/test-1.pom
+downloads = scrapeLinesWithPrefix(result, 'Download ');
 
-% assume artifact comes before pom, the order specified in fetch.gradle.
-if numel(fileMatches) > 0
-    filePath = fileMatches{1}{1};
+% what was successfully fetched?
+% FETCHED fetchPom /home/ben/.gradle/caches/modules-2/files-2.1/classifiers/test/1/4dc69fb8460ab022d05618308858ecc5659de678/test-1.pom
+pom = scrapeLinesWithPrefix(result, 'FETCHED fetchPom ');
+withClassifier = scrapeLinesWithPrefix(result, 'FETCHED fetchWithClassifier ');
+withoutClassifier = scrapeLinesWithPrefix(result, 'FETCHED fetchWithoutClassifier ');
+
+% what couldn't be fetched?
+% ERROR fetchWithoutClassifier Could not resolve all dependencies for configuration ':fetchWithoutClassifier'.
+errors = scrapeLinesWithPrefix(result, 'ERROR ');
+
+%% Choose return values.
+if ~isempty(pom)
+    pomPath = pom{1};
 end
 
-if numel(fileMatches) > 1
-    pomPath = fileMatches{2}{1};
+if ~isempty(withClassifier)
+    filePath = withClassifier{1};
+    return;
+elseif ~isempty(withoutClassifier)
+    filePath = withoutClassifier{1};
+    return;
+end
+
+%% Could not find the artifact!
+error('gradleFetchArtifact:noArtifact', '%s\n', errors{:});
+
+%% Scrape one or more lines of text from the input text by prefix matching.
+function lines = scrapeLinesWithPrefix(text, prefix)
+tokens = regexp(text, [prefix '([^\r\n]*)[\r\n]'], 'tokens');
+nLines = numel(tokens);
+lines = cell(1, nLines);
+for ii = 1:nLines
+    lines{ii} = tokens{ii}{1};
 end
