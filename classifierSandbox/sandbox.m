@@ -88,12 +88,12 @@ response = rdtRequestWeb(client.configuration, resourcePath);
 response
 
 %% Trigger a scan!
-configuration = rdtCredentialsDialog(client.configuration);
+configuration = rdtCredentialsDialog(rdtConfiguration('brainard-archiva'));
 configuration.acceptMediaType = 'text/plain';
 configuration.repositoryName = 'scien';
 resourcePath = '/restServices/archivaServices/repositoriesService/scanRepositoryNow';
 queryParams = struct( ...
-    'repositoryId', client.configuration.repositoryName, ...
+    'repositoryId', configuration.repositoryName, ...
     'fullScan', 1);
 response = rdtRequestWeb(configuration, resourcePath, 'queryParams', queryParams);
 

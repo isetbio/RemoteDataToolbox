@@ -113,9 +113,14 @@ classdef RdtPublishTests < matlab.unittest.TestCase
             
             testCase.assertNotEmpty(artifacts);
             testCase.assertInstanceOf(artifacts, 'struct');
-            testCase.assertNumElements(artifacts, 1);
-            testCase.assertEqual(artifacts.type, 'txt');
-            testCase.assertEqual(artifacts.artifactId, 'text-artifact');
+            testCase.assertNumElements(artifacts, 2);
+            
+            types = {artifacts.type};
+            testCase.assertEqual(types, {'txt', 'txt'});
+            
+            artifactIds = {artifacts.artifactId};
+            testCase.assertTrue(any(strcmp('text-artifact', artifactIds)));
+            testCase.assertTrue(any(strcmp('classifier-test', artifactIds)));
         end
     end
 end
