@@ -1,4 +1,4 @@
-function [data, artifact] = rdtReadArtifact(configuration, remotePath, artifactId, varargin)
+function [data, artifact, downloads] = rdtReadArtifact(configuration, remotePath, artifactId, varargin)
 %% Fetch an artifact from a remote repository an read it into Matlab.
 %
 % [data, artifact] = rdtReadArtifact(configuration, remotePath, artifactId)
@@ -20,11 +20,13 @@ function [data, artifact] = rdtReadArtifact(configuration, remotePath, artifactI
 %   - image (see imformat()): array of image data from built-in imread()
 %   - default: char array from fread(..., '*char')
 %
-% Also returns a struct of metadata about the artifact.
+% Also returns a struct of metadata about the artifact.  Also returns a
+% cell array of urls for artifacts that were downloaded from the remote
+% server (i.e. not already in the local cache).
 %
 % See also rdtArtifact rdtReadArtifacts imformat imread
 %
-% [data, artifact] = rdtReadArtifact(configuration, remotePath, artifactId, varargin)
+% [data, artifact, downloads] = rdtReadArtifact(configuration, remotePath, artifactId, varargin)
 %
 % Copyright (c) 2015 RemoteDataToolbox Team
 
@@ -45,7 +47,7 @@ data = [];
 artifact = [];
 
 %% Fetch the artifact.
-[localPath, pomPath] = gradleFetchArtifact(configuration.repositoryUrl, ...
+[localPath, pomPath, downloads] = gradleFetchArtifact(configuration.repositoryUrl, ...
     configuration.username, ...
     configuration.password, ...
     rdtPathSlashesToDots(remotePath), ...

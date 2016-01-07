@@ -1,4 +1,4 @@
-function [datas, artifacts] = rdtReadArtifacts(configuration, artifacts)
+function [datas, artifacts, downloads] = rdtReadArtifacts(configuration, artifacts)
 %% Fetch multiple artifacts from a remote repository an read them into Matlab.
 %
 % [datas, artifacts] = rdtReadArtifacts(configuration, artifacts) fetches
@@ -13,9 +13,12 @@ function [datas, artifacts] = rdtReadArtifacts(configuration, artifacts)
 % rdtFetchArtifact describes the expected data formats.  Also returns the
 % given artifacts struct array with some local data filled in.
 %
+% Also returns a cell array of urls for artifacts that were downloaded from
+% the remote server (i.e. not already in the local cache).
+%
 % See also rdtFetchArtifact rdtListArtifacts rdtSearchArtifacts
 %
-% [datas, artifacts] = rdtReadArtifacts(configuration, artifacts)
+% [datas, artifacts, downloads] = rdtReadArtifacts(configuration, artifacts)
 %
 % Copyright (c) 2015 RemoteDataToolbox Team
 
@@ -32,11 +35,13 @@ artifacts = parser.Results.artifacts;
 % a good way to pass multiple artifacts to fetch.gradle.
 nArtifacts = numel(artifacts);
 datas = cell(1, nArtifacts);
+downloadses = cell(1, nArtifacts);
 for ii = 1:nArtifacts
     artifact = artifacts(ii);
-    [datas{ii}, artifacts(ii)] = rdtReadArtifact(configuration, ...
+    [datas{ii}, artifacts(ii), downloadses{ii}] = rdtReadArtifact(configuration, ...
         artifact.remotePath, ...
         artifact.artifactId, ...
         'version', artifact.version, ...
         'type', artifact.type);
 end
+downloads = cat(2, downloadses{:});
