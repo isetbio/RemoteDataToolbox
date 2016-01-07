@@ -15,7 +15,7 @@ client.publishArtifact(fullfile(sandboxFolder, 'test.bar'));
 client.publishArtifact(fullfile(sandboxFolder, 'test.quux'));
 
 %% Now what do we see?
-listed = client.listArtifacts();
+listed = client.listArtifacts('pageSize', 2);
 artifactIds = {listed.artifactId}
 types = {listed.type}
 
@@ -29,12 +29,12 @@ repo = client.configuration.repositoryName;
 
 % quickSearchWithRepositories only uses 4 body fields
 searchRequest = struct( ...
-    'queryTerms', 'test', ...
+    'queryTerms', 'project', ...
     'repositories', {{repo, repo}}, ...
     'pageSize', 1000, ...
     'selectedPage', 0);
 response = rdtRequestWeb(client.configuration, resourcePath, 'requestBody', searchRequest);
-response
+response{:}
 
 %% POST for listing.
 clc
