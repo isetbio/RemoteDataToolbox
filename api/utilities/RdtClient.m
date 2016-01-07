@@ -92,14 +92,20 @@ classdef RdtClient < handle
                 nRemotePaths = numel(remotePaths);
                 artifactCollection = cell(1, nRemotePaths);
                 for ii = 1:nRemotePaths
+                    % pass remotePath parameter explicitly
+                    % so it doesn't get squashed by varargin
                     artifactCollection{ii} = ...
-                        rdtListArtifacts(obj.configuration, remotePaths{ii}, varargin{:});
+                        rdtListArtifacts(obj.configuration, ...
+                        remotePaths{ii}, ...
+                        varargin{:}, ...
+                        'remotePath', remotePaths{ii});
                 end
                 artifacts = [artifactCollection{:}];
                 
             else
                 % list under the known path
-                artifacts = rdtListArtifacts(obj.configuration, remotePath, varargin{:});
+                artifacts = rdtListArtifacts(obj.configuration, ...
+                    remotePath, varargin{:});
             end
         end
         
