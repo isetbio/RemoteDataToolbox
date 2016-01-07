@@ -14,9 +14,6 @@
 % dialog window.  For this demo, use the user name "test" and password
 % "test123".
 %
-% We need to add an example here that uses a configuration structure to
-% publish a collection of artifacts, not just a single artifact.  
-%
 % See also rdtExampleReadData, rdtPublishArtifacts
 %
 % Copyright (c) 2015 RemoteDataToolbox Team
