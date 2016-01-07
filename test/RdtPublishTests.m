@@ -98,6 +98,16 @@ classdef RdtPublishTests < matlab.unittest.TestCase
                 testCase.assertEqual(artifacts(ii).name, 'Test');
                 testCase.assertEqual(artifacts(ii).description, 'This is one of several tests.');
             end
+            
+            % make sure we can list these
+            listed = rdtListArtifacts(testCase.testConfig, ...
+                'publish-multiple-group');
+            testCase.assertNumElements(listed, numel(artifacts));
+
+            % make sure we can find these
+            found = rdtSearchArtifacts(testCase.testConfig, ...
+                'publish-multiple-group');
+            testCase.assertNumElements(found, numel(artifacts));
         end
         
         function testPublishMultipleByType(testCase)
