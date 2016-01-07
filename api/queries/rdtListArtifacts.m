@@ -7,9 +7,6 @@ function artifacts = rdtListArtifacts(configuration, remotePath, varargin)
 % Archiva server root.  configuration.repositoryName must contain the
 % name of a repository on the server.
 %
-% artifacts = rdtListArtifacts( ... 'remotePath', remotePath) restricts
-% search results to artifacts under the given remotePath.
-%
 % artifacts = rdtListArtifacts( ... 'artifactId', artifactId) restricts
 % search results to artifacts with exactly the given artifactId.
 %
