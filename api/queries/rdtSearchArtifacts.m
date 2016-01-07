@@ -21,6 +21,9 @@ function artifacts = rdtSearchArtifacts(configuration, searchText, varargin)
 % artifacts = rdtSearchArtifacts( ... 'type', type) restricts
 % search results to artifacts with exactly the given type.
 %
+% artifacts = rdtSearchArtifacts( ... 'pageSize', pageSize) restricts
+% the number of search results to the given pageSize.  The default is 1000.
+%
 % Returns a struct array describing artifacts that matched the given
 % searchText and other restrictions, or else [] if the query failed.
 %
@@ -37,6 +40,7 @@ parser.addParameter('remotePath', '', @ischar);
 parser.addParameter('artifactId', '', @ischar);
 parser.addParameter('version', '', @ischar);
 parser.addParameter('type', '', @ischar);
+parser.addParameter('pageSize', 1000);
 parser.parse(configuration, searchText, varargin{:});
 configuration = rdtConfiguration(parser.Results.configuration);
 searchText = parser.Results.searchText;
@@ -44,13 +48,20 @@ remotePath = parser.Results.remotePath;
 artifactId = parser.Results.artifactId;
 version = parser.Results.version;
 type = parser.Results.type;
+pageSize = parser.Results.pageSize;
 
 artifacts = [];
 
 %% Query the Archiva server with fuzzy matching on searchText.
-resourcePath = '/restServices/archivaServices/searchService/quickSearch';
-query.queryString = searchText;
-response = rdtRequestWeb(configuration, resourcePath, 'queryParams', query);
+resourcePath = '/restServices/archivaServices/searchService/quickSearchWithRepositories';
+
+% hack: repeat repositoryName forces JSON array, not scalar string
+searchRequest.repositories = {configuration.repositoryName, configuration.repositoryName};
+searchRequest.queryTerms = searchText;
+searchRequest.pageSize = pageSize;
+searchRequest.selectedPage = 0;
+
+response = rdtRequestWeb(configuration, resourcePath, 'requestBody', searchRequest);
 if isempty(response)
     return;
 end
