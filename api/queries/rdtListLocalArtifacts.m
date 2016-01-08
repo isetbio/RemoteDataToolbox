@@ -112,8 +112,8 @@ for gg = 1:numel(groupDirectories)
                     [~, ~, fileExt] = fileparts(filePath);
                     localType = fileExt(2:end);
                     if isempty(type) || strcmp(type, localType)
-                        % don't know how many artifacts beforehand
-                        %   long for a containers.List...alas
+                        % don't know how many artifacts to preallocate
+                        %   we long for a containers.List...alas
                         artifactCell{end+1} = rdtArtifact( ...
                             'artifactId', localArtifactId, ...
                             'localPath', filePath, ...
