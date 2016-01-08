@@ -101,12 +101,14 @@ classdef RdtPublishTests < matlab.unittest.TestCase
             
             % make sure we can list these
             listed = rdtListArtifacts(testCase.testConfig, ...
-                'publish-multiple-group');
+                'publish-multiple-group', ...
+                'version', '123');
             testCase.assertNumElements(listed, numel(artifacts));
 
             % make sure we can find these
             found = rdtSearchArtifacts(testCase.testConfig, ...
-                'publish-multiple-group');
+                'publish-multiple-group', ...
+                'version', '123');
             testCase.assertNumElements(found, numel(artifacts));
         end
         
@@ -130,7 +132,7 @@ classdef RdtPublishTests < matlab.unittest.TestCase
             
             artifactIds = {artifacts.artifactId};
             testCase.assertTrue(any(strcmp('text-artifact', artifactIds)));
-            testCase.assertTrue(any(strcmp('classifier-test', artifactIds)));
+            testCase.assertTrue(any(strcmp('multiple-flavor-test', artifactIds)));
         end
     end
 end

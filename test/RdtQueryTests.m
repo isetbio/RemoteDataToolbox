@@ -74,7 +74,7 @@ classdef RdtQueryTests < matlab.unittest.TestCase
         
         function testSearchArtifactsPageSize(testCase)
             % large page size, return all results
-            artifacts = rdtSearchArtifacts(testCase.testConfig, 'test', ...
+            artifacts = rdtSearchArtifacts(testCase.testConfig, 'test-group', ...
                 'pageSize', 1e6);
             testCase.assertNotEmpty(artifacts);
             testCase.assertInstanceOf(artifacts, 'struct');
@@ -85,7 +85,7 @@ classdef RdtQueryTests < matlab.unittest.TestCase
             % Furthermore, our rdtSearchArtifacts() may make multiple
             % requests, each with its own "page" of results.
             % Nevertheless, pageSize ought to have some effect.
-            artifacts = rdtSearchArtifacts(testCase.testConfig, 'test', ...
+            artifacts = rdtSearchArtifacts(testCase.testConfig, 'test-group', ...
                 'pageSize', 2);
             testCase.assertNotEmpty(artifacts);
             testCase.assertInstanceOf(artifacts, 'struct');            
@@ -102,20 +102,20 @@ classdef RdtQueryTests < matlab.unittest.TestCase
             testCase.assertEmpty(artifacts);
         end
         
-        function testSearchHitAll(testCase)
-            artifacts = rdtSearchArtifacts(testCase.testConfig, 'test');
+        function testSearchHitMany(testCase)
+            artifacts = rdtSearchArtifacts(testCase.testConfig, 'test-group');
             testCase.assertInstanceOf(artifacts, 'struct');
             testCase.assertNumElements(artifacts, 8);
         end
         
         function testSearchRestrictRemotePath(testCase)
-            artifacts = rdtSearchArtifacts(testCase.testConfig, 'test', ...
+            artifacts = rdtSearchArtifacts(testCase.testConfig, 'test-group', ...
                 'remotePath', 'test-group-1');
             testCase.checkPathArtifacts(artifacts, 'test-group-1');
         end
         
         function testSearchRestrictArtifactId(testCase)
-            artifacts = rdtSearchArtifacts(testCase.testConfig, 'test', ...
+            artifacts = rdtSearchArtifacts(testCase.testConfig, 'test-group', ...
                 'artifactId', 'text-artifact');
             testCase.assertInstanceOf(artifacts, 'struct');
             testCase.assertNumElements(artifacts, 2);
@@ -125,7 +125,7 @@ classdef RdtQueryTests < matlab.unittest.TestCase
         end
         
         function testSearchRestrictVersion(testCase)
-            artifacts = rdtSearchArtifacts(testCase.testConfig, 'test', ...
+            artifacts = rdtSearchArtifacts(testCase.testConfig, 'test-group', ...
                 'version', '1');
             testCase.assertInstanceOf(artifacts, 'struct');
             testCase.assertNumElements(artifacts, 2);
@@ -135,7 +135,7 @@ classdef RdtQueryTests < matlab.unittest.TestCase
         end
         
         function testSearchRestrictType(testCase)
-            artifacts = rdtSearchArtifacts(testCase.testConfig, 'test', ...
+            artifacts = rdtSearchArtifacts(testCase.testConfig, 'test-group', ...
                 'type', 'mat');
             testCase.assertInstanceOf(artifacts, 'struct');
             testCase.assertNumElements(artifacts, 2);
@@ -145,7 +145,7 @@ classdef RdtQueryTests < matlab.unittest.TestCase
         end
         
         function testSearchRestrictUniqueArtifact(testCase)
-            artifacts = rdtSearchArtifacts(testCase.testConfig, 'test', ...
+            artifacts = rdtSearchArtifacts(testCase.testConfig, 'test-group', ...
                 'remotePath', 'test-group-1', ...
                 'artifactId', 'image-artifact', ...
                 'version', '1', ...
@@ -160,7 +160,7 @@ classdef RdtQueryTests < matlab.unittest.TestCase
         end
         
         function testSearchRestrictNoArtifact(testCase)
-            artifacts = rdtSearchArtifacts(testCase.testConfig, 'test', ...
+            artifacts = rdtSearchArtifacts(testCase.testConfig, 'test-group', ...
                 'remotePath', 'test-group-1', ...
                 'artifactId', 'image-artifact', ...
                 'version', '2', ...
