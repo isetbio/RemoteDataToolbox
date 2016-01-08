@@ -24,7 +24,7 @@ function artifacts = rdtListArtifacts(configuration, remotePath, varargin)
 %
 % See also rdtListRemotePaths, rdtSearchArtifacts, rdtArtifact
 %
-% artifacts = rdtListArtifacts(configuration, remotePath)
+% artifacts = rdtListArtifacts(configuration, remotePath, varargin)
 %
 % Copyright (c) 2015 RemoteDataToolbox Team
 
