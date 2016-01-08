@@ -78,21 +78,21 @@ classdef RdtClientTests < matlab.unittest.TestCase
             
             % all artifacts
             workingArtifacts = client.listArtifacts();
-            explicitArtifacts = client.listArtifacts('');
+            explicitArtifacts = client.listArtifacts('remotePath', '');
             testCase.assertNotEmpty(workingArtifacts);
             testCase.assertEqual(workingArtifacts, explicitArtifacts);
             
             % some artifacts
             client.crp('test-group-1');
             workingArtifacts = client.listArtifacts();
-            explicitArtifacts = client.listArtifacts('test-group-1');
+            explicitArtifacts = client.listArtifacts('remotePath', 'test-group-1');
             testCase.assertNumElements(workingArtifacts, 4);
             testCase.assertEqual(workingArtifacts, explicitArtifacts);
             
             % no artifacts
             client.crp('nonono/thou/art/not/a/path');
             workingArtifacts = client.listArtifacts();
-            explicitArtifacts = client.listArtifacts('nonono/thou/art/not/a/path');
+            explicitArtifacts = client.listArtifacts('remotePath', 'nonono/thou/art/not/a/path');
             testCase.assertEmpty(workingArtifacts);
             testCase.assertEqual(workingArtifacts, explicitArtifacts);
         end
@@ -101,7 +101,7 @@ classdef RdtClientTests < matlab.unittest.TestCase
             client = RdtClient(testCase.testConfig);
             
             % all test artifacts
-            testArtifacts = client.searchArtifacts('test');
+            testArtifacts = client.searchArtifacts('test-group');
             testCase.assertNumElements(testArtifacts, 8);
             
             % half the test artifacts
@@ -158,7 +158,7 @@ classdef RdtClientTests < matlab.unittest.TestCase
             testCase.assertNumElements(artifacts, 4);
             
             % artifacts from explicit struct of metadata
-            explicitArtifacts = client.listArtifacts('test-group-1');
+            explicitArtifacts = client.listArtifacts('remotePath', 'test-group-1');
             [datas, artifacts] = client.readArtifacts(explicitArtifacts);
             testCase.assertNumElements(datas, 4);
             testCase.assertNumElements(artifacts, 4);
@@ -200,7 +200,7 @@ classdef RdtClientTests < matlab.unittest.TestCase
             artifacts = client.publishArtifacts(artifactFolder, ...
                 'remotePath', 'publish-multiple-group/subgroup/subsubgroup', ...
                 'type', 'txt');
-            testCase.assertNumElements(artifacts, 1);
+            testCase.assertNumElements(artifacts, 2);
             testCase.verifyPublishedFolder(artifacts, ...
                 artifactFolder, ...
                 'publish-multiple-group/subgroup/subsubgroup');

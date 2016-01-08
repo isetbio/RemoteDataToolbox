@@ -34,7 +34,7 @@ function artifacts = rdtPublishArtifacts(configuration, folder, remotePath, vara
 parser = rdtInputParser();
 parser.addRequired('configuration');
 parser.addRequired('folder', @ischar);
-parser.addRequired('remotePath', @ischar);
+parser.addRequired('remotePath', @(p)ischar(p) && ~isempty(p));
 parser.addParameter('version', '1', @ischar);
 parser.addParameter('type', '', @ischar);
 parser.addParameter('description', '', @ischar);

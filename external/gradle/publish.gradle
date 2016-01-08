@@ -11,6 +11,7 @@ publishing {
 
             artifact(System.getProperty("FILE")) {
                 extension System.getProperty("EXTENSION")
+                classifier System.getProperty("EXTENSION")
             }
 
             pom.withXml {

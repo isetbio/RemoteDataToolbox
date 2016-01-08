@@ -63,11 +63,33 @@ classdef RdtQueryTests < matlab.unittest.TestCase
             testCase.assertNumElements(artifacts, 4);
             
             % small page size, restrict results
+            % Archiva list seems not to obey pageSize exact value
+            % Nevertheless, pageSize ought to have some effect.
             artifacts = rdtListArtifacts(testCase.testConfig, 'test-group-1', ...
                 'pageSize', 2);
             testCase.assertNotEmpty(artifacts);
             testCase.assertInstanceOf(artifacts, 'struct');
-            testCase.assertNumElements(artifacts, 2);
+            testCase.assertLessThan(numel(artifacts), 4);
+        end
+        
+        function testSearchArtifactsPageSize(testCase)
+            % large page size, return all results
+            artifacts = rdtSearchArtifacts(testCase.testConfig, 'test-group', ...
+                'pageSize', 1e6);
+            testCase.assertNotEmpty(artifacts);
+            testCase.assertInstanceOf(artifacts, 'struct');
+            testCase.assertNumElements(artifacts, 8);
+            
+            % small page size, restrict results
+            % Archiva search seems not to obey pageSize exact value
+            % Furthermore, our rdtSearchArtifacts() may make multiple
+            % requests, each with its own "page" of results.
+            % Nevertheless, pageSize ought to have some effect.
+            artifacts = rdtSearchArtifacts(testCase.testConfig, 'test-group', ...
+                'pageSize', 2);
+            testCase.assertNotEmpty(artifacts);
+            testCase.assertInstanceOf(artifacts, 'struct');            
+            testCase.assertLessThan(numel(artifacts), 8);
         end
         
         function testSearchEmptyTerms(testCase)
@@ -80,20 +102,20 @@ classdef RdtQueryTests < matlab.unittest.TestCase
             testCase.assertEmpty(artifacts);
         end
         
-        function testSearchHitAll(testCase)
-            artifacts = rdtSearchArtifacts(testCase.testConfig, 'test');
+        function testSearchHitMany(testCase)
+            artifacts = rdtSearchArtifacts(testCase.testConfig, 'test-group');
             testCase.assertInstanceOf(artifacts, 'struct');
             testCase.assertNumElements(artifacts, 8);
         end
         
         function testSearchRestrictRemotePath(testCase)
-            artifacts = rdtSearchArtifacts(testCase.testConfig, 'test', ...
+            artifacts = rdtSearchArtifacts(testCase.testConfig, 'test-group', ...
                 'remotePath', 'test-group-1');
             testCase.checkPathArtifacts(artifacts, 'test-group-1');
         end
         
         function testSearchRestrictArtifactId(testCase)
-            artifacts = rdtSearchArtifacts(testCase.testConfig, 'test', ...
+            artifacts = rdtSearchArtifacts(testCase.testConfig, 'test-group', ...
                 'artifactId', 'text-artifact');
             testCase.assertInstanceOf(artifacts, 'struct');
             testCase.assertNumElements(artifacts, 2);
@@ -103,7 +125,7 @@ classdef RdtQueryTests < matlab.unittest.TestCase
         end
         
         function testSearchRestrictVersion(testCase)
-            artifacts = rdtSearchArtifacts(testCase.testConfig, 'test', ...
+            artifacts = rdtSearchArtifacts(testCase.testConfig, 'test-group', ...
                 'version', '1');
             testCase.assertInstanceOf(artifacts, 'struct');
             testCase.assertNumElements(artifacts, 2);
@@ -113,7 +135,7 @@ classdef RdtQueryTests < matlab.unittest.TestCase
         end
         
         function testSearchRestrictType(testCase)
-            artifacts = rdtSearchArtifacts(testCase.testConfig, 'test', ...
+            artifacts = rdtSearchArtifacts(testCase.testConfig, 'test-group', ...
                 'type', 'mat');
             testCase.assertInstanceOf(artifacts, 'struct');
             testCase.assertNumElements(artifacts, 2);
@@ -123,7 +145,7 @@ classdef RdtQueryTests < matlab.unittest.TestCase
         end
         
         function testSearchRestrictUniqueArtifact(testCase)
-            artifacts = rdtSearchArtifacts(testCase.testConfig, 'test', ...
+            artifacts = rdtSearchArtifacts(testCase.testConfig, 'test-group', ...
                 'remotePath', 'test-group-1', ...
                 'artifactId', 'image-artifact', ...
                 'version', '1', ...
@@ -138,7 +160,57 @@ classdef RdtQueryTests < matlab.unittest.TestCase
         end
         
         function testSearchRestrictNoArtifact(testCase)
-            artifacts = rdtSearchArtifacts(testCase.testConfig, 'test', ...
+            artifacts = rdtSearchArtifacts(testCase.testConfig, 'test-group', ...
+                'remotePath', 'test-group-1', ...
+                'artifactId', 'image-artifact', ...
+                'version', '2', ...
+                'type', 'jpg');
+            testCase.assertEmpty(artifacts);
+        end
+        
+        function testListRestrictArtifactId(testCase)
+            artifacts = rdtListArtifacts(testCase.testConfig, 'test-group-1', ...
+                'artifactId', 'text-artifact');
+            testCase.assertInstanceOf(artifacts, 'struct');
+            testCase.assertNumElements(artifacts, 1);
+            
+            testCase.assertEqual(artifacts.artifactId, 'text-artifact');
+        end
+        
+        function testListRestrictVersion(testCase)
+            artifacts = rdtListArtifacts(testCase.testConfig, 'test-group-1', ...
+                'version', '1');
+            testCase.assertInstanceOf(artifacts, 'struct');
+            testCase.assertNumElements(artifacts, 1);
+            
+            testCase.assertEqual(artifacts.version, '1');
+        end
+        
+        function testListRestrictType(testCase)
+            artifacts = rdtListArtifacts(testCase.testConfig, 'test-group-1', ...
+                'type', 'mat');
+            testCase.assertInstanceOf(artifacts, 'struct');
+            testCase.assertNumElements(artifacts, 1);
+            
+            testCase.assertEqual(artifacts.type, 'mat');
+        end
+        
+        function testListRestrictUniqueArtifact(testCase)
+            artifacts = rdtListArtifacts(testCase.testConfig, 'test-group-1', ...
+                'artifactId', 'image-artifact', ...
+                'version', '1', ...
+                'type', 'jpg');
+            testCase.assertInstanceOf(artifacts, 'struct');
+            testCase.assertNumElements(artifacts, 1);
+            
+            testCase.assertEqual(artifacts.remotePath, 'test-group-1');
+            testCase.assertEqual(artifacts.artifactId, 'image-artifact');
+            testCase.assertEqual(artifacts.version, '1');
+            testCase.assertEqual(artifacts.type, 'jpg');
+        end
+        
+        function testListRestrictNoArtifact(testCase)
+            artifacts = rdtListArtifacts(testCase.testConfig, 'test-group-1', ...
                 'remotePath', 'test-group-1', ...
                 'artifactId', 'image-artifact', ...
                 'version', '2', ...

@@ -78,11 +78,11 @@ classdef RdtClient < handle
         
         function artifacts = listArtifacts(obj, varargin)
             % List artifacts under a remote path.
-            %   artifacts = obj.listArtifacts() use pwrp()
-            %   artifacts = obj.listArtifacts(remotePath) use remotePath
+            %   artifacts = obj.listArtifacts() remotePath = pwrp()
+            %   artifacts = obj.listArtifacts('remotePath', remotePath)
             
             parser = rdtInputParser();
-            parser.addOptional('remotePath', obj.workingRemotePath, @ischar);
+            parser.addParameter('remotePath', obj.workingRemotePath, @ischar);
             parser.parse(varargin{:});
             remotePath = parser.Results.remotePath;
             
@@ -92,14 +92,20 @@ classdef RdtClient < handle
                 nRemotePaths = numel(remotePaths);
                 artifactCollection = cell(1, nRemotePaths);
                 for ii = 1:nRemotePaths
+                    % pass remotePath parameter explicitly
+                    % so it doesn't get squashed by varargin
                     artifactCollection{ii} = ...
-                        rdtListArtifacts(obj.configuration, remotePaths{ii});
+                        rdtListArtifacts(obj.configuration, ...
+                        remotePaths{ii}, ...
+                        varargin{:}, ...
+                        'remotePath', remotePaths{ii});
                 end
                 artifacts = [artifactCollection{:}];
                 
             else
                 % list under the known path
-                artifacts = rdtListArtifacts(obj.configuration, remotePath);
+                artifacts = rdtListArtifacts(obj.configuration, ...
+                    remotePath, varargin{:});
             end
         end
         

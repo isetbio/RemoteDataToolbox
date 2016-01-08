@@ -98,6 +98,18 @@ classdef RdtPublishTests < matlab.unittest.TestCase
                 testCase.assertEqual(artifacts(ii).name, 'Test');
                 testCase.assertEqual(artifacts(ii).description, 'This is one of several tests.');
             end
+            
+            % make sure we can list these
+            listed = rdtListArtifacts(testCase.testConfig, ...
+                'publish-multiple-group', ...
+                'version', '123');
+            testCase.assertNumElements(listed, numel(artifacts));
+
+            % make sure we can find these
+            found = rdtSearchArtifacts(testCase.testConfig, ...
+                'publish-multiple-group', ...
+                'version', '123');
+            testCase.assertNumElements(found, numel(artifacts));
         end
         
         function testPublishMultipleByType(testCase)
@@ -113,9 +125,14 @@ classdef RdtPublishTests < matlab.unittest.TestCase
             
             testCase.assertNotEmpty(artifacts);
             testCase.assertInstanceOf(artifacts, 'struct');
-            testCase.assertNumElements(artifacts, 1);
-            testCase.assertEqual(artifacts.type, 'txt');
-            testCase.assertEqual(artifacts.artifactId, 'text-artifact');
+            testCase.assertNumElements(artifacts, 2);
+            
+            types = {artifacts.type};
+            testCase.assertEqual(types, {'txt', 'txt'});
+            
+            artifactIds = {artifacts.artifactId};
+            testCase.assertTrue(any(strcmp('text-artifact', artifactIds)));
+            testCase.assertTrue(any(strcmp('multiple-flavor-test', artifactIds)));
         end
     end
 end

@@ -22,11 +22,28 @@ clc;
 % get a client configured for our repository
 client = RdtClient('brainard-archiva');
 
-% change to the "remote path" where we expect to find our artifact
-client.crp('project-demo');
+% To read an artifact we must supply at least the artifactId and the
+% remotePath where the artifact is located.  There are a few ways to do
+% this:
 
-% fetch our artifact
+% 1. Change the working remote path of our client object to match the
+% artifact we want.
+client.crp('project-demo');
 [data, artifact] = client.readArtifact('demo-image', 'type', 'png');
+
+% 2. supply the "remote path" explicitly to readArtifact().
+[data, artifact] = client.readArtifact('demo-image', ...
+    'type', 'png', ...
+    'remotePath', 'project-demo');
+
+% 3. obtain an artifact metadata strut from listArtifacts() or
+% searchArtifacts() and pass it to readArtifacts() with-an-s.
+list = client.listArtifacts('remotePath', 'project-demo', ...
+    'artifactId', 'demo-image', ...
+    'type', 'png');
+[dataCell, artifactCell] = client.readArtifacts(list);
+data = dataCell{1};
+artifact = artifactCell(1);
 
 %% See metadata about the artifact we just fetched.
 disp(artifact)

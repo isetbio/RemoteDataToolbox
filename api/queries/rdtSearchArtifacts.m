@@ -10,7 +10,7 @@ function artifacts = rdtSearchArtifacts(configuration, searchText, varargin)
 % the the 'pageSize' parameter.
 %
 % artifacts = rdtSearchArtifacts( ... 'remotePath', remotePath) restricts
-% search results to artifacts with exactly the given remotePath.
+% search results to artifacts under the given remotePath.
 %
 % artifacts = rdtSearchArtifacts( ... 'artifactId', artifactId) restricts
 % search results to artifacts with exactly the given artifactId.
@@ -20,6 +20,9 @@ function artifacts = rdtSearchArtifacts(configuration, searchText, varargin)
 %
 % artifacts = rdtSearchArtifacts( ... 'type', type) restricts
 % search results to artifacts with exactly the given type.
+%
+% artifacts = rdtSearchArtifacts( ... 'pageSize', pageSize) restricts
+% the number of search results to the given pageSize.  The default is 1000.
 %
 % Returns a struct array describing artifacts that matched the given
 % searchText and other restrictions, or else [] if the query failed.
@@ -37,6 +40,7 @@ parser.addParameter('remotePath', '', @ischar);
 parser.addParameter('artifactId', '', @ischar);
 parser.addParameter('version', '', @ischar);
 parser.addParameter('type', '', @ischar);
+parser.addParameter('pageSize', 1000);
 parser.parse(configuration, searchText, varargin{:});
 configuration = rdtConfiguration(parser.Results.configuration);
 searchText = parser.Results.searchText;
@@ -44,48 +48,50 @@ remotePath = parser.Results.remotePath;
 artifactId = parser.Results.artifactId;
 version = parser.Results.version;
 type = parser.Results.type;
+pageSize = parser.Results.pageSize;
 
 artifacts = [];
 
 %% Query the Archiva server with fuzzy matching on searchText.
-resourcePath = '/restServices/archivaServices/searchService/quickSearch';
-query.queryString = searchText;
-response = rdtRequestWeb(configuration, resourcePath, 'queryParams', query);
-if isempty(response)
+resourcePath = '/restServices/archivaServices/searchService/quickSearchWithRepositories';
+
+% hack: repeat repositoryName forces JSON array, not scalar string
+searchRequest.repositories = {configuration.repositoryName, configuration.repositoryName};
+searchRequest.queryTerms = searchText;
+searchRequest.pageSize = pageSize;
+
+hits = rdtRequestWeb(configuration, resourcePath, 'requestBody', searchRequest);
+if isempty(hits)
     return;
 end
 
-nArtifacts = numel(response);
-artifactCell = cell(1, nArtifacts);
-for ii = 1:nArtifacts
-    r = response{ii};
-    r.remotePath = rdtPathDotsToSlashes(r.groupId);
-    artifactCell{ii} = rdtArtifact(r);
+%% Query to list files under each search hit.
+%   We need to do this in case there are multiple files under a given
+%   artifact -- the text seach above returns only one hit in that case.
+nHits = numel(hits);
+artifactCell = cell(1, nHits);
+for ii = 1:nHits
+    hit = hits{ii};
+    
+    % list artifacts under this search result
+    artifactCell{ii} = rdtListArtifacts(configuration, ...
+        rdtPathDotsToSlashes(hit.groupId), ...
+        'artifactId', hit.artifactId, ...
+        'version', hit.version, ...
+        'pageSize', pageSize);
 end
 artifacts = [artifactCell{:}];
 
-%% Filter results for given restrictions.
-% Would prefer to let the server do the filtering as part of the query,
-% instead of transferring extra results and doing filtering here on the
-% client side.  But in testing, the Archiva searchArtifacts resource didn't
-% allow this.
-isMatch = isFieldMatch(artifacts, 'remotePath', remotePath) ...
-    & isFieldMatch(artifacts, 'artifactId', artifactId) ...
-    & isFieldMatch(artifacts, 'version', version) ...
-    & isFieldMatch(artifacts, 'type', type);
-artifacts = artifacts(isMatch);
-
-%% True where each element has given field equal to given string.
-function isMatch = isFieldMatch(structArray, fieldName, fieldString)
-nElements = numel(structArray);
-isMatch = true(1, nElements);
-
-% default "all elements match"
-if isempty(fieldString)
+if isempty(artifacts)
     return;
 end
 
-% check each element explicitly
-for ii = 1:nElements
-    isMatch(ii) = strcmp(fieldString, structArray(ii).(fieldName));
-end
+%% Filter results for given restrictions.
+% rdtListArtifacts() does use server-side filtering.  But here we are
+% combining results from multiple searches, so we do the filtering on the
+% client side.
+isMatch = rdtFilterStructArray(artifacts, 'remotePath', remotePath, 'matchStyle', 'prefix') ...
+    & rdtFilterStructArray(artifacts, 'artifactId', artifactId) ...
+    & rdtFilterStructArray(artifacts, 'version', version) ...
+    & rdtFilterStructArray(artifacts, 'type', type);
+artifacts = artifacts(isMatch);
