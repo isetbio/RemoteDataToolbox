@@ -128,7 +128,7 @@ classdef RdtClient < handle
                 searchText, varargin{:}, 'remotePath', remotePath);
         end
         
-        function [data, artifact] = readArtifact(obj, artifactId, varargin)
+        function [data, artifact, downloads] = readArtifact(obj, artifactId, varargin)
             % Read data for one artifact into Matlab.
             % The artifactID 
             %   [data, artifact] = obj.readArtifact(artifactId)
@@ -143,11 +143,11 @@ classdef RdtClient < handle
             artifactId = parser.Results.artifactId;
             remotePath = parser.Results.remotePath;
             
-            [data, artifact] = rdtReadArtifact(obj.configuration, ...
+            [data, artifact, downloads] = rdtReadArtifact(obj.configuration, ...
                 remotePath, artifactId, varargin{:});
         end
         
-        function [datas, artifacts] = readArtifacts(obj, pathOrArtifacts)
+        function [datas, artifacts, downloads] = readArtifacts(obj, pathOrArtifacts)
             % Read data for multiple artifacts into Matlab.
             %   [datas, artifacts] = obj.readArtifacts() all under pwrp()
             %   obj.readArtifacts(remotePath) remotePath instead of pwrp()
@@ -159,16 +159,16 @@ classdef RdtClient < handle
             if nargin < 2 || isempty(pathOrArtifacts)
                 % all under pwrp()
                 artifacts = obj.listArtifacts();
-                [datas, artifacts] = rdtReadArtifacts(obj.configuration, artifacts);
+                [datas, artifacts, downloads] = rdtReadArtifacts(obj.configuration, artifacts);
                 
             elseif ischar(pathOrArtifacts)
                 % all under remote path
                 artifacts = rdtListArtifacts(obj.configuration, pathOrArtifacts);
-                [datas, artifacts] = rdtReadArtifacts(obj.configuration, artifacts);
+                [datas, artifacts, downloads] = rdtReadArtifacts(obj.configuration, artifacts);
                 
             elseif isstruct(pathOrArtifacts)
                 % explicit struct array
-                [datas, artifacts] = rdtReadArtifacts(obj.configuration, pathOrArtifacts);
+                [datas, artifacts, downloads] = rdtReadArtifacts(obj.configuration, pathOrArtifacts);
             end
         end
         
