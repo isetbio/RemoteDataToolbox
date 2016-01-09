@@ -70,21 +70,35 @@ classdef RdtClient < handle
             obj.workingRemotePath = wrp;
         end
         
-        function remotePaths = listRemotePaths(obj)
+        function remotePaths = listRemotePaths(obj,varargin)
             % List remote paths to artifacts.
             %   remotePaths = obj.listRemotePaths() list all paths
+            %   remotePaths = obj.ListRemotePaths('sortFlag',true); % Could be set to false
+            parser = rdtInputParser();
+            parser.addParameter('sortFlag',true,@islogical);
+            parser.parse(varargin{:});
+            sortFlag = parser.Results.sortFlag;
+            
             remotePaths = rdtListRemotePaths(obj.configuration);
+            
+            if sortFlag
+                remotePaths = sort(remotePaths);
+            end
+            
         end
         
         function artifacts = listArtifacts(obj, varargin)
             % List artifacts under a remote path.
-            %   artifacts = obj.listArtifacts() remotePath = pwrp()
+            %   artifacts = obj.listArtifacts() % remotePath = pwrp()
             %   artifacts = obj.listArtifacts('remotePath', remotePath)
+            %   artifacts = obj.listArtifacts('sortArtifacts',true);  % Sort by  artifactID
             
             parser = rdtInputParser();
             parser.addParameter('remotePath', obj.workingRemotePath, @ischar);
+            parser.addParameter('sortArtifacts',true,@islogical);
             parser.parse(varargin{:});
-            remotePath = parser.Results.remotePath;
+            remotePath    = parser.Results.remotePath;
+            sortArtifacts = parser.Results.sortArtifacts;
             
             if isempty(remotePath)
                 % list all artifacts by iterating remote paths
@@ -106,6 +120,16 @@ classdef RdtClient < handle
                 % list under the known path
                 artifacts = rdtListArtifacts(obj.configuration, ...
                     remotePath, varargin{:});
+            end
+            
+            % Sort by artifactId
+            if sortArtifacts
+                % I wonder if there is a better way to sort?
+                tmp = squeeze(struct2cell(artifacts));
+                id = cell(1,size(tmp,2));   % First entry is artifactId
+                for ii=1:size(tmp,2), id{ii} = char(tmp(1,ii)); end
+                [~, lst] = sort(id);
+                artifacts = artifacts(lst);
             end
         end
         
