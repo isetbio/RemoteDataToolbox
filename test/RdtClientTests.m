@@ -20,16 +20,8 @@ classdef RdtClientTests < matlab.unittest.TestCase
     
     methods (TestMethodSetup)
         function checkIfServerPresent(testCase)
-            exception = [];
-            try
-                pingConfig = testCase.testConfig;
-                pingConfig.acceptMediaType = 'text/plain';
-                pingPath = '/restServices/archivaServices/pingService/ping';
-                rdtRequestWeb(pingConfig, pingPath);
-            catch ex
-                exception = ex;
-            end
-            testCase.assumeEmpty(exception);
+            [isConnected, message] = rdtPingServer(testCase.testConfig);
+            testCase.assumeTrue(isConnected, message);
         end
     end
     
