@@ -3,8 +3,8 @@ classdef RdtClient < handle
     %
     % Data slots in this object are:
     %
-    %   configuration: Holds the remote configuration 
-    %   workingRemotePath: Holds a working remote path 
+    %   configuration: Holds the remote configuration
+    %   workingRemotePath: Holds a working remote path
     %
     % The remote path simplifies calls to the plain-old-function API.
     
@@ -33,7 +33,7 @@ classdef RdtClient < handle
         end
         
         function wrp = crp(obj, varargin)
-            % Change the working remote path. 
+            % Change the working remote path.
             % This works exactly the way cd works.
             %
             %   wrp = obj.crp() just return working remote path
@@ -74,17 +74,7 @@ classdef RdtClient < handle
             % List remote paths to artifacts.
             %   remotePaths = obj.listRemotePaths() list all paths
             %   remotePaths = obj.ListRemotePaths('sortFlag',true); % Could be set to false
-            parser = rdtInputParser();
-            parser.addParameter('sortFlag',true,@islogical);
-            parser.parse(varargin{:});
-            sortFlag = parser.Results.sortFlag;
-            
-            remotePaths = rdtListRemotePaths(obj.configuration);
-            
-            if sortFlag
-                remotePaths = sort(remotePaths);
-            end
-            
+            remotePaths = rdtListRemotePaths(obj.configuration, varargin{:});
         end
         
         function artifacts = listArtifacts(obj, varargin)
@@ -154,7 +144,7 @@ classdef RdtClient < handle
         
         function [data, artifact, downloads] = readArtifact(obj, artifactId, varargin)
             % Read data for one artifact into Matlab.
-            % The artifactID 
+            % The artifactID
             %   [data, artifact] = obj.readArtifact(artifactId)
             %   ( ... 'remotePath', remotePath) remotePath instead of pwrp()
             %   ( ... 'version', version) version instead of default latest
