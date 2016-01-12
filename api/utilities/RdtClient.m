@@ -81,14 +81,12 @@ classdef RdtClient < handle
             % List artifacts under a remote path.
             %   artifacts = obj.listArtifacts() % remotePath = pwrp()
             %   artifacts = obj.listArtifacts('remotePath', remotePath)
-            %   artifacts = obj.listArtifacts('sortArtifacts',true);  % Sort by  artifactID
+            %   artifacts = obj.listArtifacts('sortField', field); % default is sort by artifactId
             
             parser = rdtInputParser();
             parser.addParameter('remotePath', obj.workingRemotePath, @ischar);
-            parser.addParameter('sortArtifacts',true,@islogical);
             parser.parse(varargin{:});
-            remotePath    = parser.Results.remotePath;
-            sortArtifacts = parser.Results.sortArtifacts;
+            remotePath = parser.Results.remotePath;
             
             if isempty(remotePath)
                 % list all artifacts by iterating remote paths
@@ -110,16 +108,6 @@ classdef RdtClient < handle
                 % list under the known path
                 artifacts = rdtListArtifacts(obj.configuration, ...
                     remotePath, varargin{:});
-            end
-            
-            % Sort by artifactId
-            if sortArtifacts
-                % I wonder if there is a better way to sort?
-                tmp = squeeze(struct2cell(artifacts));
-                id = cell(1,size(tmp,2));   % First entry is artifactId
-                for ii=1:size(tmp,2), id{ii} = char(tmp(1,ii)); end
-                [~, lst] = sort(id);
-                artifacts = artifacts(lst);
             end
         end
         
