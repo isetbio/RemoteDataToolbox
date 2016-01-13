@@ -3,9 +3,10 @@ function [deleted, notDeleted] = rdtDeleteArtifacts(configuration, artifacts)
 %
 % [deleted, notDeleted] = rdtDeleteArtifacts(configuration, artifacts)
 % deletes multiple artifacts from a remote server and from the local
-% artifact cache. configuration.cacheFolder should point to the root of the local artifact
-% cache.  If configuration.cacheFolder is empty, the Gradle  default is
-% used ('~/.gradle').
+% artifact cache.  configuration.repositoryUrl must point to the repository
+% root.  configuration.cacheFolder should point to the root of the
+% local artifact cache.  If configuration.cacheFolder is empty, the Gradle
+% default is used ('~/.gradle').
 %
 % The given artifacts must be a struct array of artifact metadata, with one
 % element per artifact to delete.  rdtListArtifacts() and
