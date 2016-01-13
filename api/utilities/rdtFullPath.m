@@ -9,7 +9,7 @@ function fullPath = rdtFullPath(pathParts, varargin)
 % For example, rdtFullPath({'', 'foo', 'bar'}) would build up to the
 % path "/foo/bar".
 %
-% converted = rdtConvertPathStyle(... 'separator', separator) uses the
+% converted = rdtFullPath(... 'separator', separator) uses the
 % given separator character instead of the default '/'.
 %
 % fullPath = rdtFullPath( ... 'trimLeading', trimLeading) obeys the
