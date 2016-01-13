@@ -3,8 +3,8 @@ classdef RdtClient < handle
     %
     % Data slots in this object are:
     %
-    %   configuration: Holds the remote configuration 
-    %   workingRemotePath: Holds a working remote path 
+    %   configuration: Holds the remote configuration
+    %   workingRemotePath: Holds a working remote path
     %
     % The remote path simplifies calls to the plain-old-function API.
     
@@ -33,7 +33,7 @@ classdef RdtClient < handle
         end
         
         function wrp = crp(obj, varargin)
-            % Change the working remote path. 
+            % Change the working remote path.
             % This works exactly the way cd works.
             %
             %   wrp = obj.crp() just return working remote path
@@ -70,21 +70,25 @@ classdef RdtClient < handle
             obj.workingRemotePath = wrp;
         end
         
-        function remotePaths = listRemotePaths(obj)
+        function remotePaths = listRemotePaths(obj,varargin)
             % List remote paths to artifacts.
             %   remotePaths = obj.listRemotePaths() list all paths
-            remotePaths = rdtListRemotePaths(obj.configuration);
+            %   remotePaths = obj.ListRemotePaths('sortFlag',true); % Could be set to false
+            remotePaths = rdtListRemotePaths(obj.configuration, varargin{:});
         end
         
         function artifacts = listArtifacts(obj, varargin)
             % List artifacts under a remote path.
-            %   artifacts = obj.listArtifacts() remotePath = pwrp()
+            %   artifacts = obj.listArtifacts() % remotePath = pwrp()
             %   artifacts = obj.listArtifacts('remotePath', remotePath)
+            %   artifacts = obj.listArtifacts('sortField', field); % default is sort by artifactId
             
             parser = rdtInputParser();
             parser.addParameter('remotePath', obj.workingRemotePath, @ischar);
+            parser.addParameter('sortField', 'artifactId', @ischar);
             parser.parse(varargin{:});
             remotePath = parser.Results.remotePath;
+            sortField = parser.Results.sortField;
             
             if isempty(remotePath)
                 % list all artifacts by iterating remote paths
@@ -100,7 +104,7 @@ classdef RdtClient < handle
                         varargin{:}, ...
                         'remotePath', remotePaths{ii});
                 end
-                artifacts = [artifactCollection{:}];
+                artifacts = rdtSortStructArray([artifactCollection{:}], sortField);
                 
             else
                 % list under the known path
@@ -130,7 +134,7 @@ classdef RdtClient < handle
         
         function [data, artifact, downloads] = readArtifact(obj, artifactId, varargin)
             % Read data for one artifact into Matlab.
-            % The artifactID 
+            % The artifactID
             %   [data, artifact] = obj.readArtifact(artifactId)
             %   ( ... 'remotePath', remotePath) remotePath instead of pwrp()
             %   ( ... 'version', version) version instead of default latest
