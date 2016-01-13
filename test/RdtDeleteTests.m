@@ -34,6 +34,29 @@ classdef RdtDeleteTests < matlab.unittest.TestCase
     end
     
     methods (Test)
+        function testDeletePathLocally(testCase)
+            published = testCase.publishTestArtifact();
+            
+            % should find local path for published artifact
+            [localPath, fullPath] = rdtListLocalPaths(testCase.testConfig, ...
+                'remotePath', published.remotePath);
+            testCase.assertNotEmpty(localPath);
+            testCase.assertNotEmpty(fullPath);
+            testCase.assertEqual(localPath{1}, published.remotePath);
+            testCase.assertEqual(exist(fullPath{1}, 'dir'), 7);
+            
+            [deleted, notDeleted] = rdtDeleteLocalPaths(testCase.testConfig, published.remotePath);
+            testCase.assertNotEmpty(deleted);
+            testCase.assertEqual(deleted{1}, published.remotePath);
+            testCase.assertEmpty(notDeleted);
+            
+            % should no longer find local path
+            [localPath, fullPath] = rdtListLocalPaths(testCase.testConfig, ...
+                'remotePath', published.remotePath);
+            testCase.assertEmpty(localPath);
+            testCase.assertEmpty(fullPath);
+        end
+        
         function testDeleteAsListedLocally(testCase)
             published = testCase.publishTestArtifact();
             foundLocally = rdtListLocalArtifacts(testCase.testConfig, ...
