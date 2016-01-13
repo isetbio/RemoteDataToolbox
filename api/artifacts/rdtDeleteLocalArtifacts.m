@@ -60,7 +60,7 @@ for ii = 1:nArtifacts
     % remove the checksum folder that contains the artifact file.
     [isDeleted(ii), message] = rmdir(checksumFolder, 's');
     if ~isDeleted(ii)
-        fprintf('Could not delete artifact <%s>:\n%s\n', message);
+        fprintf('Could not delete artifact <%s>:\n%s\n', checksumFolder, message);
     end
 end
 

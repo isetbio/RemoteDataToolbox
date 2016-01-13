@@ -10,9 +10,9 @@ function [remotePaths, repositoryName] = rdtListRemotePaths(configuration, varar
 % rdtListRemotePaths(... 'sortFlag', sortFlag) determines whether the
 % list of remote paths will be sorted.  The default is true, sorted.
 %
-% Returns a cell array string paths returned from the Archiva respository,
-% or {} if the query failed.  Also returns the name of the repository whose
-% paths are listed.
+% Returns a cell array of string paths returned from the Archiva
+% respository, or {} if the query failed.  Also returns the name of the
+% repository whose paths are listed.
 %
 % See also rdtListArtifacts, rdtSearchArtifacts
 %

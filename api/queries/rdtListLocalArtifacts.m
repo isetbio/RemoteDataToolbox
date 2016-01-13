@@ -64,42 +64,16 @@ artifacts = [];
 % want to collect a whole super-group like "validation.fast" we have to
 % find all the flattened groups by prefix matching.
 
-%% Locate the local artifact cache.
-cacheFolder = configuration.cacheFolder;
-if isempty(cacheFolder)
-    cacheFolder = '~/.gradle';
-end
+%% Locate mathcing paths in the cache.
+[localPaths, fullPaths] = rdtListLocalPaths(configuration, ...
+    'remotePath', remotePath);
 
-% magic subfolder used by Gradle, which we expect not to change
-GRADLE_CACHES_SUBFOLDER = '/caches/modules-2/files-2.1';
-cachePath = fullfile(cacheFolder, GRADLE_CACHES_SUBFOLDER);
-
-if 7 ~= exist(cachePath, 'dir')
-    warning('rdtListLocalArtifacts:cacheFolderMissing', ...
-        'No cache folder exists at <%s>.', cacheFolder);
-    return;
-end
-
-%% Locate the remotePaths at or below this group.
-superGroupId = rdtPathSlashesToDots(remotePath);
-cacheDirectories = dir(cachePath);
-[~, groupDirectories] = rdtFilterStructArray(cacheDirectories, ...
-    'name', superGroupId, ...
-    'matchStyle', 'prefix');
-
-if isempty(groupDirectories)
-    warning('rdtListLocalArtifacts:remotePathMissing', ...
-        'No cache entries for remotePath <%s>.', remotePath);
-    return;
-end
-
-%% Locate artifacts, versions, and files in each group.
+%% Locate artifacts, versions, and files under each local path.
 % it's deep, but constant depth, so let's do it!
 artifactCell = {};
-for gg = 1:numel(groupDirectories)
-    groupId = groupDirectories(gg).name;
-    artifactRemotePath = rdtPathDotsToSlashes(groupId);
-    groupPath = fullfile(cachePath, groupId);
+for pp = 1:numel(localPaths)
+    artifactRemotePath = localPaths{pp};
+    groupPath = fullPaths{pp};
     artifactDirectories = getMatchingEntries(dir(groupPath), artifactId);
     for aa = 1:numel(artifactDirectories)
         localArtifactId = artifactDirectories(aa).name;
