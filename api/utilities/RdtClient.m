@@ -85,8 +85,10 @@ classdef RdtClient < handle
             
             parser = rdtInputParser();
             parser.addParameter('remotePath', obj.workingRemotePath, @ischar);
+            parser.addParameter('sortField', 'artifactId', @ischar);
             parser.parse(varargin{:});
             remotePath = parser.Results.remotePath;
+            sortField = parser.Results.sortField;
             
             if isempty(remotePath)
                 % list all artifacts by iterating remote paths
@@ -102,7 +104,7 @@ classdef RdtClient < handle
                         varargin{:}, ...
                         'remotePath', remotePaths{ii});
                 end
-                artifacts = [artifactCollection{:}];
+                artifacts = rdtSortStructArray([artifactCollection{:}], sortField);
                 
             else
                 % list under the known path
