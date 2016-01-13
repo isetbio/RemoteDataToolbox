@@ -19,6 +19,10 @@ function artifact = rdtPublishArtifact(configuration, file, remotePath, varargin
 % artifact = rdtPublishArtifact( ... 'name', name) adds the given
 % name to the artifact metadata.  The default is no name.
 %
+% artifact = rdtPublishArtifact( ... 'deleteLocal', deleteLocal) choose
+% whether to delete the artifact from the local cache after publishing.
+% The default is false, leave the artifact in the local cache.
+%
 % Returns a struct of metadata about the published artifact, or [] if the
 % publication failed.
 %
@@ -36,6 +40,7 @@ parser.addParameter('artifactId', '', @ischar);
 parser.addParameter('version', '1', @ischar);
 parser.addParameter('description', '', @ischar);
 parser.addParameter('name', '', @ischar);
+parser.addParameter('deleteLocal', false, @islogical);
 parser.parse(configuration, file, remotePath, varargin{:});
 configuration = rdtConfiguration(parser.Results.configuration);
 file = parser.Results.file;
@@ -44,6 +49,7 @@ artifactId = parser.Results.artifactId;
 version = parser.Results.version;
 description = parser.Results.description;
 name = parser.Results.name;
+deleteLocal = parser.Results.deleteLocal;
 
 if isempty(artifactId)
     [~, artifactId] = fileparts(file);
@@ -91,3 +97,9 @@ artifact = rdtArtifact( ...
     'url', remoteUrl, ...
     'description', description, ...
     'name', name);
+
+%% Optionally clean up the local cache.
+if deleteLocal
+    rdtDeleteLocalArtifacts(configuration, artifact);
+    artifact.localPath = '';
+end

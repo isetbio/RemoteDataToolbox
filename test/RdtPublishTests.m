@@ -96,7 +96,7 @@ classdef RdtPublishTests < matlab.unittest.TestCase
                 'publish-multiple-group', ...
                 'version', '123');
             testCase.assertNumElements(listed, numel(artifacts));
-
+            
             % make sure we can find these
             found = rdtSearchArtifacts(testCase.testConfig, ...
                 'publish-multiple-group', ...
@@ -125,6 +125,32 @@ classdef RdtPublishTests < matlab.unittest.TestCase
             artifactIds = {artifacts.artifactId};
             testCase.assertTrue(any(strcmp('text-artifact', artifactIds)));
             testCase.assertTrue(any(strcmp('multiple-flavor-test', artifactIds)));
+        end
+        
+        function testPublishMultipleDeleteLocal(testCase)
+            % publish the testArtifacts from this folder
+            thisFolder = fileparts(mfilename('fullpath'));
+            artifactFolder = fullfile(thisFolder, 'testArtifacts');
+            
+            artifacts = rdtPublishArtifacts(testCase.testConfig, ...
+                artifactFolder, ...
+                'publish-multiple-group', ...
+                'version', '890', ...
+                'name', 'Test', ...
+                'description', 'This is one of several tests.', ...
+                'deleteLocal', true);
+            
+            testCase.assertNotEmpty(artifacts);
+            testCase.assertInstanceOf(artifacts, 'struct');
+            
+            % make sure we don't see these artifacts in the local cache
+            for ii = 1:numel(artifacts)
+                foundLocally = rdtListLocalArtifacts(testCase.testConfig, ...
+                    artifacts(ii).remotePath, ...
+                    'version', artifacts(ii).version, ...
+                    'type', artifacts(ii).type);
+                testCase.assertEmpty(foundLocally);
+            end
         end
     end
 end

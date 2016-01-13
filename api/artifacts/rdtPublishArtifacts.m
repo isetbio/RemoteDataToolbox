@@ -22,6 +22,10 @@ function artifacts = rdtPublishArtifacts(configuration, folder, remotePath, vara
 % artifact = rdtPublishArtifacts(... 'type', type) restricts publication to
 % only files that have the same file extension as the given type.
 %
+% artifact = rdtPublishArtifacts( ... 'deleteLocal', deleteLocal) choose
+% whether to delete the artifacts from the local cache after publishing.
+% The default is false, leave the artifacts in the local cache.
+%
 % Returns a struct array of metadata about the published artifacts, or []
 % if the publication failed.
 %
@@ -39,6 +43,7 @@ parser.addParameter('version', '1', @ischar);
 parser.addParameter('type', '', @ischar);
 parser.addParameter('description', '', @ischar);
 parser.addParameter('name', '', @ischar);
+parser.addParameter('deleteLocal', false, @islogical);
 parser.parse(configuration, folder, remotePath, varargin{:});
 configuration = rdtConfiguration(parser.Results.configuration);
 folder = parser.Results.folder;
@@ -47,6 +52,7 @@ version = parser.Results.version;
 type = parser.Results.type;
 description = parser.Results.description;
 name = parser.Results.name;
+deleteLocal = parser.Results.deleteLocal;
 
 artifacts = [];
 
@@ -61,7 +67,7 @@ for ii = 1:nFiles
         continue;
     end
     
-    [filePath, fileBase, fileExt] = fileparts(listing.name);
+    [~, fileBase, fileExt] = fileparts(listing.name);
     fileType = fileExt(fileExt ~= '.');
     
     isChosen(ii) = '.' ~= fileBase(1) ...
@@ -81,14 +87,15 @@ nArtifacts = numel(chosenListing);
 artifactCell = cell(1, nArtifacts);
 for ii = 1:nArtifacts
     file = fullfile(folder, chosenListing(ii).name);
-    [filePath, artifactId] = fileparts(file);
+    [~, artifactId] = fileparts(file);
     artifactCell{ii} = rdtPublishArtifact(configuration, ...
         file, ...
         remotePath, ...
         'artifactId', artifactId, ...
         'version', version, ...
         'description', description, ...
-        'name', name);
+        'name', name, ...
+        'deleteLocal', deleteLocal);
 end
 
 artifacts = [artifactCell{:}];
