@@ -16,6 +16,11 @@ function artifacts = rdtListLocalArtifacts(configuration, remotePath, varargin)
 % artifacts = rdtListLocalArtifacts( ... 'type', type) restricts
 % search results to artifacts with exactly the given type.
 %
+% artifacts = rdtListLocalArtifacts( ... 'sortField', sortField) sort search
+% results using the given artifact field name.  The default is to sort by
+% artifacts.artifactId.  If sortField is not an existing artifact field
+% name, results will be left undorted.
+%
 % Returns a struct array describing locally cached artifacts under the
 % given remotePath, or else [] if there are none.
 %
@@ -31,12 +36,14 @@ parser.addRequired('remotePath',  @(p)ischar(p) && ~isempty(p));
 parser.addParameter('artifactId', '', @ischar);
 parser.addParameter('version', '', @ischar);
 parser.addParameter('type', '', @ischar);
+parser.addParameter('sortField', 'artifactId', @ischar);
 parser.parse(configuration, remotePath, varargin{:});
 configuration = rdtConfiguration(parser.Results.configuration);
 remotePath = parser.Results.remotePath;
 artifactId = parser.Results.artifactId;
 version = parser.Results.version;
 type = parser.Results.type;
+sortField = parser.Results.sortField;
 
 artifacts = [];
 
@@ -126,7 +133,7 @@ for gg = 1:numel(groupDirectories)
         end
     end
 end
-artifacts = [artifactCell{:}];
+artifacts = rdtSortStructArray([artifactCell{:}], sortField);
 
 %% Filter out non-matching entries, and always remove "." and "..".
 function dirs = getMatchingEntries(dirs, name)

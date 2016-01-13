@@ -24,6 +24,11 @@ function artifacts = rdtSearchArtifacts(configuration, searchText, varargin)
 % artifacts = rdtSearchArtifacts( ... 'pageSize', pageSize) restricts
 % the number of search results to the given pageSize.  The default is 1000.
 %
+% artifacts = rdtSearchArtifacts( ... 'sortField', sortField) sort search
+% results using the given artifact field name.  The default is to sort by
+% artifacts.artifactId.  If sortField is not an existing artifact field
+% name, results will be left undorted.
+%
 % Returns a struct array describing artifacts that matched the given
 % searchText and other restrictions, or else [] if the query failed.
 %
@@ -41,6 +46,7 @@ parser.addParameter('artifactId', '', @ischar);
 parser.addParameter('version', '', @ischar);
 parser.addParameter('type', '', @ischar);
 parser.addParameter('pageSize', 1000);
+parser.addParameter('sortField', 'artifactId', @ischar);
 parser.parse(configuration, searchText, varargin{:});
 configuration = rdtConfiguration(parser.Results.configuration);
 searchText = parser.Results.searchText;
@@ -49,6 +55,7 @@ artifactId = parser.Results.artifactId;
 version = parser.Results.version;
 type = parser.Results.type;
 pageSize = parser.Results.pageSize;
+sortField = parser.Results.sortField;
 
 artifacts = [];
 
@@ -80,7 +87,7 @@ for ii = 1:nHits
         'version', hit.version, ...
         'pageSize', pageSize);
 end
-artifacts = [artifactCell{:}];
+artifacts = rdtSortStructArray([artifactCell{:}], sortField);
 
 if isempty(artifacts)
     return;
