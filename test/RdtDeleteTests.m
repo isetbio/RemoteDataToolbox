@@ -1,5 +1,5 @@
 classdef RdtDeleteTests < matlab.unittest.TestCase
-    % Test that we can find and delete locally cached artifacts.
+    % Test that we can delete artifacts locally and remotely.
     % These tests attempt to connect to our public Archiva server called
     % brainard-archiva, using expected test credentials and repository
     % contents. If the expected server can't be found, skips these tests.
@@ -34,7 +34,7 @@ classdef RdtDeleteTests < matlab.unittest.TestCase
     end
     
     methods (Test)
-        function testDeleteAsListed(testCase)
+        function testDeleteAsListedLocally(testCase)
             published = testCase.publishTestArtifact();
             foundLocally = rdtListLocalArtifacts(testCase.testConfig, ...
                 published.remotePath, ...
@@ -54,7 +54,7 @@ classdef RdtDeleteTests < matlab.unittest.TestCase
             testCase.assertEmpty(notDeleted);
         end
         
-        function testDeleteAsPublished(testCase)
+        function testDeleteAsPublishedLocally(testCase)
             published = testCase.publishTestArtifact();
             [deleted, notDeleted] = rdtDeleteLocalArtifacts(testCase.testConfig, ...
                 published);
@@ -66,7 +66,7 @@ classdef RdtDeleteTests < matlab.unittest.TestCase
             testCase.assertEmpty(notDeleted);
         end
         
-        function testBogusNotDeleted(testCase)
+        function testBogusNotDeletedLocally(testCase)
             bogus = rdtArtifact( ...
                 'artifactId', 'bogus-artifact', ...
                 'localPath', 'nonononotapath');
@@ -80,7 +80,7 @@ classdef RdtDeleteTests < matlab.unittest.TestCase
             testCase.assertEqual(notDeleted.artifactId, bogus.artifactId);
         end
         
-        function testSomeRealSomeBogus(testCase)
+        function testSomeRealSomeBogusLocally(testCase)
             published = testCase.publishTestArtifact();
             foundLocally = rdtListLocalArtifacts(testCase.testConfig, ...
                 published.remotePath, ...
@@ -104,16 +104,73 @@ classdef RdtDeleteTests < matlab.unittest.TestCase
             testCase.assertEqual(sort({notDeleted.artifactId}), sort({boguses.artifactId}));
         end
         
+        % TODO: would be nice to have another remote test,
+        % testDeleteAsListedRemotely().  This would publish, then query for
+        % a listing that includes the just-published artifact, then delete
+        % using that listing.  Deleting based on a listing is probably how
+        % users will use the API.
+        %
+        % But this test must wait because getting an up-to-date listing
+        % would require us to trigger a repository re-scan immediately
+        % following the publishing.  We havne't implemented
+        % client-triggered re-scanning yet.
+        
+        function testDeleteAsPublishedRemotely(testCase)
+            published = testCase.publishTestArtifact();
+            [deleted, notDeleted] = rdtDeleteArtifacts(testCase.testConfig, ...
+                published);
+            
+            testCase.assertNotEmpty(deleted);
+            testCase.assertInstanceOf(deleted, 'struct');
+            testCase.assertTrue(all(strcmp(published.artifactId, {deleted.artifactId})));
+            
+            testCase.assertEmpty(notDeleted);
+        end
+        
+        function testBogusNotDeletedRemotely(testCase)
+            bogus = rdtArtifact( ...
+                'artifactId', 'bogus-artifact', ...
+                'localPath', 'nonononotapath', ...
+                'remotePath', 'ringadongdillo');
+            [deleted, notDeleted] = rdtDeleteArtifacts(testCase.testConfig, ...
+                bogus);
+            
+            testCase.assertEmpty(deleted);
+            
+            testCase.assertNotEmpty(notDeleted);
+            testCase.assertInstanceOf(notDeleted, 'struct');
+            testCase.assertEqual(notDeleted.artifactId, bogus.artifactId);
+        end
+        
+        function testSomeRealSomeBogusRemotely(testCase)
+            published = testCase.publishTestArtifact();
+            
+            boguses(1) = rdtArtifact( ...
+                'artifactId', 'bogus-artifact-1', ...
+                'localPath', 'nonononotapath', ...
+                'remotePath', published.remotePath);
+            boguses(2) = rdtArtifact( ...
+                'artifactId', 'bogus-artifact-2', ...
+                'localPath', 'heydolmerrydol', ...
+                'remotePath', published.remotePath);
+            [deleted, notDeleted] = rdtDeleteArtifacts(testCase.testConfig, ...
+                [published, boguses]);
+            
+            % Archiva actually reports successful deletion for bogus
+            % artifacts.  I guess its interpretation of success is that
+            % the artifact does not exist on the server, which is true of
+            % deleted artifacts as well as artifacts that never existed.
+            % So just check that the previously published artifact is among
+            % those that don't exist.
+            testCase.assertNotEmpty(deleted);
+            testCase.assertInstanceOf(deleted, 'struct');
+            testCase.assertTrue(any(strcmp({deleted.artifactId}, published.artifactId)));
+        end
     end
     
     methods
+        % Publish a throw-away artifact that's independent of other tests.
         function [artifact, testArtifactData] = publishTestArtifact(testCase)
-            % Actually publishing something seems like the best way to get
-            % something in the local cache that we are free to delete.
-            % This avoids interaction with other tests and also avoids
-            % unintended side effects of finding some other way to populate
-            % the cache.
-            
             testArtifactData = 'please delete me!';
             save(testCase.testArtifactFile, 'testArtifactData');
             
