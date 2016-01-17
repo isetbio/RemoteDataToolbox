@@ -254,10 +254,7 @@ classdef RdtClient < handle
                 % If there is no argument, then we open the repository URL,
                 % appending the working directory.
                 % open pwrp()
-                repoParts = rdtPathParts(obj.configuration.repositoryUrl);
-                remotePathParts = rdtPathParts(obj.workingRemotePath);
-                pathParts = cat(2, repoParts, remotePathParts);
-                url = rdtFullPath(pathParts, 'hasProtocol', true);
+                url = rdtBuildArtifactUrl(obj.configuration.repositoryUrl, obj.workingRemotePath, '', '');
                 
                 % Tell the open browser that we are sending in a full URL
                 rdtOpenBrowser(struct('url', url), 'url');

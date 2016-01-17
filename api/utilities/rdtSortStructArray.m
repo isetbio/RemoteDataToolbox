@@ -15,7 +15,7 @@ function [sorted, order] = rdtSortStructArray(structArray, fieldName)
 % Copyright (c) 2016 RemoteDataToolbox Team
 
 parser = rdtInputParser();
-parser.addRequired('structArray', @isstruct);
+parser.addRequired('structArray', @(s) isempty(s) || isstruct(s));
 parser.addRequired('fieldName', @ischar);
 parser.parse(structArray, fieldName);
 structArray = parser.Results.structArray;
@@ -25,7 +25,11 @@ nElements = numel(structArray);
 sorted = structArray;
 order = 1:nElements;
 
-%% Sanity check the fieldName.
+%% Sanity check.
+if isempty(structArray)
+    return;
+end
+
 if ~isfield(structArray, fieldName)
     return;
 end
