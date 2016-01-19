@@ -21,10 +21,9 @@ function [isScanning, message] = rdtRequestRescan(configuration, varargin)
 % condition" between the completion of the re-scan and any listing or
 % searching requests you invoke after this function.
 %
-% rdtRequestRescan( ... 'delaySecs', delaySecs) pauses after requesting the
-% re-scan for the given number of delaySecs.  This may be a "cheap" way to
-% avoid race conditions at the expense of a small delay.  The default is 0,
-% don't delay at all.
+% rdtRequestRescan( ... 'timeout', timeout) waits after requesting the
+% re-scan until the given timeout in seconds has elapsed, or the Archiva
+% server reports that the scan is complete.
 %
 % Returns a logical value, true only if the server responded with a success
 % message.  Also returns a string message from the server in case of
@@ -36,32 +35,54 @@ function [isScanning, message] = rdtRequestRescan(configuration, varargin)
 
 parser = rdtInputParser();
 parser.addRequired('configuration');
-parser.addParameter('delaySecs', 0, @isnumeric);
+parser.addParameter('timeout', 0, @isnumeric);
 parser.parse(configuration, varargin{:});
 configuration = rdtConfiguration(parser.Results.configuration);
-delaySecs = parser.Results.delaySecs;
+timeout = parser.Results.timeout;
 
 isScanning = false;
 message = '';
 
 %% Request the re-scan.
-requestPath = '/restServices/archivaServices/repositoriesService/scanRepositoryNow';
+scanPath = '/restServices/archivaServices/repositoriesService/scanRepositoryNow';
 scanConfig = configuration;
 scanConfig.acceptMediaType = 'text/plain';
-queryParams = struct( ...
+scanParams = struct( ...
     'repositoryId', scanConfig.repositoryName, ...
     'fullScan', 1);
 
 try
-    message = rdtRequestWeb(scanConfig, requestPath, 'queryParams', queryParams);
+    message = rdtRequestWeb(scanConfig, scanPath, 'queryParams', scanParams);
     isScanning = true;
     
     % wait for the re-scan to complete?
-    if delaySecs > 0
-        fprintf('%.1f second delay for repository rescan...', delaySecs);
-        pause(delaySecs);
-        fprintf('done!\n');
+    if timeout > 0
+        rdtPrintf(scanConfig.verbosity, ...
+            '%.1f second timeout for rescan to finish...', timeout);
+        
+        % ask the server if it's done yet
+        ticToc = tic();
+        endTime = timeout + toc(ticToc);
+        alreadyScanning = true;
+        while alreadyScanning && toc(ticToc) < endTime
+            alreadyScanning = requestAlreadyScanning(scanConfig);
+            pause(.1);
+        end
+        
+        rdtPrintf(scanConfig.verbosity, 'done!\n');
     end
 catch ex
     message = ex.message;
+end
+
+% Check if the requested repository is already being scanned.
+function alreadyScanning = requestAlreadyScanning(configuration)
+alreadyScanningPath = [ ...
+    '/restServices/archivaServices/repositoriesService/alreadyScanning/' ...
+    configuration.repositoryName];
+try
+    alreadyMessage = rdtRequestWeb(scanConfig, alreadyScanningPath);
+    alreadyScanning = strcmpi('true', alreadyMessage);
+catch
+    alreadyScanning = false;
 end

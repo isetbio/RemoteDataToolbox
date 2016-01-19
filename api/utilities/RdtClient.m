@@ -273,8 +273,8 @@ classdef RdtClient < handle
             % Ask Archiva to rescan the repository to up-to-date artifact
             % listing and searching.
             %   [isScanning, message] = requestRescan() initiate scan
-            %   [isScanning, message] = requestRescan('delaySecs',
-            %       delaySecs) wait delaySecs for scan to finish.
+            %   [isScanning, message] = requestRescan('timeout',
+            %       timeout) wait up to timeout seconds for scan to finish.
             
             [isScanning, message] = rdtRequestRescan(obj.configuration, ...
                 varargin{:});
