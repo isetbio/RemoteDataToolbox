@@ -1,7 +1,7 @@
-function [isScanning, message] = rdtRequestRescan(configuration, varargin)
+function [isStarted, message] = rdtRequestRescan(configuration, varargin)
 %% Request Archiva to re-scan a repository for artifact listings.
 %
-% [isScanning, message] = rdtRequestRescan(configuration) requests a
+% [isStarted, message] = rdtRequestRescan(configuration) requests a
 % repository re-scan from an Archiva Maven repository.  If successful, this
 % will cause the repository artifact listing and search index to be
 % re-generated immediately.  This may be useful when modifying the
@@ -18,18 +18,18 @@ function [isScanning, message] = rdtRequestRescan(configuration, varargin)
 % On success, this function will *initiate* the re-scan.  It may take some
 % time for the scan to be completed.  For small repositories, the time
 % required should be less than a second.  Still, there may be a "race
-% condition" between the completion of the re-scan and any listing or
-% searching requests you invoke after this function.
+% condition" between the completion of the re-scan and any subsequent
+% requests for artifact listings or searches.
 %
 % rdtRequestRescan( ... 'timeout', timeout) waits after requesting the
 % re-scan until the given timeout in seconds has elapsed, or the Archiva
 % server reports that the scan is complete.
 %
 % Returns a logical value, true only if the server responded with a success
-% message.  Also returns a string message from the server in case of
-% success or failure.
+% message when asked to initiate the scan.  Also returns a string message
+% from the server in case of success or failure.
 %
-% [isScanning, message] = rdtRequestRescan(configuration, varargin)
+% [isStarted, message] = rdtRequestRescan(configuration, varargin)
 %
 % Copyright (c) 2015 RemoteDataToolbox Team
 
@@ -40,7 +40,7 @@ parser.parse(configuration, varargin{:});
 configuration = rdtConfiguration(parser.Results.configuration);
 timeout = parser.Results.timeout;
 
-isScanning = false;
+isStarted = false;
 message = '';
 
 %% Request the re-scan.
@@ -53,7 +53,7 @@ scanParams = struct( ...
 
 try
     message = rdtRequestWeb(scanConfig, scanPath, 'queryParams', scanParams);
-    isScanning = true;
+    isStarted = true;
     
     % wait for the re-scan to complete?
     if timeout > 0
