@@ -1,4 +1,4 @@
-function [deleted, notDeleted] = rdtDeleteArtifacts(configuration, artifacts)
+function [deleted, notDeleted] = rdtDeleteArtifacts(configuration, artifacts, varargin)
 %% Delete multiple artifacts from a remote server and the local cache.
 %
 % [deleted, notDeleted] = rdtDeleteArtifacts(configuration, artifacts)
@@ -12,22 +12,28 @@ function [deleted, notDeleted] = rdtDeleteArtifacts(configuration, artifacts)
 % element per artifact to delete.  rdtListArtifacts() and
 % rdtSearchArtifacts() return such struct arrays.
 %
+% artifact = rdtDeleteArtifacts( ... 'rescan', rescan) choose
+% whether to request the remote repository to update its artifact listing
+% and search index.  The default is true -- rescan and update.
+%
 % Returns a subset of the given artifacts struct array indicating which
 % artifacts were actually deleted from the remote server.  Also returns a
 % subset indicating which artifacts were not deleted if any.
 %
 % See also rdtListArtifacts rdtSearchArtifacts rdtDeleteLocalArtifacts
 %
-% [deleted, notDeleted] = rdtDeleteArtifacts(configuration, artifacts)
+% [deleted, notDeleted] = rdtDeleteArtifacts(configuration, artifacts, varargin)
 %
 % Copyright (c) 2015 RemoteDataToolbox Team
 
 parser = rdtInputParser();
 parser.addRequired('configuration');
 parser.addRequired('artifacts', @isstruct);
-parser.parse(configuration, artifacts);
+parser.addParameter('rescan', true, @islogical);
+parser.parse(configuration, artifacts, varargin{:});
 configuration = rdtConfiguration(parser.Results.configuration);
 artifacts = parser.Results.artifacts;
+rescan = parser.Results.rescan;
 
 %% Implementation note:
 % This delete operation is implemented in an Archiva-specific way.  So from
@@ -59,6 +65,11 @@ end
 
 deleted = artifacts(isDeleted);
 notDeleted = artifacts(~isDeleted);
+
+%% Ask the remote server to rescan the repository?
+if rescan
+    rdtRequestRescan(configuration);
+end
 
 % Ask Archiva to delete an artifact.
 function isDeleted = archivaDeleteArtifact(configuration, artifact)

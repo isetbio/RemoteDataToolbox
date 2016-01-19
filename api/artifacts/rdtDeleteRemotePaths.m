@@ -1,40 +1,48 @@
-function [deleted, notDeleted] = rdtDeleteRemotePaths(configuration, remotePath)
+function [deleted, notDeleted] = rdtDeleteRemotePaths(configuration, remotePath, varargin)
 %% Delete paths containing artifacts from a remote server and the local cache.
 %
 %   [deleted, notDeleted] = rdtDeleteRemotePaths(configuration, remotePath)
-% 
+%
 % Deletes one or more paths containing artifacts from a remote server and
 % also from the local artifact cache. Thus, the local cache will not return
 % the artifacts after this delete is executed on the remote server.
 %
+% artifact = rdtDeleteRemotePaths( ... 'rescan', rescan) choose
+% whether to request the remote repository to update its artifact listing
+% and search index.  The default is true -- rescan and update.
+%
 % Inputs:
-% remotePath - string to the remote path.  
+% remotePath - string to the remote path.
 %   Should be a string artifact path, like those returned from
 %   rdtListRemotePaths(). The remotePath may be a partial or "super" path,
 %   which matches multiple subpaths.
-% configuration.repositoryUrl - must point to the repository root.  
+% configuration.repositoryUrl - must point to the repository root.
 % configuration.cacheFolder   - should point to the root of the local
 %   artifact cache.  If configuration.cacheFolder is empty, the Gradle
-%   default is used ('~/.gradle'). 
+%   default is used ('~/.gradle').
 %
 % Returns:
 %  deleted    - a cell array that contains the matching paths that were
-%               actually deleted. 
+%               actually deleted.
 %  notDeleted - a cell array indicating matching paths that were not
-%               deleted, if any. 
+%               deleted, if any.
 %
 % See also rdtDeleteArtifacts rdtDeleteLocalpaths
 %
 % Examples:
+%
+% [deleted, notDeleted] = rdtDeleteRemotePaths(configuration, remotePath, varargin)
 %
 % Copyright (c) 2015 RemoteDataToolbox Team
 
 parser = rdtInputParser();
 parser.addRequired('configuration');
 parser.addRequired('remotePath', @ischar);
-parser.parse(configuration, remotePath);
+parser.addParameter('rescan', true, @islogical);
+parser.parse(configuration, remotePath, varargin{:});
 configuration = rdtConfiguration(parser.Results.configuration);
 remotePath = parser.Results.remotePath;
+rescan = parser.Results.rescan;
 
 %% Implementation note:
 %
@@ -58,7 +66,7 @@ nPaths = numel(remotePaths);
 isDeleted = false(1, nPaths);
 for ii = 1:nPaths
     % try to delete remotely
-    isDeleted(ii) = archivaDeleteRemotePath(configuration, remotePaths{ii});
+    isDeleted(ii) = archivaDeleteRemotePath(configuration, remotePaths{ii}, rescan);
 end
 
 deleted = remotePaths(isDeleted);
@@ -68,7 +76,7 @@ notDeleted = remotePaths(~isDeleted);
 rdtDeleteLocalPaths(configuration, remotePath);
 
 % Ask Archiva to delete a remote path.
-function isDeleted = archivaDeleteRemotePath(configuration, remotePath)
+function isDeleted = archivaDeleteRemotePath(configuration, remotePath, rescan)
 configuration.acceptMediaType = 'text/plain';
 resourcePath = '/restServices/archivaServices/repositoriesService/deleteGroupId';
 groupId = rdtPathSlashesToDots(remotePath);
@@ -79,6 +87,12 @@ deleteParams = struct( ...
 try
     message = rdtRequestWeb(configuration, resourcePath, 'queryParams', deleteParams);
     isDeleted = strcmpi('true', message);
+    
+    %% Ask the remote server to rescan the repository?
+    if rescan
+        rdtRequestRescan(configuration);
+    end
+    
 catch ex
     isDeleted = false;
     message = ex.message;
