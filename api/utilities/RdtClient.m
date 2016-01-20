@@ -268,5 +268,16 @@ classdef RdtClient < handle
                 url = rdtOpenBrowser(obj.configuration, whichUrlOrArtifact);
             end
         end
+        
+        function [isStarted, message] = requestRescan(obj, varargin)
+            % Ask Archiva to rescan the repository to up-to-date artifact
+            % listing and searching.
+            %   [isStarted, message] = requestRescan() initiate scan
+            %   [isStarted, message] = requestRescan('timeout',
+            %       timeout) wait up to timeout seconds for scan to finish.
+            
+            [isStarted, message] = rdtRequestRescan(obj.configuration, ...
+                varargin{:});
+        end
     end
 end

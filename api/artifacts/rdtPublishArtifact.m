@@ -23,6 +23,10 @@ function artifact = rdtPublishArtifact(configuration, file, remotePath, varargin
 % whether to delete the artifact from the local cache after publishing.
 % The default is false, leave the artifact in the local cache.
 %
+% artifact = rdtPublishArtifact( ... 'rescan', rescan) choose
+% whether to request the remote repository to update its artifact listing
+% and search index.  The default is true -- rescan and update.
+%
 % Returns a struct of metadata about the published artifact, or [] if the
 % publication failed.
 %
@@ -41,6 +45,7 @@ parser.addParameter('version', '1', @ischar);
 parser.addParameter('description', '', @ischar);
 parser.addParameter('name', '', @ischar);
 parser.addParameter('deleteLocal', false, @islogical);
+parser.addParameter('rescan', true, @islogical);
 parser.parse(configuration, file, remotePath, varargin{:});
 configuration = rdtConfiguration(parser.Results.configuration);
 file = parser.Results.file;
@@ -50,6 +55,7 @@ version = parser.Results.version;
 description = parser.Results.description;
 name = parser.Results.name;
 deleteLocal = parser.Results.deleteLocal;
+rescan = parser.Results.rescan;
 
 if isempty(artifactId)
     [~, artifactId] = fileparts(file);
@@ -72,6 +78,11 @@ artifact = [];
 
 if isempty(localPath)
     return;
+end
+
+%% Ask the remote server to rescan the repository?
+if rescan
+    rdtRequestRescan(configuration);
 end
 
 %% Read more metadata from the artifact pom.
