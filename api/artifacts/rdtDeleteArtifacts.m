@@ -16,6 +16,11 @@ function [deleted, notDeleted] = rdtDeleteArtifacts(configuration, artifacts, va
 % whether to request the remote repository to update its artifact listing
 % and search index.  The default is true -- rescan and update.
 %
+% artifact = rdtDeleteArtifacts( ... 'allFiles', allFiles) choose
+% whether to delete all files associated with each given artifact.  This
+% includes artifact metadata and all data files of any type.  The default
+% is false, only delete one file at a time as specified by artifact.type.
+%
 % Returns a subset of the given artifacts struct array indicating which
 % artifacts were actually deleted from the remote server.  Also returns a
 % subset indicating which artifacts were not deleted if any.
@@ -30,10 +35,12 @@ parser = rdtInputParser();
 parser.addRequired('configuration');
 parser.addRequired('artifacts', @isstruct);
 parser.addParameter('rescan', true, @islogical);
+parser.addParameter('allFiles', false, @islogical);
 parser.parse(configuration, artifacts, varargin{:});
 configuration = rdtConfiguration(parser.Results.configuration);
 artifacts = parser.Results.artifacts;
 rescan = parser.Results.rescan;
+allFiles = parser.Results.allFiles;
 
 %% Implementation note:
 % This delete operation is implemented in an Archiva-specific way.  So from
@@ -50,14 +57,21 @@ nArtifacts = numel(artifacts);
 isDeleted = false(1, nArtifacts);
 for ii = 1:nArtifacts
     % try to delete from remote server
-    isDeleted(ii) = archivaDeleteArtifact(configuration, artifacts(ii));
+    isDeleted(ii) = archivaDeleteArtifact(configuration, artifacts(ii), allFiles);
     
     % try to delete from local cache
-    foundLocally = rdtListLocalArtifacts(configuration, ...
-        artifacts(ii).remotePath, ...
-        'artifactId', artifacts(ii).artifactId, ...
-        'version', artifacts(ii).version, ...
-        'type', artifacts(ii).type);
+    if allFiles
+        foundLocally = rdtListLocalArtifacts(configuration, ...
+            artifacts(ii).remotePath, ...
+            'artifactId', artifacts(ii).artifactId, ...
+            'version', artifacts(ii).version);
+    else
+        foundLocally = rdtListLocalArtifacts(configuration, ...
+            artifacts(ii).remotePath, ...
+            'artifactId', artifacts(ii).artifactId, ...
+            'version', artifacts(ii).version, ...
+            'type', artifacts(ii).type);
+    end
     if ~isempty(foundLocally)
         rdtDeleteLocalArtifacts(configuration, foundLocally);
     end
@@ -72,16 +86,19 @@ if rescan
 end
 
 % Ask Archiva to delete an artifact.
-function isDeleted = archivaDeleteArtifact(configuration, artifact)
+function isDeleted = archivaDeleteArtifact(configuration, artifact, allFiles)
 configuration.acceptMediaType = 'text/plain';
 resourcePath = '/restServices/archivaServices/repositoriesService/deleteArtifact';
 deleteRequest = struct( ...
     'repositoryId', configuration.repositoryName, ...
     'version', artifact.version, ...
     'artifactId', artifact.artifactId, ...
-    'groupId', rdtPathSlashesToDots(artifact.remotePath), ...
-    'classifier', artifact.type, ...
-    'packaging', artifact.type);
+    'groupId', rdtPathSlashesToDots(artifact.remotePath));
+
+if ~allFiles
+    deleteRequest.classifier = artifact.type;
+    deleteRequest.packaging = artifact.type;
+end
 
 try
     message = rdtRequestWeb(configuration, resourcePath, 'requestBody', deleteRequest);

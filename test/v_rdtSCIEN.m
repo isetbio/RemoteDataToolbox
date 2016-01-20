@@ -25,12 +25,15 @@ a = rd.listArtifacts;
 disp('This artifact found')
 a.artifactId
 
-% Poke around
-rd.openBrowser;
+% BSH: let's look specifically at the image-artifact version 1 folder
+% it should contain the jpg and various metadata files
+artifactFolderHack = rdtArtifact('url', fileparts(a.url));
+rd.openBrowser(artifactFolderHack);
 
 %% Remove the file
 
-deleted = rdtDeleteArtifacts(rd.configuration, a);
+% BSH: try again with the new 'allFiles' flag
+deleted = rdtDeleteArtifacts(rd.configuration, a, 'allFiles', true);
 
 % This returns an empty artifact, which is good
 a = rd.listArtifacts;
@@ -38,18 +41,25 @@ if isempty(a)
     disp('Artifact successfully deleted')
 end
 
-% The pom file and related (md6, sha1, xml) are still there
+%BSH: The pom file and related (md6, sha1, xml) that we say above should
+%have been deleted.
 
 %% Now, test triggering a rescan
 
 % Ask for a rescan - not sure what this does ...
+
+% BSH: rdtDeleteArtifacts() already should have rescanned automatically.
+% And if listArtifacts() above returned empty, then the rescan was
+% successful.  So this rescan here is redundant but harmless.
+
 [isStarted,message] = rd.requestRescan;
 if isStarted
     disp('Rescan is initiated')
 end
 
-% Poke around.  In my case, I see a lot of files.
-rd.openBrowser;
+% now the whole artifact is gone!
+%   expect a 404 error
+rd.openBrowser(artifactFolderHack);
 
 %% But the artifact is invisible
 rd.crp('/');
@@ -61,5 +71,12 @@ end
 % Is that the expected behavior?  When do the pom, md5, and other files go
 % away?
 
-%%
+% BSH with the allFiles flag to rdtDeleteArtifacts(), we can make a whole
+% folder go away, including the pom, data files, and other metadata
+
+% BSH but there is still a mostly-empty folder that we might have to live
+% with
+
+% still see a folder named briefTest/image-artifact/  :(
+rd.openBrowser();
 
