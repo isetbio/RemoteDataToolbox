@@ -14,5 +14,10 @@ parser = inputParser();
 
 parser.CaseSensitive = true;
 parser.KeepUnmatched = true;
-parser.PartialMatching = false;
 parser.StructExpand = false;
+
+% PartialMatching is not an option in Matlab < ~8.2/R2013b
+%   That's OK.  We just want to turn it off when we have the choice.
+if ~verLessThan('matlab', '8.2')
+    parser.PartialMatching = false;
+end
