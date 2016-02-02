@@ -13,6 +13,10 @@ function [data, artifact, downloads] = rdtReadArtifact(configuration, remotePath
 % [data, artifact] = rdtReadArtifact( ... 'type', type) fetches an
 % artifact with the given type instead of the default 'mat'.
 %
+% Note: you must supply the full remotePath where the artifact is located.
+% For example, to read "/path/to/file/foo.txt", you would have to supply
+% the full "/path/to/file".  Supplying "/path" would not be enough.
+%
 % Returns a Matlab variable containing the artifact data.  The class of the
 % returned variable depends on the artifact type:
 %   - 'mat': struct of variables from the built-in load()
@@ -47,6 +51,7 @@ data = [];
 artifact = [];
 
 %% Fetch the artifact.
+try
 [localPath, pomPath, downloads] = gradleFetchArtifact(configuration.repositoryUrl, ...
     configuration.username, ...
     configuration.password, ...
@@ -56,6 +61,20 @@ artifact = [];
     type, ...
     'cacheFolder', configuration.cacheFolder, ...
     'verbose', logical(configuration.verbosity));
+catch ex
+    fprintf('Could not find artifactId <%s> of type <%s> at remotePath <%s>\n', ...
+        artifactId, type, remotePath);
+    fprintf('Suggestion: specify the full remotePath, not just a parent path:\n');
+    fprintf('  rdtReadArtifact( ... ''remotePath'', ''/foo/bar/baz'')\n');
+    fprintf('  rather than\n');
+    fprintf('  rdtReadArtifact( ... ''remotePath'', ''/foo'')\n');
+    fprintf('Suggestion: specify the artifact file type:\n');
+    fprintf('  rdtReadArtifact( ... ''type'', ''jpg'')\n');
+    fprintf('  rdtReadArtifact( ... ''type'', ''tiff'')\n');
+    fprintf('  rdtReadArtifact( ... ''type'', ''gz'')\n');
+    fprintf('  etc...\n');
+    rethrow(ex);
+end
 
 if isempty(localPath)
     return;

@@ -134,7 +134,26 @@ classdef RdtClient < handle
         
         function [data, artifact, downloads] = readArtifact(obj, artifactId, varargin)
             % Read data for one artifact into Matlab.
-            % The artifactID
+            %
+            % You must supply the artifactId of the artifact you want to
+            % read.  This is like the base name of the file, for example
+            % the "foo" in "foo.txt".
+            %
+            % You must also supply the type of the artifact you want to
+            % read.  This is like the file extension, for example the "txt"
+            % in "foo.txt".  If you omit the type, the default, "mat" is
+            % used.
+            %
+            % Finally, you must supply the "remotePath" to the artifact.
+            % This is like the folder that contains a file, for example the
+            % "/path/to/file" in "/path/to/file/foo.txt".  If you omit the
+            % remotePath, the value of pwrp() is used.
+            %
+            % Note: you must supply the full remotePath where the artifact
+            % is located.  For example, to read "/path/to/file/foo.txt",
+            % you would have to supply the full "/path/to/file".  Supplying
+            % "/path" or using crp("/path") would not be enough.
+            %
             %   [data, artifact] = obj.readArtifact(artifactId)
             %   ( ... 'remotePath', remotePath) remotePath instead of pwrp()
             %   ( ... 'version', version) version instead of default latest
