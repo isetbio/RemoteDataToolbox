@@ -51,3 +51,21 @@ disp(artifact)
 
 %% Display the artifact data as an image.
 imshow(data);
+
+%% Copy a fetched artifact to an alternate folder.
+
+% choose a temp folder to copy the artifact into
+destinationFolder = fullfile(tempdir(), 'destination-folder');
+
+% increase the "verbosity" to print what happens
+client.configuration.verbosity = 1;
+
+% fetch it again
+[data, artifact] = client.readArtifact('demo-image', ...
+    'type', 'png', ...
+    'remotePath', 'project-demo', ...
+    'destinationFolder', destinationFolder);
+
+disp('artifact.localPath:')
+disp(artifact.localPath)
+
