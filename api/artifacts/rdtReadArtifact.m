@@ -13,6 +13,13 @@ function [data, artifact, downloads] = rdtReadArtifact(configuration, remotePath
 % [data, artifact] = rdtReadArtifact( ... 'type', type) fetches an
 % artifact with the given type instead of the default 'mat'.
 %
+% [data, artifact] = rdtReadArtifact( ... 'loadFunction', loadFunction)
+% uses the given loadFunction to load the fetched artifact into memory.
+% The load function must have the following form:
+%   function data = myLoadFunction(artifactStruct)
+% The data returned from this funciton will be whatever was returned from
+% myLoadFunction.  The default is @rdtLoadWellKnownFileTypes.
+%
 % Note: you must supply the full remotePath where the artifact is located.
 % For example, to read "/path/to/file/foo.txt", you would have to supply
 % the full "/path/to/file".  Supplying "/path" would not be enough.
@@ -40,12 +47,14 @@ parser.addRequired('remotePath', @ischar);
 parser.addRequired('artifactId', @ischar);
 parser.addParameter('version', '+', @ischar);
 parser.addParameter('type', 'mat', @ischar);
+parser.addParameter('loadFunction', @rdtLoadWellKnownFileTypes, @(f) isa(f, 'function_handle'));
 parser.parse(configuration, remotePath, artifactId, varargin{:});
 configuration = rdtConfiguration(parser.Results.configuration);
 remotePath = parser.Results.remotePath;
 artifactId = parser.Results.artifactId;
 version = parser.Results.version;
 type = parser.Results.type;
+loadFunction = parser.Results.loadFunction;
 
 data = [];
 artifact = [];
@@ -105,22 +114,6 @@ artifact = rdtArtifact( ...
     'description', description, ...
     'name', name);
 
-%% Load the artifact data.
-imageTypes = imreadExtensions();
-switch type
-    case 'mat'
-        data = load(localPath);
-    case 'json'
-        data = loadjson(localPath);
-    case imageTypes
-        data = imread(localPath);
-    otherwise
-        fid = fopen(localPath);
-        data = fread(fid, '*char')';
-        fclose(fid);
-end
+%% Load the artifact data into memory.
+data = feval(loadFunction, artifact);
 
-%% Ask Matlab for recognized image file extensions.
-function imageTypes = imreadExtensions()
-formats = imformats();
-imageTypes = cat(2, formats.ext);

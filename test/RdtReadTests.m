@@ -93,7 +93,8 @@ classdef RdtReadTests < matlab.unittest.TestCase
                 remotePath, ...
                 artifactId, ...
                 'version', version, ...
-                'type', type);
+                'type', type, ...
+                'loadFunction', @RdtReadTests.loadText);
             
             testCase.assertNotEmpty(data);
             testCase.assertInstanceOf(data, 'char');
@@ -134,7 +135,7 @@ classdef RdtReadTests < matlab.unittest.TestCase
             testCase.assertInstanceOf(datas, 'cell');
             testCase.assertNumElements(datas, numel(artifacts));
             
-            testCase.assertEqual(datas{4}, 'This is a test artifact.');
+            testCase.assertTrue(2 == exist(datas{4}, 'file'));
             testCase.assertEqual(datas{3}.foo, 'bar');
             testCase.assertEqual(datas{2}.hello, 'world');
             testCase.assertTrue(isnumeric(datas{1}));
@@ -172,6 +173,14 @@ classdef RdtReadTests < matlab.unittest.TestCase
             testCase.assertNotEmpty(artifact);
             testCase.assertInstanceOf(artifact, 'struct');
             testCase.assertEqual(artifact.artifactId, 'matlab-artifact');
+        end
+    end
+    
+    methods (Static)
+        function data = loadText(artifact)
+            fid = fopen(artifact.localPath);
+            data = fread(fid, '*char')';
+            fclose(fid);
         end
     end
 end

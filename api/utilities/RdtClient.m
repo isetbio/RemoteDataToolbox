@@ -170,7 +170,7 @@ classdef RdtClient < handle
                 remotePath, artifactId, varargin{:});
         end
         
-        function [datas, artifacts, downloads] = readArtifacts(obj, pathOrArtifacts)
+        function [datas, artifacts, downloads] = readArtifacts(obj, pathOrArtifacts, varargin)
             % Read data for multiple artifacts into Matlab.
             %   [datas, artifacts] = obj.readArtifacts() all under pwrp()
             %   obj.readArtifacts(remotePath) remotePath instead of pwrp()
@@ -182,16 +182,16 @@ classdef RdtClient < handle
             if nargin < 2 || isempty(pathOrArtifacts)
                 % all under pwrp()
                 artifacts = obj.listArtifacts();
-                [datas, artifacts, downloads] = rdtReadArtifacts(obj.configuration, artifacts);
+                [datas, artifacts, downloads] = rdtReadArtifacts(obj.configuration, artifacts, varargin{:});
                 
             elseif ischar(pathOrArtifacts)
                 % all under remote path
                 artifacts = rdtListArtifacts(obj.configuration, pathOrArtifacts);
-                [datas, artifacts, downloads] = rdtReadArtifacts(obj.configuration, artifacts);
+                [datas, artifacts, downloads] = rdtReadArtifacts(obj.configuration, artifacts, varargin{:});
                 
             elseif isstruct(pathOrArtifacts)
                 % explicit struct array
-                [datas, artifacts, downloads] = rdtReadArtifacts(obj.configuration, pathOrArtifacts);
+                [datas, artifacts, downloads] = rdtReadArtifacts(obj.configuration, pathOrArtifacts, varargin{:});
             end
         end
         
