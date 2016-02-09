@@ -13,6 +13,13 @@ function [data, artifact, downloads] = rdtReadArtifact(configuration, remotePath
 % [data, artifact] = rdtReadArtifact( ... 'type', type) fetches an
 % artifact with the given type instead of the default 'mat'.
 %
+% [data, artifact] = rdtReadArtifact( ... 'destinationFolder', destinationFolder)
+% copies the fetched artifact from the local artifact cache to the given
+% destinationFolder.  In this case artifact.localPath will point to the
+% destinationFolder.  The name of the copied artifact will have the
+% form <artifactId>.<type>.  This name may differ from the file name used
+% on the remote server or within the local cache.
+%
 % [data, artifact] = rdtReadArtifact( ... 'loadFunction', loadFunction)
 % uses the given loadFunction to load the fetched artifact into memory.
 % The load function must have the following form:
@@ -47,6 +54,7 @@ parser.addRequired('remotePath', @ischar);
 parser.addRequired('artifactId', @ischar);
 parser.addParameter('version', '+', @ischar);
 parser.addParameter('type', 'mat', @ischar);
+parser.addParameter('destinationFolder', '', @ischar);
 parser.addParameter('loadFunction', @rdtLoadWellKnownFileTypes, @(f) isa(f, 'function_handle'));
 parser.parse(configuration, remotePath, artifactId, varargin{:});
 configuration = rdtConfiguration(parser.Results.configuration);
@@ -54,6 +62,7 @@ remotePath = parser.Results.remotePath;
 artifactId = parser.Results.artifactId;
 version = parser.Results.version;
 type = parser.Results.type;
+destinationFolder = parser.Results.destinationFolder;
 loadFunction = parser.Results.loadFunction;
 
 data = [];
@@ -100,6 +109,22 @@ else
     name = rdtScrapeXml(xmlString, 'name', '');
     version = rdtScrapeXml(xmlString, 'version', '');
     fclose(fid);
+end
+
+%% Copy to a destination folder?
+if ~isempty(destinationFolder)
+    if 7 ~= exist(destinationFolder, 'dir')
+        mkdir(destinationFolder);
+    end
+    
+    % make a simple file name which "undoes" a Maven naming convention
+    %   this is important eg when file name contains a double extension
+    %   foo.nii.gz (original) -> foo.nii-1-gz.gz (Maven) -> foo.nii.gz (simple)
+    destinationPath = fullfile(destinationFolder, [artifactId '.' type]);
+    [success, message] = copyfile(localPath, destinationPath, 'f');
+    if success
+        localPath = destinationPath;
+    end
 end
 
 %% Build an artifact struct for the fetched artifact.

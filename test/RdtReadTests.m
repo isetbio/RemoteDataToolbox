@@ -14,6 +14,7 @@ classdef RdtReadTests < matlab.unittest.TestCase
             'requestMediaType', 'application/json', ...
             'acceptMediaType', 'application/json', ...
             'verbosity', 1);
+        destinationFolder = fullfile(tempdir(), 'destination');
     end
     
     methods (TestMethodSetup)
@@ -23,6 +24,9 @@ classdef RdtReadTests < matlab.unittest.TestCase
             testCase.assumeTrue(isConnected, message);
         end
         
+        function clearDestinationFolder(testCase)
+            [~] = rmdir(testCase.destinationFolder, 's');
+        end
     end
     
     methods (Test)
@@ -173,6 +177,34 @@ classdef RdtReadTests < matlab.unittest.TestCase
             testCase.assertNotEmpty(artifact);
             testCase.assertInstanceOf(artifact, 'struct');
             testCase.assertEqual(artifact.artifactId, 'matlab-artifact');
+        end
+        
+        function testFetchToDestinationDir(testCase)
+            remotePath = 'test-group-1';
+            artifactId = 'text-artifact';
+            version = '4';
+            type = 'txt';
+            [data, artifact] = rdtReadArtifact(testCase.testConfig, ...
+                remotePath, ...
+                artifactId, ...
+                'version', version, ...
+                'type', type, ...
+                'destinationFolder', testCase.destinationFolder, ...
+                'loadFunction', @RdtReadTests.loadText);
+            
+            % destinationFolder must not break loadFunction
+            testCase.assertNotEmpty(data);
+            testCase.assertInstanceOf(data, 'char');
+            testCase.assertEqual(data, 'This is a test artifact.');
+            
+            testCase.assertNotEmpty(artifact);
+            testCase.assertInstanceOf(artifact, 'struct');
+            
+            % must create test folder and artifact with simple name
+            simpleName = fullfile(testCase.destinationFolder, [artifactId '.' type]);
+            testCase.assertEqual(artifact.localPath, simpleName);
+            testCase.assertEqual(exist(testCase.destinationFolder, 'dir'), 7);
+            testCase.assertEqual(exist(simpleName, 'file'), 2);
         end
     end
     

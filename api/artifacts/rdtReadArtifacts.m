@@ -16,6 +16,13 @@ function [datas, artifacts, downloads] = rdtReadArtifacts(configuration, artifac
 % The returned datas array will contain results from myLoadFunction.  The
 % default is @rdtLoadWellKnownFileTypes.
 %
+% [data, artifact] = rdtReadArtifacts( ... 'destinationFolder', destinationFolder)
+% copies the fetched artifacts from the local artifact cache to the given
+% destinationFolder.  In this case each artifact.localPath will point to
+% the destinationFolder.  The names of the copied artifacts will have the
+% form <artifactId>.<type>.  These names may differ from the file names
+% used on the remote server or within the local cache.
+%
 % Returns a cell array of loaded Matlab data with one element per artifact.
 % rdtFetchArtifact describes the expected data formats.  Also returns the
 % given artifacts struct array with some local data filled in.
@@ -32,10 +39,12 @@ function [datas, artifacts, downloads] = rdtReadArtifacts(configuration, artifac
 parser = rdtInputParser();
 parser.addRequired('configuration');
 parser.addRequired('artifacts', @isstruct);
+parser.addParameter('destinationFolder', '', @ischar);
 parser.addParameter('loadFunction', @rdtLoadWellKnownFileTypes, @(f) isa(f, 'function_handle'));
 parser.parse(configuration, artifacts, varargin{:});
 configuration = rdtConfiguration(parser.Results.configuration);
 artifacts = parser.Results.artifacts;
+destinationFolder = parser.Results.destinationFolder;
 loadFunction = parser.Results.loadFunction;
 
 % TODO: optimize the multiple-artifact fetch by including all artifacts in
@@ -52,6 +61,7 @@ for ii = 1:nArtifacts
         artifact.artifactId, ...
         'version', artifact.version, ...
         'type', artifact.type, ...
+        'destinationFolder', destinationFolder, ...
         'loadFunction', loadFunction);
 end
 downloads = cat(2, downloadses{:});
