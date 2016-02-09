@@ -55,7 +55,7 @@ client = RdtClient('brainard-archiva');
 client.credentialsDialog();
 
 % this is where the artifacts will go in the remote repository
-client.crp('publish-multiple');
+client.crp('/publish-multiple');
 
 %% Publish the collection!
 artifacts = client.publishArtifacts(sourceFolder);

@@ -28,7 +28,7 @@ client = RdtClient('brainard-archiva');
 
 % 1. Change the working remote path of our client object to match the
 % artifact we want, and specify the "type" explicitly.
-client.crp('project-demo');
+client.crp('/project-demo');
 [data, artifact] = client.readArtifact('demo-image', ...
     'type', 'png');
 

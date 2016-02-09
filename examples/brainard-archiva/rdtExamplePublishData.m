@@ -43,7 +43,7 @@ client.credentialsDialog();
 %% Publish the image as an artifact.
 
 % change to the "remote path" where we want to publish the artifact
-client.crp('project-demo');
+client.crp('/project-demo');
 
 % each artifact must have a version, the default is version '1'
 version = '40';
