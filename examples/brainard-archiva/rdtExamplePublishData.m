@@ -59,6 +59,5 @@ disp(artifact)
 
 %% Visit the new artifact on the web!
 
-% From the directory listing, click on png file and check that the image in
-% the brwoser matches the image in the Matlab figure.
+% should see the artifact image in the browser
 client.openBrowser(artifact);

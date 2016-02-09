@@ -72,7 +72,7 @@ end
 % We need to handle the case in which the first string is http:, in which
 % case we need to have two separators (//) instead of just one.  So we add
 % a /.
-if hasProtocol && ~isempty(pathParts{2})
+if hasProtocol && numel(pathParts) > 1 && ~isempty(pathParts{2})
     pathParts = cat(2, pathParts(1), {''}, pathParts(2:end));
 end
 

@@ -89,11 +89,12 @@ else
     xmlString = fread(fid, '*char')';
     description = rdtScrapeXml(xmlString, 'description', '');
     name = rdtScrapeXml(xmlString, 'name', '');
+    version = rdtScrapeXml(xmlString, 'version', '');
     fclose(fid);
 end
 
 %% Build an artifact struct for the fetched artifact.
-remoteUrl = rdtBuildArtifactUrl(configuration.repositoryUrl, remotePath, artifactId, version);
+remoteUrl = rdtBuildArtifactUrl(configuration.repositoryUrl, remotePath, artifactId, version, localPath);
 artifact = rdtArtifact( ...
     'remotePath', remotePath, ...
     'artifactId', artifactId, ...
