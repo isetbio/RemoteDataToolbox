@@ -2,9 +2,11 @@ function artifacts = rdtPublishArtifacts(configuration, folder, remotePath, vara
 %% Publish multiple artifacts to a remote repository path.
 %
 % artifacts = rdtPublishArtifacts(configuration, folder, remotePath)
-% publishes each of the files in the given folder as an artifact to a
-% remote respository.  configuration.repositoryUrl must point to the
-% repository root.
+% publishes each of the files in folder as an artifact to the repository at
+% the remotePath. Sub-directories are not included. And special files
+% (e.g., '.' or '..') are not included.
+%
+% configuration.repositoryUrl must point to the repository root.
 %
 % The artifactId of each artifact will be the same as the file base name.
 % The type of each artifact will be the same as the file extension.
@@ -33,9 +35,13 @@ function artifacts = rdtPublishArtifacts(configuration, folder, remotePath, vara
 % Returns a struct array of metadata about the published artifacts, or []
 % if the publication failed.
 %
-% See also rdtArtifact rdtPublishArtifact
+% See also: rdtArtifact rdtPublishArtifact
 %
 % artifacts = rdtPublishArtifacts(configuration, folder, remotePath, varargin)
+%
+% *N.B.* In some cases, the file has may have two meaningful extensions,
+% say FILE.nii.gz for neuroimaging data (NIfTI format).  In that case the
+% extension '.gz' treated as the type.
 %
 % Copyright (c) 2015 RemoteDataToolbox Team
 
@@ -51,18 +57,23 @@ parser.addParameter('deleteLocal', false, @islogical);
 parser.addParameter('rescan', true, @islogical);
 parser.parse(configuration, folder, remotePath, varargin{:});
 configuration = rdtConfiguration(parser.Results.configuration);
-folder = parser.Results.folder;
-remotePath = parser.Results.remotePath;
-version = parser.Results.version;
 type = parser.Results.type;
-description = parser.Results.description;
 name = parser.Results.name;
+folder     = parser.Results.folder;
+remotePath = parser.Results.remotePath;
+version    = parser.Results.version;
+description = parser.Results.description;
 deleteLocal = parser.Results.deleteLocal;
-rescan = parser.Results.rescan;
+rescan      = parser.Results.rescan;
 
 artifacts = [];
 
 %% Choose artifacts to publish.
+%
+% '.' and '..' directory files are excluded.
+% '.DS_Store' file is excluded (Apple directory store files)
+% '.ASV' files are excluded (these are Matlab editor backup files)
+%
 folderListing = dir(folder);
 nFiles = numel(folderListing);
 isChosen = false(1, nFiles);
