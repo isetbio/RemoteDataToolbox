@@ -1,8 +1,9 @@
 function data = rdtLoadWellKnownFileTypes(artifact)
 %% Load well-known file types, otherwise return file name
 %
-% data = rdtLoadWellKnownFileTypes(artifact) loads data from the given
-% fetched artifact, artifact.type is well-known (mat, json, or image).
+% data = rdtLoadWellKnownFileTypes(artifact) 
+%  loads data from the given fetched artifact, if the artifact.type is
+%  well-known (mat, json, or image). 
 % Otherwise, returns artifact.localPath as a string.
 %
 % @rdtLoadWellKnownFileTypes is suitable value for the "loadFunction"
