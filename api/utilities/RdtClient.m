@@ -144,10 +144,14 @@ classdef RdtClient < handle
             % in "foo.txt".  If you omit the type, the default, "mat" is
             % used.
             %
-            % Finally, you must supply the "remotePath" to the artifact.
-            % This is like the folder that contains a file, for example the
+            % You must supply the "remotePath" to the artifact. This is
+            % like the folder that contains a file, for example the
             % "/path/to/file" in "/path/to/file/foo.txt".  If you omit the
             % remotePath, the value of pwrp() is used.
+            %
+            % You can supply a "destinationFolder", in which case the file
+            % name will be decoded and the file will be placed into the
+            % directory you indicate.
             %
             % Note: you must supply the full remotePath where the artifact
             % is located.  For example, to read "/path/to/file/foo.txt",
@@ -170,7 +174,7 @@ classdef RdtClient < handle
                 remotePath, artifactId, varargin{:});
         end
         
-        function [datas, artifacts, downloads] = readArtifacts(obj, pathOrArtifacts)
+        function [datas, artifacts, downloads] = readArtifacts(obj, pathOrArtifacts, varargin)
             % Read data for multiple artifacts into Matlab.
             %   [datas, artifacts] = obj.readArtifacts() all under pwrp()
             %   obj.readArtifacts(remotePath) remotePath instead of pwrp()
@@ -182,16 +186,16 @@ classdef RdtClient < handle
             if nargin < 2 || isempty(pathOrArtifacts)
                 % all under pwrp()
                 artifacts = obj.listArtifacts();
-                [datas, artifacts, downloads] = rdtReadArtifacts(obj.configuration, artifacts);
+                [datas, artifacts, downloads] = rdtReadArtifacts(obj.configuration, artifacts, varargin{:});
                 
             elseif ischar(pathOrArtifacts)
                 % all under remote path
                 artifacts = rdtListArtifacts(obj.configuration, pathOrArtifacts);
-                [datas, artifacts, downloads] = rdtReadArtifacts(obj.configuration, artifacts);
+                [datas, artifacts, downloads] = rdtReadArtifacts(obj.configuration, artifacts, varargin{:});
                 
             elseif isstruct(pathOrArtifacts)
                 % explicit struct array
-                [datas, artifacts, downloads] = rdtReadArtifacts(obj.configuration, pathOrArtifacts);
+                [datas, artifacts, downloads] = rdtReadArtifacts(obj.configuration, pathOrArtifacts, varargin{:});
             end
         end
         
@@ -264,27 +268,41 @@ classdef RdtClient < handle
             
             parser = rdtInputParser();
             parser.addOptional('whichUrlOrArtifact', []);
+            parser.addOptional('fancy',false,@islogical);
             parser.parse(varargin{:});
             whichUrlOrArtifact = parser.Results.whichUrlOrArtifact;
             
-            url = '';
-            
-            if isempty(whichUrlOrArtifact)
-                % If there is no argument, then we open the repository URL,
-                % appending the working directory.
-                % open pwrp()
-                url = rdtBuildArtifactUrl(obj.configuration.repositoryUrl, obj.workingRemotePath, '', '');
-                
-                % Tell the open browser that we are sending in a full URL
-                rdtOpenBrowser(struct('url', url), 'url');
-                
-            elseif isstruct(whichUrlOrArtifact)
-                % open the browser at the URL of the named artifact
-                url = rdtOpenBrowser(whichUrlOrArtifact);
-                
-            elseif ischar(whichUrlOrArtifact)
-                % A string was sent in.  We assume this is the URL
-                url = rdtOpenBrowser(obj.configuration, whichUrlOrArtifact);
+            % Use the fancy browsing method rather than the simple direct
+            % one by default.  This is invoked by building a special URL
+            % that indicates to the server to call their special interface.
+            % In this case, I don't know how to append the
+            % whichUrLOrArtifact yet.  Maybe BSH will figure it out.
+            if parser.Results.fancy
+                % http://52.32.77.154/#browse~vistasoft
+                url = sprintf('%s#browse~%s',obj.configuration.serverUrl,obj.configuration.repositoryName);
+                web(url, '-browser');
+            else
+                url = '';
+                if isempty(whichUrlOrArtifact)
+                    % If there is no argument, then we open the repository URL,
+                    % appending the working directory.
+                    % open pwrp()
+                    version    = '';
+                    artifactId = '';
+                    fileName   = '';
+                    url = rdtBuildArtifactUrl(obj.configuration.repositoryUrl, obj.workingRemotePath, version,artifactId,fileName);
+                    
+                    % Tell the open browser that we are sending in a full URL
+                    rdtOpenBrowser(struct('url', url), 'url');
+                    
+                elseif isstruct(whichUrlOrArtifact)
+                    % open the browser at the URL of the named artifact
+                    url = rdtOpenBrowser(whichUrlOrArtifact);
+                    
+                elseif ischar(whichUrlOrArtifact)
+                    % A string was sent in.  We assume this is the URL
+                    url = rdtOpenBrowser(obj.configuration, whichUrlOrArtifact);
+                end
             end
         end
         

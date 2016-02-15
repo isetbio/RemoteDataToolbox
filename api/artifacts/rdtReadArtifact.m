@@ -13,6 +13,20 @@ function [data, artifact, downloads] = rdtReadArtifact(configuration, remotePath
 % [data, artifact] = rdtReadArtifact( ... 'type', type) fetches an
 % artifact with the given type instead of the default 'mat'.
 %
+% [data, artifact] = rdtReadArtifact( ... 'destinationFolder', destinationFolder)
+% copies the fetched artifact from the local artifact cache to the given
+% destinationFolder.  In this case artifact.localPath will point to the
+% destinationFolder.  The name of the copied artifact will have the
+% form <artifactId>.<type>.  This name may differ from the file name used
+% on the remote server or within the local cache.
+%
+% [data, artifact] = rdtReadArtifact( ... 'loadFunction', loadFunction)
+% uses the given loadFunction to load the fetched artifact into memory.
+% The load function must have the following form:
+%   function data = myLoadFunction(artifactStruct)
+% The data returned from this funciton will be whatever was returned from
+% myLoadFunction.  The default is @rdtLoadWellKnownFileTypes.
+%
 % Note: you must supply the full remotePath where the artifact is located.
 % For example, to read "/path/to/file/foo.txt", you would have to supply
 % the full "/path/to/file".  Supplying "/path" would not be enough.
@@ -40,27 +54,31 @@ parser.addRequired('remotePath', @ischar);
 parser.addRequired('artifactId', @ischar);
 parser.addParameter('version', '+', @ischar);
 parser.addParameter('type', 'mat', @ischar);
+parser.addParameter('destinationFolder', '', @ischar);
+parser.addParameter('loadFunction', @rdtLoadWellKnownFileTypes, @(f) isa(f, 'function_handle'));
 parser.parse(configuration, remotePath, artifactId, varargin{:});
 configuration = rdtConfiguration(parser.Results.configuration);
 remotePath = parser.Results.remotePath;
 artifactId = parser.Results.artifactId;
 version = parser.Results.version;
 type = parser.Results.type;
+destinationFolder = parser.Results.destinationFolder;
+loadFunction = parser.Results.loadFunction;
 
 data = [];
 artifact = [];
 
 %% Fetch the artifact.
 try
-[localPath, pomPath, downloads] = gradleFetchArtifact(configuration.repositoryUrl, ...
-    configuration.username, ...
-    configuration.password, ...
-    rdtPathSlashesToDots(remotePath), ...
-    artifactId, ...
-    version, ...
-    type, ...
-    'cacheFolder', configuration.cacheFolder, ...
-    'verbose', logical(configuration.verbosity));
+    [localPath, pomPath, downloads] = gradleFetchArtifact(configuration.repositoryUrl, ...
+        configuration.username, ...
+        configuration.password, ...
+        rdtPathSlashesToDots(remotePath), ...
+        artifactId, ...
+        version, ...
+        type, ...
+        'cacheFolder', configuration.cacheFolder, ...
+        'verbose', logical(configuration.verbosity));
 catch ex
     fprintf('Could not find artifactId <%s> of type <%s> at remotePath <%s>\n', ...
         artifactId, type, remotePath);
@@ -89,11 +107,37 @@ else
     xmlString = fread(fid, '*char')';
     description = rdtScrapeXml(xmlString, 'description', '');
     name = rdtScrapeXml(xmlString, 'name', '');
+    version = rdtScrapeXml(xmlString, 'version', '');
     fclose(fid);
 end
 
+%% Copy to a destination folder?
+if ~isempty(destinationFolder)
+    if 7 ~= exist(destinationFolder, 'dir')
+        rdtPrintf(configuration.verbosity, ...
+            'Create destination folder "%s"\n', destinationFolder);
+        
+        mkdir(destinationFolder);
+    end
+    
+    % make a simple file name which "undoes" a Maven naming convention
+    %   this is important eg when file name contains a double extension
+    %   foo.nii.gz (original) -> foo.nii-1-gz.gz (Maven) -> foo.nii.gz (simple)
+    destinationPath = fullfile(destinationFolder, [artifactId '.' type]);
+    [success, message] = copyfile(localPath, destinationPath, 'f');
+    if success
+        rdtPrintf(configuration.verbosity, ...
+            'Copy artifact to "%s"\n', destinationPath);
+        localPath = destinationPath;
+    else
+        rdtPrintf(configuration.verbosity, ...
+            'Could not copy artifact to "%s":\n  %s\n', ...
+            destinationPath, message);
+    end
+end
+
 %% Build an artifact struct for the fetched artifact.
-remoteUrl = rdtBuildArtifactUrl(configuration.repositoryUrl, remotePath, artifactId, version);
+remoteUrl = rdtBuildArtifactUrl(configuration.repositoryUrl, remotePath, artifactId, version, localPath);
 artifact = rdtArtifact( ...
     'remotePath', remotePath, ...
     'artifactId', artifactId, ...
@@ -104,22 +148,10 @@ artifact = rdtArtifact( ...
     'description', description, ...
     'name', name);
 
-%% Load the artifact data.
-imageTypes = imreadExtensions();
-switch type
-    case 'mat'
-        data = load(localPath);
-    case 'json'
-        data = loadjson(localPath);
-    case imageTypes
-        data = imread(localPath);
-    otherwise
-        fid = fopen(localPath);
-        data = fread(fid, '*char')';
-        fclose(fid);
-end
+%% Load the artifact data into memory.
+data = feval(loadFunction, artifact);
 
-%% Ask Matlab for recognized image file extensions.
-function imageTypes = imreadExtensions()
-formats = imformats();
-imageTypes = cat(2, formats.ext);
+if ischar(data) && 2 == exist(data, 'file')
+    rdtPrintf(configuration.verbosity, ...
+        'Artifact data is a file name "%s"\n', data);
+end
