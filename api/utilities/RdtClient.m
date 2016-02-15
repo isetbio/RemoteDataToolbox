@@ -264,30 +264,41 @@ classdef RdtClient < handle
             
             parser = rdtInputParser();
             parser.addOptional('whichUrlOrArtifact', []);
+            parser.addOptional('fancy',false,@islogical);
             parser.parse(varargin{:});
             whichUrlOrArtifact = parser.Results.whichUrlOrArtifact;
             
-            url = '';
-            
-            if isempty(whichUrlOrArtifact)
-                % If there is no argument, then we open the repository URL,
-                % appending the working directory.
-                % open pwrp()
-                version    = '';
-                artifactId = '';
-                fileName   = '';
-                url = rdtBuildArtifactUrl(obj.configuration.repositoryUrl, obj.workingRemotePath, version,artifactId,fileName);
-                
-                % Tell the open browser that we are sending in a full URL
-                rdtOpenBrowser(struct('url', url), 'url');
-                
-            elseif isstruct(whichUrlOrArtifact)
-                % open the browser at the URL of the named artifact
-                url = rdtOpenBrowser(whichUrlOrArtifact);
-                
-            elseif ischar(whichUrlOrArtifact)
-                % A string was sent in.  We assume this is the URL
-                url = rdtOpenBrowser(obj.configuration, whichUrlOrArtifact);
+            % Use the fancy browsing method rather than the simple direct
+            % one by default.  This is invoked by building a special URL
+            % that indicates to the server to call their special interface.
+            % In this case, I don't know how to append the
+            % whichUrLOrArtifact yet.  Maybe BSH will figure it out.
+            if parser.Results.fancy
+                % http://52.32.77.154/#browse~vistasoft
+                url = sprintf('%s#browse~%s',obj.configuration.serverUrl,obj.configuration.repositoryName);
+                web(url, '-browser');
+            else
+                url = '';
+                if isempty(whichUrlOrArtifact)
+                    % If there is no argument, then we open the repository URL,
+                    % appending the working directory.
+                    % open pwrp()
+                    version    = '';
+                    artifactId = '';
+                    fileName   = '';
+                    url = rdtBuildArtifactUrl(obj.configuration.repositoryUrl, obj.workingRemotePath, version,artifactId,fileName);
+                    
+                    % Tell the open browser that we are sending in a full URL
+                    rdtOpenBrowser(struct('url', url), 'url');
+                    
+                elseif isstruct(whichUrlOrArtifact)
+                    % open the browser at the URL of the named artifact
+                    url = rdtOpenBrowser(whichUrlOrArtifact);
+                    
+                elseif ischar(whichUrlOrArtifact)
+                    % A string was sent in.  We assume this is the URL
+                    url = rdtOpenBrowser(obj.configuration, whichUrlOrArtifact);
+                end
             end
         end
         
