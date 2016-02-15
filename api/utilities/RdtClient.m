@@ -144,10 +144,14 @@ classdef RdtClient < handle
             % in "foo.txt".  If you omit the type, the default, "mat" is
             % used.
             %
-            % Finally, you must supply the "remotePath" to the artifact.
-            % This is like the folder that contains a file, for example the
+            % You must supply the "remotePath" to the artifact. This is
+            % like the folder that contains a file, for example the
             % "/path/to/file" in "/path/to/file/foo.txt".  If you omit the
             % remotePath, the value of pwrp() is used.
+            %
+            % You can supply a "destinationFolder", in which case the file
+            % name will be decoded and the file will be placed into the
+            % directory you indicate.
             %
             % Note: you must supply the full remotePath where the artifact
             % is located.  For example, to read "/path/to/file/foo.txt",
