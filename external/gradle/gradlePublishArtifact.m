@@ -56,8 +56,13 @@ verbose = parser.Results.verbose;
 filePath = '';
 pomPath = '';
 
-[inputPath, inputBase, inputExtension] = fileparts(file);
+[~, inputBase, inputExtension] = fileparts(file);
 extension = inputExtension(inputExtension ~= '.');
+if isempty(extension)
+    error('gradlePublishArtifact:MissingExtension', ...
+        'Published files must have an extension but <%s> has none.\n', ...
+        inputBase);
+end
 
 %% Pass args to Gradle via enviromnent variables.
 %% -D Define system properties.
@@ -102,7 +107,7 @@ end
 
 [status, result] = system(command);
 if 0 ~= status
-    error('PublishArtifact:BadStatus', 'error status %d (%s)', status, result)
+    error('gradlePublishArtifact:BadStatus', 'error status %d (%s)', status, result)
 end
 
 %% Fetch the file and report the path into the local cache.
