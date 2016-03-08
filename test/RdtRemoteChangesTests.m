@@ -65,7 +65,7 @@ classdef RdtRemoteChangesTests < matlab.unittest.TestCase
             % now A and B each has a cached copy of the original artifact
             
             % update the artifact from client B
-            updateData = 'This is not the answer!';
+            updateData = 'Not The Answer.';
             save(testFile, 'updateData');
             updated = rdtPublishArtifact(configB, testFile, 'test-path', ...
                 'version', '0');
@@ -81,7 +81,6 @@ classdef RdtRemoteChangesTests < matlab.unittest.TestCase
             testCase.assertNotEmpty(updatedA);
             testCase.assertInstanceOf(updatedA{1}, 'struct');
             testCase.assertEqual(updatedA{1}.updateData, updateData);
-            
         end
     end
 end

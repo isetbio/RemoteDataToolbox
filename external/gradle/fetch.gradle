@@ -15,12 +15,17 @@ configurations {
   fetchPom
 }
 
+configurations.all {
+  resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+}
+
 dependencies {
   fetchWithoutClassifier(
     group: System.getProperty("GROUP"),
     name: System.getProperty("ID"),
     version: System.getProperty("VERSION"),
-    ext: System.getProperty("EXTENSION")
+    ext: System.getProperty("EXTENSION"),
+    changing: true
   )
 
   fetchWithClassifier(
@@ -28,14 +33,16 @@ dependencies {
     name: System.getProperty("ID"),
     version: System.getProperty("VERSION"),
     ext: System.getProperty("EXTENSION"),
-    classifier: System.getProperty("EXTENSION")
+    classifier: System.getProperty("EXTENSION"),
+    changing: true
   )
 
   fetchPom (
     group: System.getProperty("GROUP"),
     name: System.getProperty("ID"),
     version: System.getProperty("VERSION"),
-    ext: 'pom'
+    ext: 'pom',
+    changing: true
   )
 }
 
