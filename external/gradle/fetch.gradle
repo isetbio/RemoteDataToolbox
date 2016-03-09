@@ -15,22 +15,35 @@ configurations {
   fetchPom
 }
 
+configurations.all {
+  resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+}
+
 dependencies {
-  fetchWithoutClassifier System.getProperty("GROUP") + 
-    ":" + System.getProperty("ID") + 
-    ":" + System.getProperty("VERSION") + 
-    "@" + System.getProperty("EXTENSION")
+  fetchWithoutClassifier(
+    group: System.getProperty("GROUP"),
+    name: System.getProperty("ID"),
+    version: System.getProperty("VERSION"),
+    ext: System.getProperty("EXTENSION"),
+    changing: true
+  )
 
-  fetchWithClassifier System.getProperty("GROUP") + 
-    ":" + System.getProperty("ID") + 
-    ":" + System.getProperty("VERSION") + 
-    ":" + System.getProperty("EXTENSION") +
-    "@" + System.getProperty("EXTENSION")
+  fetchWithClassifier(
+    group: System.getProperty("GROUP"),
+    name: System.getProperty("ID"),
+    version: System.getProperty("VERSION"),
+    ext: System.getProperty("EXTENSION"),
+    classifier: System.getProperty("EXTENSION"),
+    changing: true
+  )
 
-  fetchPom System.getProperty("GROUP") + 
-    ":" + System.getProperty("ID") + 
-    ":" + System.getProperty("VERSION") + 
-    "@" + "pom"
+  fetchPom (
+    group: System.getProperty("GROUP"),
+    name: System.getProperty("ID"),
+    version: System.getProperty("VERSION"),
+    ext: 'pom',
+    changing: true
+  )
 }
 
 task fetchIt << {
