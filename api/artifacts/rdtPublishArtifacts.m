@@ -2,9 +2,12 @@ function artifacts = rdtPublishArtifacts(configuration, folder, remotePath, vara
 %% Publish multiple artifacts to a remote repository path.
 %
 % artifacts = rdtPublishArtifacts(configuration, folder, remotePath)
-% publishes each of the files in folder as an artifact to the repository at
-% the remotePath. Sub-directories are not included. And special files
-% (e.g., '.' or '..') are not included.
+%  publishes each of the files in folder as an artifact to the repository
+%  at the remotePath. Sub-directories are not included. Special files
+%  (e.g., '.' or '..') are not included.
+%
+% Thus, suppose the are 10 files in the directory fullDirPath. Then the
+% files in fullDirPath will be uploaded to the current remote path.
 %
 % configuration.repositoryUrl must point to the repository root.
 %
@@ -14,23 +17,26 @@ function artifacts = rdtPublishArtifacts(configuration, folder, remotePath, vara
 % artifact = rdtPublishArtifacts(... 'version', version) uses the
 % given version for all published artifacts instead of the default '1'.
 %
-% artifact = rdtPublishArtifacts( ... 'description', description) adds
-% the given description to the metadata for each artifact.  The default is
-% no description.
+% artifact = rdtPublishArtifacts( ... 'description', description) 
+%  adds the given description to the metadata for each artifact.  The
+%  default is no description.
 %
-% artifact = rdtPublishArtifacts( ... 'name', name) adds the given
-% name to the metadata for each artifact.  The default is no name.
+% artifact = rdtPublishArtifacts( ... 'name', name) 
+%  adds the given name to the metadata for each artifact.  The default is
+%  no name.
 %
-% artifact = rdtPublishArtifacts(... 'type', type) restricts publication to
-% only files that have the same file extension as the given type.
+% artifact = rdtPublishArtifacts(... 'type', type) 
+%  restricts publication to only files that have the same file extension as
+%  the given type. 
 %
-% artifact = rdtPublishArtifacts( ... 'deleteLocal', deleteLocal) choose
-% whether to delete the artifacts from the local cache after publishing.
-% The default is false, leave the artifacts in the local cache.
+% artifact = rdtPublishArtifacts( ... 'deleteLocal', deleteLocal) 
+%   choose whether to delete the artifacts from the local cache after
+%   publishing. The default is false, leave the artifacts in the local
+%   cache.
 %
-% artifact = rdtPublishArtifacts( ... 'rescan', rescan) choose
-% whether to request the remote repository to update its artifact listing
-% and search index.  The default is true -- rescan and update.
+% artifact = rdtPublishArtifacts( ... 'rescan', rescan) 
+%   choose whether to request the remote repository to update its artifact
+%   listing and search index.  The default is true -- rescan and update.
 %
 % Returns a struct array of metadata about the published artifacts, or []
 % if the publication failed.
@@ -39,10 +45,11 @@ function artifacts = rdtPublishArtifacts(configuration, folder, remotePath, vara
 %
 % artifacts = rdtPublishArtifacts(configuration, folder, remotePath, varargin)
 %
-% *N.B.* In some cases, the file has may have two meaningful extensions,
+% Special notes 
+%   1.  In some cases, the file has may have two meaningful extensions,
 % say FILE.nii.gz for neuroimaging data (NIfTI format).  In that case the
 % extension '.gz' treated as the type.
-%
+%   2.  
 % Copyright (c) 2015 RemoteDataToolbox Team
 
 parser = rdtInputParser();

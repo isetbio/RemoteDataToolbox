@@ -82,13 +82,17 @@ classdef RdtClient < handle
             %   artifacts = obj.listArtifacts() % remotePath = pwrp()
             %   artifacts = obj.listArtifacts('remotePath', remotePath)
             %   artifacts = obj.listArtifacts('sortField', field); % default is sort by artifactId
+            %   artifacts = obj.listArtifacts('printID',true);
             
             parser = rdtInputParser();
             parser.addParameter('remotePath', obj.workingRemotePath, @ischar);
             parser.addParameter('sortField', 'artifactId', @ischar);
+            parser.addParameter('printID',false,@islogical)
             parser.parse(varargin{:});
+            
             remotePath = parser.Results.remotePath;
-            sortField = parser.Results.sortField;
+            sortField  = parser.Results.sortField;
+            printID    = parser.Results.printID;
             
             if isempty(remotePath)
                 % list all artifacts by iterating remote paths
@@ -110,6 +114,14 @@ classdef RdtClient < handle
                 % list under the known path
                 artifacts = rdtListArtifacts(obj.configuration, ...
                     remotePath, varargin{:});
+            end
+            
+            % Switch to print an organized list to the console
+            if printID
+                fprintf('\n   Artifact ID\t\t  Name\n');
+                for ii=1:length(artifacts)
+                    fprintf('\t#%d:\t\t%s\n',ii,artifacts(ii).artifactId);
+                end
             end
         end
         
@@ -223,6 +235,11 @@ classdef RdtClient < handle
             %   ( ... 'remotePath', remotePath) remotePath instead of pwrp()
             %   ( ... 'version', version) version instead of default '1'
             %   ( ... 'type', type) restrict to type
+            %
+            % The files in "folder" (a full path) will be uploaded to the
+            % current remote path in the RdtClient object.  To see the
+            % current remote path you can type obj.pwrp or
+            % obj.workingRemotePath
             
             parser = rdtInputParser();
             parser.addRequired('folder', @ischar);
