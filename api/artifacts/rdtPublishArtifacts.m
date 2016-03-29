@@ -14,8 +14,9 @@ function artifacts = rdtPublishArtifacts(configuration, folder, remotePath, vara
 % The artifactId of each artifact will be the same as the file base name.
 % The type of each artifact will be the same as the file extension.
 %
-% artifact = rdtPublishArtifacts(... 'version', version) uses the
-% given version for all published artifacts instead of the default '1'.
+% artifact = rdtPublishArtifacts(... 'version', version) 
+%  uses the given version for all published artifacts instead of the
+%  default '1'.
 %
 % artifact = rdtPublishArtifacts( ... 'description', description) 
 %  adds the given description to the metadata for each artifact.  The
@@ -94,14 +95,23 @@ for ii = 1:nFiles
     [~, fileBase, fileExt] = fileparts(listing.name);
     fileType = fileExt(fileExt ~= '.');
     
-    % Checking for DS_Store must be first
-    isChosen(ii) = ...
-        ~strcmpi('.DS_Store',fileExt) ...
-        && '.' ~= fileBase(1) ...
-        && ~strcmpi('.ASV', fileExt) ...
-        && '~' ~= fileExt(end) ...
-        && (isempty(type) || strcmp(type, fileType));
+    if isempty(fileExt)
+        % Empty file extension.  Is that OK?
+        isChosen(ii) = true;
+    else
+        % Checking for DS_Store must be first
+        isChosen(ii) = ...
+            ~strcmpi('.DS_Store',fileExt) ...
+            && ~strcmpi('.ASV', fileExt) ...
+            && (isempty(type) || strcmp(type, fileType));
+    end
+    
 end
+
+%  && '.' ~= fileBase(1) ...  % Not needed because of the isdir
+%  above
+%
+       
 
 %% Publish each artifact.
 % TODO: optimize the multiple-artifact publish by including all artifacts
