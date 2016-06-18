@@ -17,11 +17,11 @@ function [datas, artifacts, downloads] = rdtReadArtifacts(configuration, artifac
 % default is @rdtLoadWellKnownFileTypes.
 %
 % [data, artifact] = rdtReadArtifacts( ... 'destinationFolder', destinationFolder)
-% copies the fetched artifacts from the local artifact cache to the given
-% destinationFolder.  In this case each artifact.localPath will point to
-% the destinationFolder.  The names of the copied artifacts will have the
-% form <artifactId>.<type>.  These names may differ from the file names
-% used on the remote server or within the local cache.
+%   copies the fetched artifacts from the local artifact cache to the given
+%   destinationFolder.  In this case each artifact.localPath will point to
+%   the destinationFolder.  The names of the copied artifacts will have the
+%   form <artifactId>.<type>.  These names may differ from the file names
+%   used on the remote server or within the local cache.
 %
 % Returns a cell array of loaded Matlab data with one element per artifact.
 % rdtFetchArtifact describes the expected data formats.  Also returns the

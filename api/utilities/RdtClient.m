@@ -174,14 +174,25 @@ classdef RdtClient < handle
             %   ( ... 'remotePath', remotePath) remotePath instead of pwrp()
             %   ( ... 'version', version) version instead of default latest
             %   ( ... 'type', type) type instead of default 'mat'
+            %   ( ... 'destinationFolder',fullFolderName) Output file
             
             parser = rdtInputParser();
-            parser.addRequired('artifactId', @ischar);
+            vFunc = @(x)(ischar(x) || isstruct(x));
+            parser.addRequired('artifactId', vFunc);
             parser.addParameter('remotePath', obj.workingRemotePath, @ischar);
             parser.parse(artifactId, varargin{:});
             artifactId = parser.Results.artifactId;
             remotePath = parser.Results.remotePath;
             
+            % Adjusted to permit sending in the artifact struct, not just
+            % the id slot, as an argument.  This way readArtifact can take
+            % an artifact argument.
+            if isstruct(artifactId) && isfield(artifactId,'artifactId')
+                artifactId = artifactId.artifactId;
+            else
+                error('Input structure does not have an artifactId slot.');
+            end
+
             [data, artifact, downloads] = rdtReadArtifact(obj.configuration, ...
                 remotePath, artifactId, varargin{:});
         end
@@ -221,12 +232,19 @@ classdef RdtClient < handle
             parser = rdtInputParser();
             parser.addRequired('file', @ischar);
             parser.addParameter('remotePath', obj.workingRemotePath, @ischar);
+            
             parser.parse(file, varargin{:});
             file = parser.Results.file;
             remotePath = parser.Results.remotePath;
             
-            artifact = rdtPublishArtifact(obj.configuration, ...
-                file, remotePath, varargin{:});
+            % I think we need a full path to the file.  Maybe we need to
+            % check this.
+            if exist(file,'file')
+                artifact = rdtPublishArtifact(obj.configuration, ...
+                    file, remotePath, varargin{:});
+            else
+                error('The file %s is not found\n');
+            end
         end
         
         function artifacts = publishArtifacts(obj, folder, varargin)

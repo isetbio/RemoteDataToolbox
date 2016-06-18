@@ -11,7 +11,7 @@ close all
 clear all
 
 %%
-rd = RdtClient('scien');
+rd = RdtClient('isetbio');
 rd.credentialsDialog;
 
 %% Upload a file to briefTest directory
