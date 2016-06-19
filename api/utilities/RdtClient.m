@@ -83,6 +83,12 @@ classdef RdtClient < handle
             %   artifacts = obj.listArtifacts('remotePath', remotePath)
             %   artifacts = obj.listArtifacts('sortField', field); % default is sort by artifactId
             %   artifacts = obj.listArtifacts('printID',true);
+            %
+            %   This function calls rdtListArtifacts
+            %
+            % Example
+            %   a = obj.listArtifacts('printID',true,'type','mat');
+            %
             
             parser = rdtInputParser();
             parser.addParameter('remotePath', obj.workingRemotePath, @ischar);
@@ -108,12 +114,18 @@ classdef RdtClient < handle
                         varargin{:}, ...
                         'remotePath', remotePaths{ii});
                 end
+                
+                % Sort the cell arrays of artifacts
                 artifacts = rdtSortStructArray([artifactCollection{:}], sortField);
                 
             else
-                % list under the known path
+                % list artifacts under the specific path
                 artifacts = rdtListArtifacts(obj.configuration, ...
                     remotePath, varargin{:});
+
+                % Sort the artifacts
+                artifacts = rdtSortStructArray(artifacts, sortField);
+
             end
             
             % Switch to print an organized list to the console
@@ -137,6 +149,7 @@ classdef RdtClient < handle
             parser.addRequired('searchText', @ischar);
             parser.addParameter('remotePath', obj.workingRemotePath, @ischar);
             parser.parse(searchText, varargin{:});
+            
             searchText = parser.Results.searchText;
             remotePath = parser.Results.remotePath;
             
@@ -181,6 +194,7 @@ classdef RdtClient < handle
             parser.addRequired('artifactId', vFunc);
             parser.addParameter('remotePath', obj.workingRemotePath, @ischar);
             parser.parse(artifactId, varargin{:});
+            
             artifactId = parser.Results.artifactId;
             remotePath = parser.Results.remotePath;
             
@@ -189,6 +203,7 @@ classdef RdtClient < handle
             % an artifact argument.
             if isstruct(artifactId) && isfield(artifactId,'artifactId')
                 artifactId = artifactId.artifactId;
+            elseif ischar(artifactId)
             else
                 error('Input structure does not have an artifactId slot.');
             end
@@ -263,6 +278,7 @@ classdef RdtClient < handle
             parser.addRequired('folder', @ischar);
             parser.addParameter('remotePath', obj.workingRemotePath, @ischar);
             parser.parse(folder, varargin{:});
+            
             folder = parser.Results.folder;
             remotePath = parser.Results.remotePath;
             
@@ -305,6 +321,7 @@ classdef RdtClient < handle
             parser.addOptional('whichUrlOrArtifact', []);
             parser.addOptional('fancy',false,@islogical);
             parser.parse(varargin{:});
+            
             whichUrlOrArtifact = parser.Results.whichUrlOrArtifact;
             
             % Use the fancy browsing method rather than the simple direct

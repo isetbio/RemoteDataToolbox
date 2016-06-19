@@ -1,35 +1,43 @@
 function artifacts = rdtListArtifacts(configuration, remotePath, varargin)
 %% Query an Archiva Maven repository for artifacts under a remote path.
 %
-% artifacts = rdtListArtifacts(configuration, remotePath) requests a list
-% of all artifacts under the given remotePath, from an
-% Archiva Maven repository.  configuration.serverUrl must point to the
-% Archiva server root.  configuration.repositoryName must contain the
-% name of a repository on the server.
+%    artifacts = rdtListArtifacts(configuration, remotePath, varargin)
 %
-% artifacts = rdtListArtifacts( ... 'artifactId', artifactId) restricts
-% search results to artifacts with exactly the given artifactId.
+% Returns a list of all artifacts under the given remotePath, from an
+% Archiva Maven repository.  
 %
-% artifacts = rdtListArtifacts( ... 'version', version) restricts
-% search results to artifacts with exactly the given version.
+% configuration.serverUrl must point to the Archiva server root.
+% configuration.repositoryName must contain the name of a repository on the
+% server.
 %
-% artifacts = rdtListArtifacts( ... 'type', type) restricts
-% search results to artifacts with exactly the given type.
+% Parameter/Value Options
 %
-% artifacts = rdtListArtifacts( ... 'pageSize', pageSize) restricts
-% the number of search results to the given pageSize.  The default is 1000.
+%   artifacts = rdtListArtifacts( ... 'artifactId', artifactId) 
+% restricts search results to artifacts with exactly the given artifactId.
 %
-% artifacts = rdtListArtifacts( ... 'sortField', sortField) sort search
-% results using the given artifact field name.  The default is to sort by
-% artifacts.artifactId.  If sortField is not an existing artifact field
-% name, results will be left undorted.
+%   artifacts = rdtListArtifacts( ... 'version', version) 
+% restricts search results to artifacts with exactly the given version.
 %
-% Returns a struct array describing artifacts under the given
-% remotePath, or else [] if the query failed.
+%   artifacts = rdtListArtifacts( ... 'type', type) 
+% restricts search results to artifacts with exactly the given type.
+%
+%   artifacts = rdtListArtifacts( ... 'pageSize', pageSize) 
+% limits the number of results to the pageSize.  The default is 1000.
+%
+%   artifacts = rdtListArtifacts( ... 'sortField', sortField) 
+% sort search results using the given field name.  The default is to sort
+% by artifacts.artifactId.  If sortField is not an existing artifact field
+% name, results are not sorted.
 %
 % See also rdtListRemotePaths, rdtSearchArtifacts, rdtArtifact
 %
-% artifacts = rdtListArtifacts(configuration, remotePath, varargin)
+% Examples:
+%  This function is called by the RdtClient listArtifacts command, which
+%  also has some additional options
+%
+%   a = rdt.listArtifacts;
+%   a = rdt.listArtifacts('type','mat')
+%   a = rdt.listArtifacts('printID',true,'type','mat');
 %
 % Copyright (c) 2015 RemoteDataToolbox Team
 
@@ -42,6 +50,7 @@ parser.addParameter('type', '', @ischar);
 parser.addParameter('pageSize', 1000);
 parser.addParameter('sortField', 'artifactId', @ischar);
 parser.parse(configuration, remotePath, varargin{:});
+
 configuration = rdtConfiguration(parser.Results.configuration);
 remotePath = parser.Results.remotePath;
 artifactId = parser.Results.artifactId;
