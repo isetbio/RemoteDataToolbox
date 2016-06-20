@@ -38,6 +38,16 @@ classdef RdtQueryTests < matlab.unittest.TestCase
             testCase.assertEqual(repositoryName, testCase.testConfig.repositoryName);
         end
         
+        function testListRemotePathsAsGuest(testCase)
+            config = testCase.testConfig;
+            config.username = 'guest';
+            config.password = '';
+            [remotePaths, repositoryName] = rdtListRemotePaths(config);
+            testCase.assertTrue(any(strcmp(remotePaths, testCase.expectedRemotePaths{1})));
+            testCase.assertTrue(any(strcmp(remotePaths, testCase.expectedRemotePaths{2})));
+            testCase.assertEqual(repositoryName, testCase.testConfig.repositoryName);
+        end
+        
         function testListArtifacts(testCase)
             artifacts = rdtListArtifacts(testCase.testConfig, 'test-group-1');
             testCase.checkPathArtifacts(artifacts, 'test-group-1');
