@@ -49,7 +49,7 @@ scanConfig = configuration;
 scanConfig.acceptMediaType = 'text/plain';
 scanParams = struct( ...
     'repositoryId', scanConfig.repositoryName, ...
-    'fullScan', 1);
+    'fullScan', true);
 
 try
     message = rdtRequestWeb(scanConfig, scanPath, 'queryParams', scanParams);

@@ -28,21 +28,29 @@ configuration = rdtConfiguration(parser.Results.configuration);
 sortFlag = parser.Results.sortFlag;
 
 remotePaths = {};
-
-%% Query the Archiva server.
-resourcePath = '/restServices/archivaServices/searchService/getAllGroupIds';
 repositoryName = configuration.repositoryName;
-params.selectedRepos = repositoryName;
-response = rdtRequestWeb(configuration, resourcePath, 'queryParams', params);
-if isempty(response) || ~isfield(response, 'groupIds')
+
+%% Get all the artifacts.
+resourcePath = ['/restServices/archivaServices/browseService/artifacts/' repositoryName ];
+response = rdtRequestWeb(configuration, resourcePath);
+if isempty(response)
     return;
 end
 
-% convert group names with dots to paths with slashes
-nPaths = numel(response.groupIds);
+%% Pare down to the unique group ids.
+artifactRecords = [response{:}];
+groupIds = {artifactRecords.groupId};
+[~, order] = unique(groupIds);
+
+% undo the sorting from unique(), so that sort remains optional below
+allGroupIds = groupIds(sort(order));
+
+
+%% Convert group names with dots to paths with slashes
+nPaths = numel(allGroupIds);
 remotePaths = cell(1, nPaths);
-for ii = 1:nPaths
-    remotePaths{ii} = rdtPathDotsToSlashes(response.groupIds{ii});
+for gg = 1:nPaths
+    remotePaths{gg} = rdtPathDotsToSlashes(allGroupIds{gg});
 end
 
 % optional sort
