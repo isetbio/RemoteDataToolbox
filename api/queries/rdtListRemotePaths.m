@@ -30,19 +30,21 @@ sortFlag = parser.Results.sortFlag;
 remotePaths = {};
 repositoryName = configuration.repositoryName;
 
-%% Get the repository's root paths.
-resourcePath = '/restServices/archivaServices/browseService/rootGroups';
-params.repositoryId = repositoryName;
-response = rdtRequestWeb(configuration, resourcePath, 'queryParams', params);
-if isempty(response) || ~isfield(response, 'browseResultEntries')
+%% Get all the artifacts.
+resourcePath = ['/restServices/archivaServices/browseService/artifacts/' repositoryName ];
+response = rdtRequestWeb(configuration, resourcePath);
+if isempty(response)
     return;
 end
 
-rootRecords = [response.browseResultEntries{:}];
-rootGroupIds = {rootRecords.name};
+%% Pare down to the unique group ids.
+artifactRecords = [response{:}];
+groupIds = {artifactRecords.groupId};
+[~, order] = unique(groupIds);
 
-%% Recursively explore each root path.
-allGroupIds = drillDownGroups(configuration, rootGroupIds);
+% undo the sorting from unique(), so that sort remains optional below
+allGroupIds = groupIds(sort(order));
+
 
 %% Convert group names with dots to paths with slashes
 nPaths = numel(allGroupIds);
@@ -55,35 +57,3 @@ end
 if sortFlag
     remotePaths = sort(remotePaths);
 end
-
-% Recurseively "browse" groups for sub-groups.
-function allGroupIds = drillDownGroups(configuration, groupIds)
-baseResourcePath = '/restServices/archivaServices/browseService/browseGroupId';
-params.repositoryId = configuration.repositoryName;
-
-nGroups = numel(groupIds);
-subGroupIds = cell(1, nGroups);
-for gg = 1:nGroups
-    groupId = groupIds{gg};
-    
-    % get the child groups of each given group
-    resourcePath = [baseResourcePath '/' groupId];
-    response = rdtRequestWeb(configuration, resourcePath, 'queryParams', params);
-    if isempty(response) || ~isfield(response, 'browseResultEntries')
-        continue;
-    end
-    
-    % ignore artifact listings, we only want groups
-    childRecords = [response.browseResultEntries{:}];
-    if isempty(childRecords)
-        continue;
-    end
-    isGroup = cellfun(@isempty, {childRecords.artifactId});
-    childGroupIds = {childRecords(isGroup).name};
-    
-    % recursive: get all descendants of each given group
-    subGroupIds{gg} = drillDownGroups(configuration, childGroupIds);
-end
-
-% combine all given groupIds and childGroupIds
-allGroupIds = cat(2, groupIds, subGroupIds{:});

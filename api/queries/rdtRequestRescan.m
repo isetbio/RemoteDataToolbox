@@ -35,7 +35,7 @@ function [isStarted, message] = rdtRequestRescan(configuration, varargin)
 
 parser = rdtInputParser();
 parser.addRequired('configuration');
-parser.addParameter('timeout', 1, @isnumeric);
+parser.addParameter('timeout', 0, @isnumeric);
 parser.parse(configuration, varargin{:});
 configuration = rdtConfiguration(parser.Results.configuration);
 timeout = parser.Results.timeout;
