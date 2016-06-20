@@ -19,7 +19,7 @@
 % a JSON file, because others would be able to read it.  So before
 % publishing data, this script will prompt you to enter a password into a
 % dialog window.  For this demo, use the user name "test" and password
-% "test123".
+% "ZeBacu5R".
 %
 % For wonks who may be interested: multiple files within one artifact are
 % distinguished using the Maven concept of a "classifier".  For

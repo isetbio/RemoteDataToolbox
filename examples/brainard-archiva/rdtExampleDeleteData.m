@@ -13,7 +13,7 @@
 % a JSON file, because others would be able to read it.  So before
 % publishing data, this script will prompt you to enter a password into a
 % dialog window.  For this demo, use the user name "test" and password
-% "test123".
+% "ZeBacu5R".
 %
 % See also rdtExampleReadData, rdtExamplePublishData
 %

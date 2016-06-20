@@ -16,7 +16,7 @@
 %   test-repository
 %
 % You should create a test user with the following credentials:
-%   test:test123
+%   test:ZeBacu5R
 %
 % You should give the test user write permissions for the test repository
 % (add the repository manager role).
@@ -31,7 +31,7 @@ clc;
 
 repository = 'http://52.32.77.154/repository/test-repository';
 username = 'test';
-password = 'test123';
+password = 'ZeBacu5R';
 
 pathHere = fileparts(mfilename('fullpath'));
 
