@@ -71,10 +71,45 @@ classdef RdtClient < handle
         end
         
         function remotePaths = listRemotePaths(obj,varargin)
-            % List remote paths to artifacts.
-            %   remotePaths = obj.listRemotePaths() list all paths
-            %   remotePaths = obj.ListRemotePaths('sortFlag',true); % Could be set to false
-            remotePaths = rdtListRemotePaths(obj.configuration, varargin{:});
+            % List remote paths to artifacts.  The paths that are
+            % sub-directories to the current remote path are returned, by
+            % default.
+            %   remotePaths = obj.listRemotePaths() % sub paths of current remote path
+            %   remotePaths = obj.listRemotePaths('sortFlag',true); % Could be set to false
+            %   remotePaths = obj.listRemotePaths('all',true);      % All paths
+            %   remotePaths = obj.listRemotePaths('print',true);  % Print to console
+            p = rdtInputParser();
+            p.addOptional('all', false, @islogical);
+            p.addOptional('print', false, @islogical);
+
+            p.parse(varargin{:});
+            all   = p.Results.all;
+            print = p.Results.print;
+
+            allPaths = rdtListRemotePaths(obj.configuration, varargin{:});
+            
+            if all
+                remotePaths = allPaths; return;
+            else
+                % Find the paths that contain the current remote path.  These
+                % will all be subdirectories.
+                str = obj.pwrp;
+                subPaths = strfind(allPaths,str);
+                lst = find(~cellfun(@isempty,subPaths));
+                remotePaths = cell(1,length(lst));
+                for ii=1:length(lst)
+                    remotePaths{ii} = allPaths{lst(ii)};
+                end
+            end
+            
+            % Print to the console
+            if print
+                for ii=1:length(remotePaths)
+                    fprintf('\t#%d:\t\t%s\n',ii,remotePaths{ii});
+                end
+            end
+            
+            
         end
         
         function artifacts = listArtifacts(obj, varargin)
@@ -128,7 +163,7 @@ classdef RdtClient < handle
 
             end
             
-            % Switch to print an organized list to the console
+            % Print to the console
             if printID
                 fprintf('\n   Artifact ID\t\t  Name\n');
                 for ii=1:length(artifacts)
