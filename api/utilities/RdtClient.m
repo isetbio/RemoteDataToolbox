@@ -89,7 +89,7 @@ classdef RdtClient < handle
             allPaths = rdtListRemotePaths(obj.configuration, varargin{:});
             
             if all
-                remotePaths = allPaths; return;
+                remotePaths = allPaths;
             else
                 % Find the paths that contain the current remote path.  These
                 % will all be subdirectories.
@@ -104,6 +104,14 @@ classdef RdtClient < handle
             
             % Print to the console
             if print
+                
+                % Print header line
+                if all, hdr = sprintf('\n --- All remote paths ------\n');
+                else    hdr = sprintf('\n  -- Paths containing [ %s ]---\n',obj.pwrp);
+                end
+                fprintf('%s',hdr);
+                
+                % Print list
                 for ii=1:length(remotePaths)
                     fprintf('\t#%d:\t\t%s\n',ii,remotePaths{ii});
                 end
@@ -117,7 +125,7 @@ classdef RdtClient < handle
             %   artifacts = obj.listArtifacts() % remotePath = pwrp()
             %   artifacts = obj.listArtifacts('remotePath', remotePath)
             %   artifacts = obj.listArtifacts('sortField', field); % default is sort by artifactId
-            %   artifacts = obj.listArtifacts('printID',true);
+            %   artifacts = obj.listArtifacts('print',true);
             %
             %   This function calls rdtListArtifacts
             %
@@ -128,12 +136,12 @@ classdef RdtClient < handle
             parser = rdtInputParser();
             parser.addParameter('remotePath', obj.workingRemotePath, @ischar);
             parser.addParameter('sortField', 'artifactId', @ischar);
-            parser.addParameter('printID',false,@islogical)
+            parser.addParameter('print',false,@islogical)
             parser.parse(varargin{:});
             
             remotePath = parser.Results.remotePath;
             sortField  = parser.Results.sortField;
-            printID    = parser.Results.printID;
+            print    = parser.Results.print;
             
             if isempty(remotePath)
                 % list all artifacts by iterating remote paths
@@ -164,7 +172,7 @@ classdef RdtClient < handle
             end
             
             % Print to the console
-            if printID
+            if print
                 fprintf('\n   Artifact ID\t\t  Name\n');
                 for ii=1:length(artifacts)
                     fprintf('\t#%d:\t\t%s\n',ii,artifacts(ii).artifactId);
