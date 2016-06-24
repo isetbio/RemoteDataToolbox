@@ -230,6 +230,8 @@ classdef RdtClient < handle
             %   ( ... 'type', type) type instead of default 'mat'
             %   ( ... 'destinationFolder',fullFolderName) Output file
             
+            % We should trap the 'type' argument here and pass it below.
+            % BW.
             parser = rdtInputParser();
             vFunc = @(x)(ischar(x) || isstruct(x));
             parser.addRequired('artifactId', vFunc);
