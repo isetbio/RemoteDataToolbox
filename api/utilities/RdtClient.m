@@ -173,26 +173,9 @@ classdef RdtClient < handle
             
             % Print a table to the console
             if print
-                
-                n = length(obj.pwrp);
-                nArtifacts = length(artifacts);
-                SubPath = cell(nArtifacts,1); 
-                ArtifactId = SubPath; Num = SubPath;
-                
-                % Create the cell arrays of table entries
-                for ii=1:nArtifacts
-                    if length(artifacts(ii).remotePath) < (n+2), SubPath{ii} = '.';
-                    else SubPath{ii} = artifacts(ii).remotePath((n+2):end);
-                    end
-                    ArtifactId{ii} = artifacts(ii).artifactId;
-                    Num{ii} = num2str(ii);
-                end
-                
-                % Create and display table
                 fprintf('\n  -- Artifacts in Remote Path [ /%s/ ]---\n\n',obj.pwrp);
-                T = table(SubPath,ArtifactId,'RowNames',Num);
-                disp(T);
-            end
+                rdtPrintArtifactTable(artifacts);
+            end    
         end
         
         function artifacts = searchArtifacts(obj, searchText, varargin)
@@ -260,6 +243,7 @@ classdef RdtClient < handle
             % the id slot, as an argument.  This way readArtifact can take
             % an artifact argument.
             if isstruct(artifactId) && isfield(artifactId,'artifactId')
+                % We should probably set the 'type' here, too.
                 artifactId = artifactId.artifactId;
             elseif ischar(artifactId)
             else
@@ -346,17 +330,7 @@ classdef RdtClient < handle
                 folder, remotePath, varargin{:});
             
             if print
-                n = length(artifacts);
-                ArtNames = cell(n,1);
-                RowNames = cell(n,1);
-                for ii=1:n
-                    RowNames{ii} = num2str(ii);
-                    ArtNames{ii} = artifacts(ii).artifactId;
-                end
-                
-                fprintf('\n***\nUploaded to remote path %s\n****\n',remotePath);
-                T = table(ArtNames,'RowNames',RowNames);
-                disp(T)
+                rdtPrintArtifactTable(artifacts);
             end
 
         end
