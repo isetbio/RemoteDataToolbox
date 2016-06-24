@@ -88,12 +88,12 @@ classdef RdtClient < handle
 
             allPaths = rdtListRemotePaths(obj.configuration, varargin{:});
             
-            if all
+            str = obj.pwrp;
+            if all || isempty(str)
                 remotePaths = allPaths;
             else
                 % Find the paths that contain the current remote path.  These
                 % will all be subdirectories.
-                str = obj.pwrp;
                 subPaths = strfind(allPaths,str);
                 lst = find(~cellfun(@isempty,subPaths));
                 remotePaths = cell(1,length(lst));
@@ -107,7 +107,7 @@ classdef RdtClient < handle
                 
                 % Print header line
                 if all, hdr = sprintf('\n --- All remote paths ------\n');
-                else    hdr = sprintf('\n  -- Paths containing [ %s ]---\n',obj.pwrp);
+                else    hdr = sprintf('\n  -- Sub-paths of [ %s ]---\n',obj.pwrp);
                 end
                 fprintf('%s',hdr);
                 
@@ -171,12 +171,27 @@ classdef RdtClient < handle
 
             end
             
-            % Print to the console
+            % Print a table to the console
             if print
-                fprintf('\n   Artifact ID\t\t  Name\n');
-                for ii=1:length(artifacts)
-                    fprintf('\t#%d:\t\t%s\n',ii,artifacts(ii).artifactId);
+                
+                n = length(obj.pwrp);
+                nArtifacts = length(artifacts);
+                SubPath = cell(nArtifacts,1); 
+                ArtifactId = SubPath; Num = SubPath;
+                
+                % Create the cell arrays of table entries
+                for ii=1:nArtifacts
+                    if length(artifacts(ii).remotePath) < (n+2), SubPath{ii} = '.';
+                    else SubPath{ii} = artifacts(ii).remotePath((n+2):end);
+                    end
+                    ArtifactId{ii} = artifacts(ii).artifactId;
+                    Num{ii} = num2str(ii);
                 end
+                
+                % Create and display table
+                fprintf('\n  -- Artifacts in Remote Path [ /%s/ ]---\n\n',obj.pwrp);
+                T = table(SubPath,ArtifactId,'RowNames',Num);
+                disp(T);
             end
         end
         
@@ -320,13 +335,30 @@ classdef RdtClient < handle
             parser = rdtInputParser();
             parser.addRequired('folder', @ischar);
             parser.addParameter('remotePath', obj.workingRemotePath, @ischar);
+            parser.addParameter('print', false, @islogical);
+
             parser.parse(folder, varargin{:});
-            
             folder = parser.Results.folder;
             remotePath = parser.Results.remotePath;
+            print = parser.Results.print;
             
             artifacts = rdtPublishArtifacts(obj.configuration, ...
                 folder, remotePath, varargin{:});
+            
+            if print
+                n = length(artifacts);
+                ArtNames = cell(n,1);
+                RowNames = cell(n,1);
+                for ii=1:n
+                    RowNames{ii} = num2str(ii);
+                    ArtNames{ii} = artifacts(ii).artifactId;
+                end
+                
+                fprintf('\n***\nUploaded to remote path %s\n****\n',remotePath);
+                T = table(ArtNames,'RowNames',RowNames);
+                disp(T)
+            end
+
         end
         
         function credentialsDialog(obj)

@@ -39,6 +39,8 @@ function artifacts = rdtPublishArtifacts(configuration, folder, remotePath, vara
 %   choose whether to request the remote repository to update its artifact
 %   listing and search index.  The default is true -- rescan and update.
 %
+% artifact = rdtPublishArtifacts( ... 'verbose', logical) 
+%
 % Returns a struct array of metadata about the published artifacts, or []
 % if the publication failed.
 %
@@ -63,6 +65,8 @@ parser.addParameter('description', '', @ischar);
 parser.addParameter('name', '', @ischar);
 parser.addParameter('deleteLocal', false, @islogical);
 parser.addParameter('rescan', true, @islogical);
+parser.addParameter('verbose',false,@islogical);
+
 parser.parse(configuration, folder, remotePath, varargin{:});
 configuration = rdtConfiguration(parser.Results.configuration);
 type = parser.Results.type;
@@ -73,8 +77,9 @@ version    = parser.Results.version;
 description = parser.Results.description;
 deleteLocal = parser.Results.deleteLocal;
 rescan      = parser.Results.rescan;
+verbose     = parser.Results.verbose;
 
-artifacts = [];
+% artifacts = [];
 
 %% Choose artifacts to publish.
 %
@@ -92,7 +97,7 @@ for ii = 1:nFiles
         continue;
     end
     
-    [~, fileBase, fileExt] = fileparts(listing.name);
+    [~, fileBase, fileExt] = fileparts(listing.name); %#ok<ASGLU>
     fileType = fileExt(fileExt ~= '.');
     
     if isempty(fileExt)
@@ -134,7 +139,12 @@ for ii = 1:nArtifacts
         'name', name, ...
         'deleteLocal', deleteLocal, ...
         'rescan', false);
+    if verbose
+        fprintf('\nPublished %s to %s',file,remotePath);
+    end
 end
+if verbose, fprintf('\nDone with %d artifacts\n',nArtifacts); end
+    
 
 artifacts = [artifactCell{:}];
 
