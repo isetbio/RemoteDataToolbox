@@ -126,21 +126,32 @@ classdef RdtClient < handle
             %   artifacts = obj.listArtifacts('remotePath', remotePath)
             %   artifacts = obj.listArtifacts('sortField', field); % default is sort by artifactId
             %   artifacts = obj.listArtifacts('print',true);
+            %            %  
+            % sortField - artifactId by default
+            % print     - print a table
+            % recursive - By default, only the artifacts in the remote path
+            % are returned. If recursive is set to true, the the artifacts
+            % in the remote path and sub paths are returned.
             %
-            %   This function calls rdtListArtifacts
+            % Example (with defaults shown)
+            %   a = obj.listArtifacts('print',false,...
+            %                         'type','mat',...
+            %                         'remotePath',obj.pwrp,...
+            %                         'recursive',false,...
+            %                         'sortField','artifactId');
             %
-            % Example
-            %   a = obj.listArtifacts('printID',true,'type','mat');
-            %
+            %  See also: rdtListArtifacts, rdtPrintArtifactTable
             
             parser = rdtInputParser();
             parser.addParameter('remotePath', obj.workingRemotePath, @ischar);
             parser.addParameter('sortField', 'artifactId', @ischar);
+            parser.addParameter('recursive',false,@islogical);
             parser.addParameter('print',false,@islogical)
             parser.parse(varargin{:});
             
             remotePath = parser.Results.remotePath;
             sortField  = parser.Results.sortField;
+            recursive  = parser.Results.recursive;
             print    = parser.Results.print;
             
             if isempty(remotePath)
@@ -160,7 +171,6 @@ classdef RdtClient < handle
                 
                 % Sort the cell arrays of artifacts
                 artifacts = rdtSortStructArray([artifactCollection{:}], sortField);
-                
             else
                 % list artifacts under the specific path
                 artifacts = rdtListArtifacts(obj.configuration, ...
@@ -171,11 +181,28 @@ classdef RdtClient < handle
 
             end
             
-            % Print a table to the console
+            % Find lst of artifacts in the current remote path
+            aStr = struct2cell(artifacts);
+            aC = squeeze(aStr(5,1,:));   % Get the remote paths into cells
+            lst = strcmp(obj.pwrp,aC);
+            
+            % If not recursive, remove the others, print, return
+            if ~recursive
+                artifacts = artifacts(lst);
+                lst = true(1,length(artifacts));
+            end
+
             if print
-                fprintf('\n  -- Artifacts in Remote Path [ /%s/ ]---\n\n',obj.pwrp);
-                rdtPrintArtifactTable(artifacts);
+                if sum(lst)
+                    fprintf('\n  -- Artifacts in Current remote path [ /%s/ ]---\n\n',obj.pwrp);
+                    rdtPrintArtifactTable(artifacts(lst));
+                end
+                if sum(~lst)
+                    fprintf('\n  -- Artifacts in subdirectories of remote path [ /%s/ ]---\n\n',obj.pwrp);
+                    rdtPrintArtifactTable(artifacts(~lst));
+                end
             end    
+            
         end
         
         function artifacts = searchArtifacts(obj, searchText, varargin)
@@ -245,15 +272,22 @@ classdef RdtClient < handle
             % the id slot, as an argument.  This way readArtifact can take
             % an artifact argument.
             if isstruct(artifactId) && isfield(artifactId,'artifactId')
-                % We should probably set the 'type' here, too.
-                artifactId = artifactId.artifactId;
+                % We set up the type here automatically
+                % It would be possible to just use the URL, I think.
+                id   = artifactId.artifactId;
+                type = artifactId.type;
+                [data, artifact, downloads] = rdtReadArtifact(obj.configuration, ...
+                    remotePath, id, 'type',type, varargin{:});
             elseif ischar(artifactId)
+                % Ben's original call
+                [data, artifact, downloads] = rdtReadArtifact(obj.configuration, ...
+                    remotePath, artifactId, varargin{:});
             else
                 error('Input structure does not have an artifactId slot.');
             end
 
-            [data, artifact, downloads] = rdtReadArtifact(obj.configuration, ...
-                remotePath, artifactId, varargin{:});
+            %             [data, artifact, downloads] = rdtReadArtifact(obj.configuration, ...
+            %                 remotePath, artifactId, varargin{:});
         end
         
         function [datas, artifacts, downloads] = readArtifacts(obj, pathOrArtifacts, varargin)

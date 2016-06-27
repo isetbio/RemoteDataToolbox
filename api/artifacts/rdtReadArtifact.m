@@ -1,10 +1,29 @@
 function [data, artifact, downloads] = rdtReadArtifact(configuration, remotePath, artifactId, varargin)
 %% Fetch an artifact from a remote repository an read it into Matlab.
 %
-% [data, artifact] = rdtReadArtifact(configuration, remotePath, artifactId)
-% fetches an artifact from a remote respository, under the given remotePath
-% and with the given artifactId.  Loads the artifact data into a Matlab
-% variable.  configuration.repositoryUrl must point at the repository root.
+% [data, artifact, downloads] = 
+%       rdtReadArtifact(configuration, remotePath, artifactId, varargin)
+%
+% Fetch an artifact from a remote respository. The artifact must be in
+% the remotePath and have the specified artifactId. When possible, this
+% function loads the artifact data into a Matlab variable. See the known
+% cases and how to handle special cases, below.
+%
+% Inputs: 
+% 
+% configuration: The typical rd structure returned by RdtClient. The slot
+%    configuration.repositoryUrl must point at the repository root.
+%
+% remotePath:    The remote path where the artifact should be found. This
+% must be the full remotePath where the artifact is located. For example,
+% to read "/path/to/file/foo.txt", you would have to supply the full
+% "/path/to/file".  Supplying "/path" or "/path/to" will fail.  If
+% remotePath is not specified, the current remote path is assumed.
+%
+% artifactId:  The artifact ID.  Often it is important to specify the
+%    artifact type, as well.
+%
+% Optional inputs
 %
 % [data, artifact] = rdtReadArtifact( ... 'version', version) fetches an
 % artifact with the given version instead of the default, which is the
@@ -23,13 +42,13 @@ function [data, artifact, downloads] = rdtReadArtifact(configuration, remotePath
 % [data, artifact] = rdtReadArtifact( ... 'loadFunction', loadFunction)
 % uses the given loadFunction to load the fetched artifact into memory.
 % The load function must have the following form:
+%
 %   function data = myLoadFunction(artifactStruct)
+%
 % The data returned from this funciton will be whatever was returned from
 % myLoadFunction.  The default is @rdtLoadWellKnownFileTypes.
 %
-% Note: you must supply the full remotePath where the artifact is located.
-% For example, to read "/path/to/file/foo.txt", you would have to supply
-% the full "/path/to/file".  Supplying "/path" would not be enough.
+% Outputs:
 %
 % Returns a Matlab variable containing the artifact data.  The class of the
 % returned variable depends on the artifact type:
@@ -42,9 +61,7 @@ function [data, artifact, downloads] = rdtReadArtifact(configuration, remotePath
 % cell array of urls for artifacts that were downloaded from the remote
 % server (i.e. not already in the local cache).
 %
-% See also rdtArtifact rdtReadArtifacts imformat imread
-%
-% [data, artifact, downloads] = rdtReadArtifact(configuration, remotePath, artifactId, varargin)
+% See also: rdtArtifact rdtReadArtifacts imformat imread
 %
 % Copyright (c) 2015 RemoteDataToolbox Team
 
@@ -56,6 +73,7 @@ parser.addParameter('version', '+', @ischar);
 parser.addParameter('type', 'mat', @ischar);
 parser.addParameter('destinationFolder', '', @ischar);
 parser.addParameter('loadFunction', @rdtLoadWellKnownFileTypes, @(f) isa(f, 'function_handle'));
+
 parser.parse(configuration, remotePath, artifactId, varargin{:});
 configuration = rdtConfiguration(parser.Results.configuration);
 remotePath = parser.Results.remotePath;
