@@ -69,9 +69,10 @@ classdef RdtClientTests < matlab.unittest.TestCase
             client = RdtClient(testCase.testConfig);
             
             % all artifacts
-            workingArtifacts = client.listArtifacts();
-            explicitArtifacts = client.listArtifacts('remotePath', '');
+            workingArtifacts = client.listArtifacts('recursive', true);
+            explicitArtifacts = client.listArtifacts('remotePath', '', 'recursive', true);
             testCase.assertNotEmpty(workingArtifacts);
+            testCase.assertNotEmpty(explicitArtifacts);
             testCase.assertEqual(workingArtifacts, explicitArtifacts);
             
             % some artifacts
