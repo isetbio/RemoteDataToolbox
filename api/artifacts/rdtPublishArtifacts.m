@@ -79,7 +79,15 @@ deleteLocal = parser.Results.deleteLocal;
 rescan      = parser.Results.rescan;
 verbose     = parser.Results.verbose;
 
-% artifacts = [];
+% People routinely specify a file rather than a folder.  This is offered as
+% help. 
+if ~(exist(folder,'dir'))
+    if exist(folder,'file')
+        fprintf('The folder argument %s appears to be a file.\n',folder);
+    else
+        error('No folder %s found. ',folder);
+    end
+end
 
 %% Choose artifacts to publish.
 %
