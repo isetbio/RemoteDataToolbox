@@ -182,6 +182,10 @@ classdef RdtClient < handle
             end
             
             % Find lst of artifacts in the current remote path
+            if isempty(artifacts)
+                fprintf('\n -- No artifacts found in %s path --\n\n',obj.pwrp);
+                return;
+            end
             aStr = struct2cell(artifacts);
             aC = squeeze(aStr(5,1,:));   % Get the remote paths into cells
             lst = strcmp(obj.pwrp,aC);
@@ -342,7 +346,7 @@ classdef RdtClient < handle
         
         function artifacts = publishArtifacts(obj, folder, varargin)
             % Publish files in a folder as artifacts to a remote repository.
-            %   artifact = obj.publishArtifact(folder)
+            %   artifact = obj.publishArtifacts(folder)
             %   ( ... 'remotePath', remotePath) remotePath instead of pwrp()
             %   ( ... 'version', version) version instead of default '1'
             %   ( ... 'type', type) restrict to type
