@@ -1,13 +1,9 @@
 %% This is a tutorial for the Remote Data Toolbox plain-old-function API.
 %
-% This script shows the effect of the the local artifact cache.  It fetches
+% This script shows the effect of the local artifact cache.  It fetches
 % the same artifact more than once and shows the elapsed time for each
-% fetch.  The idea is that the first fetch requires an actually download,
-% and subsequent fetches are faster.
-%
-% This script uses a JSON file to configure a Remote Data Toolbox client
-% object with things like the Url of the project's remote repository.  This
-% simplifies various calls to the Remote Data Toolbox functions.
+% fetch.  The idea is that the first fetch requires an actual download,
+% but subsequent fetches should be faster because the use the local cache.
 %
 % Copyright (c) 2016 RemoteDataToolbox Team
 
