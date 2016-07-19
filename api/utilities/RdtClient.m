@@ -152,7 +152,7 @@ classdef RdtClient < handle
             remotePath = parser.Results.remotePath;
             sortField  = parser.Results.sortField;
             recursive  = parser.Results.recursive;
-            print    = parser.Results.print;
+            print      = parser.Results.print;
             
             if isempty(remotePath)
                 % list all artifacts by iterating remote paths
@@ -182,6 +182,11 @@ classdef RdtClient < handle
             end
             
             % Find lst of artifacts in the current remote path
+            if isempty(artifacts)
+                fprintf('No artifacts found in this remote path of the specified type.\n'); 
+                return; 
+            end
+            
             aStr = struct2cell(artifacts);
             aC = squeeze(aStr(5,1,:));   % Get the remote paths into cells
             lst = strcmp(obj.pwrp,aC);
