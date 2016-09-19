@@ -15,4 +15,9 @@ parser.addRequired('jsonString', @ischar);
 parser.parse(jsonString);
 jsonString = parser.Results.jsonString;
 
+if isempty(jsonString) || strcmp('[]', jsonString) || strcmp('{}', jsonString)
+    data = [];
+    return;
+end
+
 data = loadjson(jsonString);
