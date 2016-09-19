@@ -131,6 +131,9 @@ function headers = encodeHeaders(configuration)
 
 headers = [];
 
+userAgent = sprintf('Remote Data Toolbox, Matlab %s', version);
+headers = [headers, http_createHeader('User-Agent', userAgent)];
+
 if ~isempty(configuration.requestMediaType)
     contentType = configuration.requestMediaType;
     headers = [headers, http_createHeader('Content-Type', contentType)];
