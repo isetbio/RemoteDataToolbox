@@ -103,7 +103,7 @@ classdef RdtRequestWebTests < matlab.unittest.TestCase
             response = rdtRequestWeb(authConfig, resourcePath);
             testCase.assertNotEmpty(response);
             testCase.assertInstanceOf(response, 'struct');
-            testCase.assertEqual(response.authenticated, 1);
+            testCase.assertEqual(logical(response.authenticated), true);
             testCase.assertEqual(response.user, username);
         end
         
@@ -127,7 +127,7 @@ classdef RdtRequestWebTests < matlab.unittest.TestCase
                 'forceFallback', true);
             testCase.assertNotEmpty(response);
             testCase.assertInstanceOf(response, 'struct');
-            testCase.assertEqual(response.authenticated, 1);
+            testCase.assertEqual(logical(response.authenticated), true);
             testCase.assertEqual(response.user, username);
         end
         
