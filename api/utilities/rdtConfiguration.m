@@ -124,5 +124,5 @@ end
 
 % unable to locate JSON.  Return in flavor and issue a warning.
 flavor = sprintf('json not found: %s or %s', arg, jsonFileName);
-warning('rdt:jsonNotFound','json file not found')
+warning('rdt:jsonNotFound', sprintf('json file (%s) not found', jsonFileName))
 
