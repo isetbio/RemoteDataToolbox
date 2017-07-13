@@ -85,6 +85,8 @@ else
     cache = '';
 end
 
+% Windows returns backslashes in paths, but bash is incompatible with
+% backslashes
 commandEnv = 'DYLD_LIBRARY_PATH='''' TERM=${TERM:-dumb}';
 command = sprintf('%s %s --daemon %s %s %s -b %s fetchIt', ...
     commandEnv, ...
@@ -98,8 +100,23 @@ if verbose
     disp(command);
 end
 
-windows_command = sprintf('%s "%s"', 'bash -c', command);
-[status, result] = system(windows_command);
+% If on Windows, check for bash and recommend Cygwin
+if ispc
+    [status, result] = system('where bash');
+    if 0 ~= status
+        msg = ['error status %d (%s). '
+            'To obtain bash for windows, you may download Cygwin from https://cygwin.com/install.html. '
+            'Alternatively, you may download Git which bundles bash from https://git-scm.com/download/win. '
+            'Either way, make sure you add the path to bash to your windows environment path, then restart Matlab.' 
+            ];
+        error('FetchArtifact:BadStatus', msg, status, result)
+    end
+end
+
+% Note that bash is implicit on Mac/Linux, but must be specified for
+% Windows
+command = sprintf('%s "%s"', 'bash -c', command);
+[status, result] = system(command);
 
 %[status, result] = system(command);
 if 0 ~= status
