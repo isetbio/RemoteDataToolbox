@@ -85,20 +85,23 @@ else
     cache = '';
 end
 
-commandEnv = 'DYLD_LIBRARY_PATH="" TERM=${TERM:-dumb}';
+commandEnv = 'DYLD_LIBRARY_PATH='''' TERM=${TERM:-dumb}';
 command = sprintf('%s %s --daemon %s %s %s -b %s fetchIt', ...
     commandEnv, ...
-    gradlew, ...
+    strrep(gradlew,'\','/'), ...
     refresh, ...
     systemProps, ...
     cache, ...
-    fetchDotGradle);
+    strrep(fetchDotGradle,'\','/'));
 
 if verbose
     disp(command);
 end
 
-[status, result] = system(command);
+windows_command = sprintf('%s "%s"', 'bash -c', command);
+[status, result] = system(windows_command);
+
+%[status, result] = system(command);
 if 0 ~= status
     error('FetchArtifact:BadStatus', 'error status %d (%s)', status, result)
 end
