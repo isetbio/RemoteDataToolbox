@@ -35,7 +35,10 @@ switch artifact.type
         data = artifact.localPath;
 end
 
+end
+
 %% Ask Matlab for recognized image file extensions.
 function imageTypes = imreadExtensions()
 formats = imformats();
 imageTypes = cat(2, formats.ext);
+end
