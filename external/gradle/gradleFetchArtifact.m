@@ -85,19 +85,37 @@ else
     cache = '';
 end
 
-commandEnv = 'DYLD_LIBRARY_PATH="" TERM=${TERM:-dumb}';
+% Windows returns backslashes in paths, but these get escaped. Forward
+% slashes do not get escaped.
+commandEnv = 'DYLD_LIBRARY_PATH='''' TERM=${TERM:-dumb}';
 command = sprintf('%s %s --daemon %s %s %s -b %s fetchIt', ...
     commandEnv, ...
-    gradlew, ...
+    strrep(gradlew,'\','/'), ...
     refresh, ...
     systemProps, ...
     cache, ...
-    fetchDotGradle);
+    strrep(fetchDotGradle,'\','/'));
 
 if verbose
     disp(command);
 end
 
+% If on Windows, check for bash.
+if ispc
+    [status, result] = system('where bash');
+    if 0 ~= status
+        msg = ['error status %d %s' ...
+            'To obtain bash for windows, you may download Cygwin from https://cygwin.com/install.html. ' ...
+            'Alternatively, you may download Git which bundles bash from https://git-scm.com/download/win. ' ...
+            'Either way, make sure you add the path to bash to your windows environment path, then restart Matlab.' 
+            ];
+        error('FetchArtifact:BadStatus', msg, status, result)
+    end
+end
+
+% We must explicitly call bash when on Windows platforms. On Mac/Linux, the
+% use of bash is implied through the system call.
+command = sprintf('%s "%s"', 'bash -c', command);
 [status, result] = system(command);
 if 0 ~= status
     error('FetchArtifact:BadStatus', 'error status %d (%s)', status, result)
