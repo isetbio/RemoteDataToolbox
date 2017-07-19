@@ -447,6 +447,52 @@ classdef RdtClient < handle
             end
         end
         
+        function removeArtifacts(obj,artifacts,varargin)
+            % Remove artifacts from a remote repository.
+            %   artifact = obj.removeArtifacts(artifacts)
+            %
+            % Required
+            %   ( ... 'artifacts',artifacts) array of artifacts
+            % Parameter-Value inputs
+            %   ( ... 'remotePath', remotePath) remotePath instead of pwrp()
+            %   ( ... 'version',  version) version instead of default '1'
+            %
+            % Example:
+            %   rdt = RdtClient('isetbio'); 
+            %   rdt.credentialsDialog();  
+            %   rdt.crp('/resources/data/cmosaics');
+            %   a = rdt.listArtifacts;
+            %   rdt.removeArtifacts(a(4),'print',true);
+            %
+            % BW, ISETBIO Team, 2017
+            
+            parser = rdtInputParser();  % Set parameters on inputParser
+            
+            % Maybe we need a better vFunc
+            vFunc = @(x)(isstruct(x) && isfield(x,'artifactId'));
+            parser.addRequired('artifacts',vFunc);
+            
+            parser.addParameter('remotePath', obj.workingRemotePath, @ischar);
+            parser.addParameter('print', false, @islogical);
+
+            parser.parse(artifacts, varargin{:});
+            remotePath = parser.Results.remotePath;
+            print = parser.Results.print;
+            
+            if ~isequal(remotePath,obj.workingRemotePath)
+                obj.crp(['/',remotePath]);
+            end
+            
+            % artifacts = rdt.listArtifacts('print',true);
+            deleted = rdtDeleteArtifacts(obj.configuration, artifacts, 'allFiles', true);
+            fprintf('Deleted %d artifacts\n',length(deleted));
+            
+            if print
+                obj.listArtifacts('print',true);
+            end
+        end
+        
+        
         function [isStarted, message] = requestRescan(obj, varargin)
             % Ask Archiva to rescan the repository to up-to-date artifact
             % listing and searching.
