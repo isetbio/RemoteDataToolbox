@@ -1,41 +1,32 @@
-%% t_rdtRemoveArtifact
+%% t_rdRemoveArtifact
 % 
-% Illustrates uploading and then removing an artifact with the RdtClient
+% Illustrates uploading and then removing an artifact with the rdClient
 %
 % BW ISETBIO Team, 2017
 
 
-%% Open and login
-
-rdt = RdtClient('isetbio');
-rdt.credentialsDialog;
+%% login
+rd = RdtClient('isetbio');
+rd.credentialsDialog;
 
 %% List the artifacts 
+rd.crp('/resources/data/cmosaics')
+rd.listArtifacts('print',true);
 
-rdt.crp('/resources/data/cmosaics')
-rdt.listArtifacts('print',true);
-
-%% Send up the deleteme.jpg file as an artifact
-
-version1 = '1';
-data = rand(32,32,3);
-imwrite(data,'deleteme.jpg');
-thisFile = fullfile(pwd,'deleteme.jpg');
-rdt.publishArtifact(thisFile, 'version', version1);
+%% Create and publish the deleteme.jpg file
+data = rand(32,32,3); imwrite(data,'deleteme.jpg'); thisFile = fullfile(pwd,'deleteme.jpg');
+rd.publishArtifact(thisFile);
 delete(thisFile);
 
-% List the artifacts to show what is there
-a = rdt.listArtifacts('print',true);
+% Show that deleteme is published
+a = rd.listArtifacts('print',true);
 
-%% Remove the artifact
-
+%% Remove the deleteme artifact
 % Find the artifactId named deleteme 
 [~,idx] = ismember('deleteme',{a(:).artifactId});
+rd.removeArtifacts(a(idx));
 
-% Remove the artifact with the deleteme id.
-rdt.removeArtifacts(a(idx));
-
-% The artifact should be deleted
-rdt.listArtifacts('print',true);
+% Show the artifacts 
+rd.listArtifacts('print',true);
 
 %%
