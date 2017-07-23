@@ -79,8 +79,8 @@ classdef RdtClient < handle
             %   remotePaths = obj.listRemotePaths('all',true);      % All paths
             %   remotePaths = obj.listRemotePaths('print',true);  % Print to console
             p = rdtInputParser();
-            p.addOptional('all', false, @islogical);
-            p.addOptional('print', false, @islogical);
+            p.addParameter('all', false, @islogical);
+            p.addParameter('print', false, @islogical);
 
             p.parse(varargin{:});
             all   = p.Results.all;
