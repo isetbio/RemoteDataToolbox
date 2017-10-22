@@ -10,7 +10,7 @@
 %
 % By default, this script points at a public server called
 % brainard-archiva, hosted by UPenn.  Visit the web UI:
-%   http://52.32.77.154/
+%   http://brainard-archiva.psych.upenn.edu/
 %
 % You should create a Maven2 repository with the following name:
 %   test-repository
@@ -29,7 +29,7 @@
 clear;
 clc;
 
-repository = 'http://52.32.77.154/repository/test-repository';
+repository = 'http://brainard-archiva.psych.upenn.edu/repository/test-repository';
 username = 'test';
 password = 'ZeBacu5R';
 

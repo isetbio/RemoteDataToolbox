@@ -124,7 +124,7 @@ end
 %% Scrape printed-out results.
 
 % what was downloaded from the server?
-% Download http://52.32.77.154/repository/demo-repository/classifiers/test/1/test-1.pom
+% Download http://brainard-archiva.psych.upenn.edu/repository/demo-repository/classifiers/test/1/test-1.pom
 downloads = scrapeLinesWithPrefix(result, 'Download ');
 
 % what was successfully fetched?

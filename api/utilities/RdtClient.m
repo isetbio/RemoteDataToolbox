@@ -419,7 +419,7 @@ classdef RdtClient < handle
             % In this case, I don't know how to append the
             % whichUrLOrArtifact yet.  Maybe BSH will figure it out.
             if parser.Results.fancy
-                % http://52.32.77.154/#browse~vistasoft
+                % http://brainard-archiva.psych.upenn.edu/#browse~vistasoft
                 url = sprintf('%s#browse~%s',obj.configuration.serverUrl,obj.configuration.repositoryName);
                 web(url, '-browser');
             else
