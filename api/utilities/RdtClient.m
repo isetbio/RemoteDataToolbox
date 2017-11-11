@@ -295,10 +295,11 @@ classdef RdtClient < handle
         end
         
         function [datas, artifacts, downloads] = readArtifacts(obj, pathOrArtifacts, varargin)
-            % Read data for multiple artifacts into Matlab.
-            %   [datas, artifacts] = obj.readArtifacts() all under pwrp()
-            %   obj.readArtifacts(remotePath) remotePath instead of pwrp()
-            %   obj.readArtifacts(artifacts) explicit artifact struct array
+            % Read data for multiple artifacts into Matlab
+            %
+            %   [datas, artifacts] = obj.readArtifacts() % all under pwrp()
+            %   obj.readArtifacts(remotePath)            % remotePath instead of pwrp()
+            %   obj.readArtifacts(artifacts)             % explicit artifact struct array
             
             datas = {};
             artifacts = {};
