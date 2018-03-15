@@ -322,6 +322,10 @@ classdef RdtClient < handle
         
         function artifact = publishArtifact(obj, file, varargin)
             % Publish a file as an artifact to a remote repository.
+            % The basic command requires that the file full path be
+            % provided.  If it looks like only a partial path is
+            % provided, we alert the user to which file we use.
+            %
             %   artifact = obj.publishArtifact(file)
             %   ( ... 'remotePath', remotePath) remotePath instead of pwrp()
             %   ( ... 'artifactId', artifactId) artifactId instead of name
@@ -333,6 +337,9 @@ classdef RdtClient < handle
             
             parser.parse(file, varargin{:});
             file = parser.Results.file;
+            p = fileparts(file);
+            if isempty(p), file = which(file); end
+            
             remotePath = parser.Results.remotePath;
             
             % I think we need a full path to the file.  Maybe we need to
