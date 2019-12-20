@@ -115,10 +115,10 @@ if 2 == exist(projectConfig, 'file')
 end
 
 % search the Matlab path
-pathConfig = which(jsonFileName);
+pathConfig = which(jsonFileName)
 if ~isempty(pathConfig)
     flavor = sprintf('config from Matlab path: %s', pathConfig);
-    configArgs = rdtFromJson(pathConfig);
+    configArgs = rdtFromJson(pathConfig)
     return;
 end
 
