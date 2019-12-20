@@ -107,10 +107,10 @@ end
 jsonFileName = ['rdt-config-' argBase '.json'];
 
 % search the current folder and its parents
-projectConfig = rdtSearchParentFolders(jsonFileName, pwd());
+projectConfig = rdtSearchParentFolders(jsonFileName, pwd())
 if 2 == exist(projectConfig, 'file')
     flavor = sprintf('config for project %s: %s', arg, projectConfig);
-    configArgs = rdtFromJson(projectConfig);
+    configArgs = rdtFromJson(projectConfig)
     return;
 end
 
