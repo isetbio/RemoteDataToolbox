@@ -99,7 +99,7 @@ configArgs = struct();
 if strcmp('.json', argExt) && 2 == exist(arg, 'file')
     % got explicit path to a JSON file
     flavor = sprintf('explicit file: %s', arg);
-    configArgs = rdtFromJson(arg);
+    configArgs = rdtFromJson(arg)
     return;
 end
 
@@ -110,7 +110,7 @@ jsonFileName = ['rdt-config-' argBase '.json'];
 projectConfig = rdtSearchParentFolders(jsonFileName, pwd());
 if 2 == exist(projectConfig, 'file')
     flavor = sprintf('config for project %s: %s', arg, projectConfig);
-    configArgs = rdtFromJson(projectConfig);
+    configArgs = rdtFromJson(projectConfig)
     return;
 end
 
