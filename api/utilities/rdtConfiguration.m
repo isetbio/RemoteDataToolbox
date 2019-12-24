@@ -118,7 +118,7 @@ end
 pathConfig = which(jsonFileName);
 if ~isempty(pathConfig)
     flavor = sprintf('config from Matlab path: %s', pathConfig);
-    configArgs = rdtFromJson(pathConfig);
+    configArgs = rdtFromJson(pathConfig)
     return;
 end
 
