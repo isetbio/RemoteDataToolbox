@@ -15,7 +15,7 @@
 % Copyright (c) 2015 RemoteDataToolbox Team
 
 clear;
-clc;
+close all;
 
 %% Fetch an image from the repository.
 
@@ -50,6 +50,7 @@ artifact = artifactCell(1);
 disp(artifact)
 
 %% Display the artifact data as an image.
+figure;
 imshow(data);
 
 %% Copy a fetched artifact to an alternate folder.
