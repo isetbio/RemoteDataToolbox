@@ -72,7 +72,7 @@ deleted = rdtDeleteArtifacts(client.configuration, victims);
 
 % these ones were deleted!
 fprintf('The following hobbits were deleted:\n');
-for ii = 1:numel(deleted);
+for ii = 1:numel(deleted)
     fprintf('  %s\n', deleted(ii).artifactId);
 end
 
@@ -84,7 +84,7 @@ deleted = rdtDeleteRemotePaths(client.configuration, victims);
 
 % all of these were deleted!
 fprintf('The following paths aka folders aka groups were deleted:\n');
-for ii = 1:numel(deleted);
+for ii = 1:numel(deleted)
     fprintf('  %s\n', deleted{ii});
 end
 
