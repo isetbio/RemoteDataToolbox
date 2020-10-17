@@ -1,6 +1,6 @@
 {
-	"serverUrl": "http://brainard-archiva.psych.upenn.edu/",
-    "repositoryUrl": "http://brainard-archiva.psych.upenn.edu/repository/demo-repository/",
+	"serverUrl": "https://brainard-archiva.psych.upenn.edu/",
+    "repositoryUrl": "https://brainard-archiva.psych.upenn.edu/repository/demo-repository/",
 	"username": "guest",
 	"password": "",
     "repositoryName": "demo-repository"
