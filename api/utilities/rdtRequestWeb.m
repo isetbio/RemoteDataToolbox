@@ -38,6 +38,11 @@ function response = rdtRequestWeb(configuration, resourcePath, varargin)
 %
 % Copyright (c) 2015 RemoteDataToolbox Team
 
+% History
+%   10/18/20  dhb  Check for string '[]' as empty return, as well as just
+%                  plain empty string.  Something in the external universe
+%                  must have changed to make this matter.
+
 parser = rdtInputParser();
 parser.addRequired('configuration');
 parser.addRequired('resourcePath', @ischar);
@@ -114,7 +119,9 @@ else
     
 end
 
-if isempty(responseText)
+% Response text can be the text string '[]', need to check
+% for that as well as just plain empty.
+if (isempty(responseText) || strcmp(responseText,'[]'))
     return;
 end
 
