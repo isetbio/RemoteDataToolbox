@@ -120,6 +120,8 @@ else
     
 end
 
+% Response text can be the text string '[]', need to check
+% for that as well as just plain empty.
 if (isempty(responseText) || strcmp(responseText,'[]'))
     return;
 end
