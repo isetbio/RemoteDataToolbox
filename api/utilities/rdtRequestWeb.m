@@ -38,6 +38,11 @@ function response = rdtRequestWeb(configuration, resourcePath, varargin)
 %
 % Copyright (c) 2015 RemoteDataToolbox Team
 
+% History:
+%  10/19/20  dhb  Add 'CertificateFilename','' to list of key/value pairs
+%                 for webread/webwrite options.  This fixes an SSL cert
+%                 error in more recent versions of Matlab.
+
 parser = rdtInputParser();
 parser.addRequired('configuration');
 parser.addRequired('resourcePath', @ischar);
@@ -102,7 +107,8 @@ else
         'Password', configuration.password, ...
         'ContentType', 'text', ...
         'KeyName', 'Accept', ...
-        'KeyValue', configuration.acceptMediaType);
+        'KeyValue', configuration.acceptMediaType, ...
+        'CertificateFilename','');
     
     % GET or POST?
     if isempty(requestBody)
