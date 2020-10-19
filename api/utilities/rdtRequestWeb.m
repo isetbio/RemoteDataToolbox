@@ -120,7 +120,7 @@ else
     
 end
 
-if isempty(responseText)
+if (isempty(responseText) || strcmp(responseText,'[]'))
     return;
 end
 
