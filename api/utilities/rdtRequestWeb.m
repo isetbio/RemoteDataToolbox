@@ -42,6 +42,9 @@ function response = rdtRequestWeb(configuration, resourcePath, varargin)
 %   10/18/20  dhb  Check for string '[]' as empty return, as well as just
 %                  plain empty string.  Something in the external universe
 %                  must have changed to make this matter.
+%  10/19/20  dhb   Add 'CertificateFilename','' to list of key/value pairs
+%                  for webread/webwrite options.  This fixes an SSL cert
+%                  error in more recent versions of Matlab.
 
 parser = rdtInputParser();
 parser.addRequired('configuration');
@@ -107,7 +110,8 @@ else
         'Password', configuration.password, ...
         'ContentType', 'text', ...
         'KeyName', 'Accept', ...
-        'KeyValue', configuration.acceptMediaType);
+        'KeyValue', configuration.acceptMediaType, ...
+        'CertificateFilename','');
     
     % GET or POST?
     if isempty(requestBody)
