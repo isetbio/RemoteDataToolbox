@@ -46,7 +46,7 @@ dependencies {
   )
 }
 
-task fetchIt << {
+task fetchIt doLast {
   configurations.each {
     config ->
     try {

@@ -21,8 +21,8 @@ clc;
 
 %% Explicit configuration pointing at Maven Central.
 configuration = rdtConfiguration( ...
-    'serverUrl', 'http://repo1.maven.org/maven2', ...
-    'repositoryUrl', 'http://repo1.maven.org/maven2');
+    'serverUrl', 'https://repo1.maven.org/maven2', ...
+    'repositoryUrl', 'https://repo1.maven.org/maven2');
 
 %% Browse the Maven Central repository.
 

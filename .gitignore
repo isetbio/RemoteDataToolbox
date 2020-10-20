@@ -1,3 +1,4 @@
 .DS_Store
 /external/gradle/.gradle
 /external/gradle/build
+/examples/.DS_Store
