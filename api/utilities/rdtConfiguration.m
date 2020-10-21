@@ -72,7 +72,7 @@ parser.addParameter('password', '', @ischar);
 parser.addParameter('requestMediaType', 'application/json', @ischar);
 parser.addParameter('acceptMediaType', 'application/json', @ischar);
 parser.addParameter('cacheFolder', '', @ischar);
-parser.addParameter('verbosity', 0, @isnumeric);
+parser.addParameter('verbosity', 1, @isnumeric);
 
 %% Parse given config through the declared config scheme.
 parser.parse(configArgs{:});
