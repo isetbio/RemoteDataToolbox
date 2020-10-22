@@ -72,7 +72,7 @@ parser.addParameter('password', '', @ischar);
 parser.addParameter('requestMediaType', 'application/json', @ischar);
 parser.addParameter('acceptMediaType', 'application/json', @ischar);
 parser.addParameter('cacheFolder', '', @ischar);
-parser.addParameter('verbosity', 1, @isnumeric);
+parser.addParameter('verbosity', 0, @isnumeric);
 
 
 %% Parse given config through the declared config scheme.
@@ -89,10 +89,14 @@ if isempty(configuration.password) ...
     configuration = rdtCredentialsDialog(configuration);
 end
 
+%% Print out config file if verbosity is true
+%
+% Set default to true above in the addParameter line if you want this.
+% Can also uncomment some printouts just below.
 rdtPrintf(configuration.verbosity, 'Configuration source "%s"\n', flavor);
-[a, b] = unix('which gradle')
-[a, b] = unix('which java')
-[a, b] = unix('java -version')
+% [a, b] = unix('which gradle')
+% [a, b] = unix('which java')
+% [a, b] = unix('java -version')
 
 %% Load config from a JSON file.
 function [configArgs, flavor] = configFromJson(arg)
