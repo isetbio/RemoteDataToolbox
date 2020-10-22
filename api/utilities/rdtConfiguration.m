@@ -91,6 +91,8 @@ end
 
 rdtPrintf(configuration.verbosity, 'Configuration source "%s"\n', flavor);
 [a, b] = unix('which gradle')
+[a, b] = unix('which java')
+[a, b] = unix('java -version')
 
 %% Load config from a JSON file.
 function [configArgs, flavor] = configFromJson(arg)
