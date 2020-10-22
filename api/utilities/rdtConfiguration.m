@@ -90,7 +90,7 @@ if isempty(configuration.password) ...
 end
 
 rdtPrintf(configuration.verbosity, 'Configuration source "%s"\n', flavor);
-unix('which gradle')
+[a, b] = unix('which gradle')
 
 %% Load config from a JSON file.
 function [configArgs, flavor] = configFromJson(arg)
